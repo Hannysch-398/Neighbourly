@@ -1,0 +1,105 @@
+############################
+# IntelliJ IDEA
+############################
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+############################
+# OS Files
+############################
+.DS_Store
+Thumbs.db
+
+############################
+# Logs
+############################
+*.log
+logs/
+
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+*.env.local
+*.secret
+*.key
+*.pem
+
+############################
+# Node / Angular
+############################
+node_modules/
+dist/
+tmp/
+temp/
+.cache/
+.angular/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# Java / JVM
+############################
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.exec
+
+############################
+# Maven
+############################
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+############################
+# Gradle
+############################
+.gradle/
+build/
+
+############################
+# Spring Boot
+############################
+*.pid
+*.pid.lock
+
+############################
+# Docker
+############################
+docker-data/
+docker-volumes/
+
+############################
+# Database
+############################
+*.db
+*.sqlite
+*.sqlite3
+
+############################
+# Coverage / Testing
+############################
+coverage/
+.nyc_output/
+test-output/
+
+############################
+# Misc
+############################
+*.tmp
+*.swp
+*.swo
+*~
