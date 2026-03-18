@@ -18,6 +18,11 @@ We use **Docker** to manage the database and required services.
 > The `-d` (detached) flag runs containers in the background, keeping your terminal free for other commands.
 
 ---
+##  Git (Github)
+
+Beispiel Branchname:
+```bash
+NeBo-1
 
 ## ☕ Backend (Spring Boot)
 
