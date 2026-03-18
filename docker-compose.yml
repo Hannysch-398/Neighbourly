@@ -5,12 +5,13 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: neighbourly
-      POSTGRES_USER: neighbourly
-      POSTGRES_PASSWORD: dev
+      POSTGRES_USER: neighbourly_admin
+      POSTGRES_PASSWORD: hiQ3-CCSCR.1
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:
