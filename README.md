@@ -18,6 +18,12 @@ We use **Docker** to manage the database and required services.
 > The `-d` (detached) flag runs containers in the background, keeping your terminal free for other commands.
 
 ---
+##  Git (Github)
+
+Beispiel Branchname:
+```bash
+NeBo-1-example-name-from-the-ticket
+```
 
 ## ☕ Backend (Spring Boot)
 
@@ -62,3 +68,4 @@ The frontend is an **Angular** application located in the `frontend/frontend` su
 
 * **Prerequisites:** Make sure you have **Node.js**, **Java 17+**, and **Docker** installed.
 * **Database Connection:** If the backend throws a connection error on the first try, wait a few seconds for the Docker container to fully initialize and try the `bootRun` command again.
+
