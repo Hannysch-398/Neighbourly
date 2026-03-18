@@ -22,7 +22,8 @@ We use **Docker** to manage the database and required services.
 
 Beispiel Branchname:
 ```bash
-NeBo-1
+NeBo-1-example-name-from-the-ticket
+```
 
 ## ☕ Backend (Spring Boot)
 
