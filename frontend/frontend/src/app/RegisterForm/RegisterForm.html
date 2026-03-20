@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<form (submit)="$event.preventDefault(); submitForm()">
+  <div class="form-container">
+    <h2>Sign up</h2>
+
+    <label>
+      <span>Firstname</span>
+      <input type="text" [formField]="registerForm.firstName"
+             [class.invalid]="registerForm.firstName().invalid() && registerForm.firstName().touched()" />
+      @if (registerForm.firstName().invalid() && registerForm.firstName().touched()) {
+        <span class="error-text">{{ registerForm.firstName().errors()?.[0]?.message }}</span>
+      }
+    </label>
+
+    <label>
+      <span>Lastname</span>
+      <input type="text" [formField]="registerForm.lastName"
+             [class.invalid]="registerForm.lastName().invalid() && registerForm.lastName().touched()" />
+      @if (registerForm.lastName().invalid() && registerForm.lastName().touched()) {
+        <span class="error-text">{{ registerForm.lastName().errors()?.[0]?.message }}</span>
+      }
+    </label>
+
+
+    <label>
+      <span>E-Mail</span>
+      <input type="email" [formField]="registerForm.email" placeholder=""
+             [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
+      @if (registerForm.email().invalid() && registerForm.email().touched()) {
+        <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
+      }
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input type="password" [formField]="registerForm.password" placeholder=""
+             [class.invalid]="registerForm.password().invalid() && registerForm.password().touched()" />
+      @if (registerForm.password().invalid() && registerForm.password().touched()) {
+        <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
+      }
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="registerForm().submitting()">Sign Up</button>
+    </div>
+  </div>
+</form>
