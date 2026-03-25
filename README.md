@@ -102,6 +102,31 @@ If you just pulled the project or the database setup has changed, follow these s
 
 ---
 
+## ✅ Database Initialization & Validation (IMPORTANT)
+
+- On the **first pull/start of the database container**, an **init script is automatically executed**.
+- When running the backend via `bootRun`, **the same initialization/validation is logged again in the Spring Boot console**.
+
+### You MUST verify the following before starting development:
+
+1. **Does the test table exist?**
+    - Table name: `test_table`
+    - Check via your DB tool (e.g. IntelliJ Database view)
+
+2. **Did Spring Boot validation succeed?**
+    - Look at the CLI where `bootRun` is running
+    - There should be a clear log indicating that the validation was successful
+
+### 🚨 If something is wrong:
+
+- **DO NOT start working**
+- **DO NOT ignore errors**
+- Instead:
+    - Report it immediately
+    - Let the person responsible for **DB/Docker** fix it
+
+---
+
 ## 🧠 Notes
 
 - The database setup (users, roles, permissions) is automatically created via Docker init scripts.
