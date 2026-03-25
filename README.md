@@ -17,6 +17,12 @@ We use **Docker** to manage the database and required services.
 > The `-d` (detached) flag runs containers in the background, keeping your terminal free for other commands.
 
 ---
+##  Git (Github)
+
+Beispiel Branchname:
+```bash
+NeBo-1-example-name-from-the-ticket
+```
 
 ## ☕ Backend (Spring Boot)
 
@@ -123,7 +129,7 @@ If you just pulled the project or the database setup has changed, follow these s
 
 - The database setup (users, roles, permissions) is automatically created via Docker init scripts.
 - If something is broken or outdated, always start with:
-
-        docker compose down -v
-
+  ```bash
+  docker compose down -v
+  ```
 - Never use the admin user (`neighbourly_admin`) for normal development.
