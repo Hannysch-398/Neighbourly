@@ -8,14 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    private PasswordEncoder passwordEncoder;
+    // Konstruktor-basiertes Autowiring (Best Practice)
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public void registerUser(RegistrationRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -24,6 +27,8 @@ public class UserService {
 
         User newUser = new User();
         newUser.setEmail(request.getEmail());
+
+        // Jetzt ist passwordEncoder NICHT mehr null
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setEmailVerified(false);
 
