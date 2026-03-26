@@ -18,6 +18,8 @@ public class UserService {
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+
+
     }
 
     public void registerUser(RegistrationRequest request) {
