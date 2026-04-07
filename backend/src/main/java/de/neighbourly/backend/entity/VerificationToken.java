@@ -26,4 +26,8 @@ public class VerificationToken {
         this.user = user;
         this.expiryDate = LocalDateTime.now().plusHours(24);
     }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(this.expiryDate);
+    }
 }
