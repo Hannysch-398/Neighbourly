@@ -1,5 +1,4 @@
 package de.neighbourly.backend.controller;
-import de.neighbourly.backend.dto.PasswordChangeRequest;
 import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.repository.UserRepository;
