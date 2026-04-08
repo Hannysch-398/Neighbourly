@@ -21,8 +21,11 @@ public class AuthController {
         userService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Registrierung erfolgreich");
     }
-    @PostMapping("/{id}/change-password")
-    public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestBody PasswordChangeRequest request) {
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Long id,
+            @RequestBody PasswordChangeRequest request
+    ) {
         userService.changePassword(id, request);
         return ResponseEntity.ok("Passwort erfolgreich geändert!");
     }
