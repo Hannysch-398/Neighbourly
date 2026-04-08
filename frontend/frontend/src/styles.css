@@ -2,3 +2,41 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
+:root {
+  --primary-color: #1d7ddf;
+  --primary-color-hover: #0f3f70;
+  --secondary-color: #7bcb62;
+  --secondary-color-hover: #3e6631;
+  --red-color: #de3b40;
+  --yellow-color: #efb034;
+  --gray-light-color: #f3f4f6;
+  --border-radius: 12px;
+
+  *{
+    color: #4e5d69;
+    font-family: ubuntu, sans-serif;
+  }
+  h1{
+    font-size: 3rem;
+  }
+  h2{
+    font-size: 2.5rem;
+  }
+  h3{
+    font-size: 2rem;
+  }
+  h4{
+    font-size: 1.75rem;
+  }
+  h5{
+    font-size: 1.5rem;
+  }
+  h6{
+    font-size: 1.25rem;
+  }
+  p,a{
+    color: #4e5d69;
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+}

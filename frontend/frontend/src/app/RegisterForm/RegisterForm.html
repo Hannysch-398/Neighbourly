@@ -1,7 +1,30 @@
 <form (submit)="$event.preventDefault(); submitForm()">
   <div class="form-container">
-    <h2>Sign up</h2>
+    <div class="d-flex justify-content-center mb-4">
+      <!-- Container für beide Tabs mit Rahmen -->
+      <div class="tab-container d-flex rounded ">
 
+        <!-- Sign Up -->
+        <div class="tab"
+             [class.tab-active]="isSignUp()"
+             [class.tab-inactive]="!isSignUp()"
+             (click)="setSignUp(true)">
+          Sign Up
+        </div>
+
+        <!-- Sign In -->
+        <div class="tab"
+             [class.tab-active]="!isSignUp()"
+             [class.tab-inactive]="isSignUp()"
+             (click)="setSignUp(false)">
+          Sign In
+        </div>
+
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
     <label>
       <span>Firstname</span>
       <input type="text" [formField]="registerForm.firstName"
@@ -10,7 +33,9 @@
         <span class="error-text">{{ registerForm.firstName().errors()?.[0]?.message }}</span>
       }
     </label>
+    </div>
 
+    <div class="col-md-6 mb-3">
     <label>
       <span>Lastname</span>
       <input type="text" [formField]="registerForm.lastName"
@@ -19,16 +44,17 @@
         <span class="error-text">{{ registerForm.lastName().errors()?.[0]?.message }}</span>
       }
     </label>
-
+    </div>
 
     <label>
       <span>E-Mail</span>
-      <input type="email" [formField]="registerForm.email" placeholder=""
+      <input class="form-control" type="email" [formField]="registerForm.email" placeholder=""
              [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
       @if (registerForm.email().invalid() && registerForm.email().touched()) {
         <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
       }
     </label>
+
 
     <label>
       <span>Password</span>
@@ -38,9 +64,20 @@
         <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
       }
     </label>
-
+  </div>
     <div class="form-actions">
-      <button type="submit" [disabled]="registerForm().submitting()">Sign Up</button>
+      <p class="terms-text">
+        By signing up, I agree with the Terms of Use& Privacy Policy
+      </p>
+      <button class ="btn btn-primary w-100" type="submit" [disabled]="registerForm().submitting()">Sign Up
+
+      </button>
     </div>
+
+    <!-- Switch Link -->
+    <p class="text-center mt-3">
+      {{ isSignUp() ? 'Already have an account?' : "Don't have an account?" }}
+
+    </p>
   </div>
 </form>

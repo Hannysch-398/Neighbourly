@@ -28,6 +28,16 @@ const initialData: RegisterFormModel = {
   styleUrls: ['./registerform.css']
 })
 export class RegisterForm {
+  isSignUp = signal(true);
+
+  toggleForm() {
+    this.isSignUp.set(!this.isSignUp());
+  }
+
+  setSignUp(value: boolean) {
+    this.isSignUp.set(value);
+  }
+
   registerModel = signal<RegisterFormModel>({ ...initialData });
   private registerService = inject(RegisterFormService);
 
