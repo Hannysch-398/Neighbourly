@@ -1,6 +1,5 @@
 package de.neighbourly.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
