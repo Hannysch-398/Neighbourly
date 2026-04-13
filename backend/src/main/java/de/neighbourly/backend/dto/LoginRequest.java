@@ -15,5 +15,4 @@ public class LoginRequest {
 
     @NotBlank(message = "Passwort darf nicht leer sein")
     private String password;
-
 }

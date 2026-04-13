@@ -4,7 +4,6 @@ import de.neighbourly.backend.dto.LoginRequest;
 import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,16 +29,23 @@ public class UserService {
         User newUser = new User();
         newUser.setEmail(request.getEmail());
 
-        // Jetzt ist passwordEncoder NICHT mehr null
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setEmailVerified(false);
 
         userRepository.save(newUser);
     }
-    public void loginUser(LoginRequest request) {
-        if (!userRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die eingegebene daten sind falsch!");
+    public User loginUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-Mail oder Passwort falsch"));
+
+        if (!user.isEmailVerified()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bitte verifiziere zuerst deine E-Mail-Adresse.");
         }
 
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-Mail oder Passwort falsch");
+        }
+
+        return user;
     }
 }
