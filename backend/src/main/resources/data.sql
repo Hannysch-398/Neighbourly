@@ -1,8 +1,9 @@
 INSERT INTO users (email, password, email_verified)
-VALUES ('ranim@test.com', '123456', true);
+VALUES ('ranim@trashmail.hmmh.io', '123456', true);
 
 INSERT INTO users (email, password, email_verified)
-VALUES ('test@test.com', 'password', false);
+VALUES ('test@trashmail.hmmh.io', 'password', false);
 
 INSERT INTO users (email, password, email_verified)
-VALUES ('user@example.com', 'abc123', true);
+VALUES ('user@trashmail.hmmh.io', 'abc123', true);
+
