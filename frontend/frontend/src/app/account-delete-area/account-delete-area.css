@@ -1,0 +1,4 @@
+.account-delete-area {
+  max-width: 800px; /* Begrenzt die Breite auf großen Bildschirmen */
+  margin: 0 auto;
+}
