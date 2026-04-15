@@ -1,11 +1,9 @@
 INSERT INTO users (email, password, email_verified)
-VALUES ('ranim@test.com', '123456', true)
-ON CONFLICT (email) DO NOTHING;
+VALUES ('ranim@trashmail.hmmh.io', '123456', true);
 
 INSERT INTO users (email, password, email_verified)
-VALUES ('test@test.com', 'password', false)
-ON CONFLICT (email) DO NOTHING;
+VALUES ('test@trashmail.hmmh.io', 'password', false);
 
 INSERT INTO users (email, password, email_verified)
-VALUES ('user@example.com', 'abc123', true)
-ON CONFLICT (email) DO NOTHING;
+VALUES ('user@trashmail.hmmh.io', 'abc123', true);
+
