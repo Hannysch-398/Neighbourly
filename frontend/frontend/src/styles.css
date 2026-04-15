@@ -11,7 +11,7 @@
   --gray-light-color: #f3f4f6;
   --border-radius: 12px;
 
-  *{
+  p,h1,h2,h3,h4,h5,h6 {
     color: #4e5d69;
     font-family: ubuntu, sans-serif;
   }
