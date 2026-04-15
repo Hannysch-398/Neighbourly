@@ -1,0 +1,48 @@
+<section class="account-delete-area mb-4">
+  <div class="card border-danger">
+    <div class="card-header bg-danger text-white fw-bold">
+      Account löschen
+    </div>
+
+    <div class="card-body">
+
+      @if (successMessage) {
+      <div class="alert alert-success">
+        {{ successMessage }}
+      </div>
+      }
+
+      @if (errorMessage){
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+      }
+
+      @if (!isConfirming && !successMessage){
+      <button class="btn btn-outline-danger" (click)="triggerConfirmation()">
+        Löschen
+      </button>
+      }
+
+      @if (isConfirming){
+      <ng-container>
+        <div class="alert alert-danger mt-3 mb-0">
+          <h6 class="alert-heading fw-bold">Sicherheitsabfrage</h6>
+          <p>Diese Aktion kann <strong>nicht</strong> rückgängig gemacht werden. Alle deine Daten gehen verloren.</p>
+          <hr>
+          <p class="mb-3">Bist du dir absolut sicher, dass du deinen Account löschen möchtest?</p>
+          <div class="d-flex gap-2 align-items-center">
+            <button class="btn btn-danger" (click)="confirmDelete()">
+              Ja, Account endgültig löschen
+            </button>
+            <button class="btn btn-secondary" (click)="cancel()">
+              Abbrechen
+            </button>
+          </div>
+        </div>
+      </ng-container>
+      }
+
+    </div>
+  </div>
+</section>
