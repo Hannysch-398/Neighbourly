@@ -27,7 +27,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Registrierung erfolgreich");
     }
 
-    @GetMapping("/verify")
+    @GetMapping("/verify-email")
     public ResponseEntity<String> verify(@RequestParam String token) {
         userService.verifyUser(token);
         return ResponseEntity.ok("E-Mail erfolgreich verifiziert! Du kannst dich jetzt einloggen.");
