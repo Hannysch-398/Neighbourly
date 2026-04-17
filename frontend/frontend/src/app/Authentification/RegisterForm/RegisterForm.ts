@@ -60,8 +60,8 @@ export class RegisterForm {
     if (!this.isFormValid()) return;
 
     this.registerService.register(this.registerModel()).subscribe({
-      next: res => console.log('Erfolg', res),
-      error: err => console.error('Fehler', err)
+      next: res => console.log('Success', res),
+      error: err => console.error('Error', err)
     });
   }
 

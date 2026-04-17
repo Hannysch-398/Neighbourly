@@ -3,15 +3,25 @@
   <!-- TOGGLE -->
   <div class="tabs-wrapper d-flex justify-content-center mb-4">
 
-    <div class="tab-container d-flex rounded">
 
       <div class="tabs">
-        <button (click)="showSignUp()">Sign Up</button>
-        <button (click)="showSignIn()">Sign In</button>
+        <button
+          (click)="showSignUp()"
+          [class.tab-active]="isSignUp()"
+          [class.tab-inactive]="!isSignUp()">
+          Sign Up
+        </button>
+
+        <button
+          (click)="showSignIn()"
+          [class.tab-active]="!isSignUp()"
+          [class.tab-inactive]="isSignUp()">
+          Sign In
+        </button>
       </div>
 
     </div>
-  </div>
+
 
   <!-- CONTENT SWITCH -->
   @if (isSignUp()) {
@@ -21,3 +31,4 @@
   }
 
 </div>
+

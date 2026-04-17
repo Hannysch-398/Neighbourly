@@ -1,4 +1,4 @@
-form {
+.auth-container {
   display: flex;
   flex-direction: column;
   width: 350px;         /* etwas breiter für Komfort */
@@ -36,7 +36,7 @@ input:focus {
 
 button {
   padding: 10px;
-  margin-top: 10px;
+
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -47,9 +47,7 @@ button {
   transition: background-color 0.2s;
 }
 
-button:hover {
-  background-color: var(--primary-color-hover);
-}
+
 
 .error-text {
   color: red;
@@ -71,16 +69,19 @@ p {
 
 }
 .tab-inactive {
+  background-color: white;
   color: var(--primary-color);
+
 
 }
 /* Jeder Tab */
-.tab {
-  flex: 1; /* gleiche Breite */
+.tabs {
+  margin:0;
   text-align: center;
-
-  cursor: pointer;
-  padding: 0px 30px;
+  display: flex;
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  overflow: hidden;
   transition: background-color 0.2s, color 0.2s;
 }
 /* Container mit Rahmen */
@@ -89,3 +90,4 @@ p {
   border-radius: 5px;
 
 }
+

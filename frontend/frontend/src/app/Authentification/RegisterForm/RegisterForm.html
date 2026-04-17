@@ -2,25 +2,7 @@
   <div class="form-container">
     <div class="d-flex justify-content-center mb-4">
       <!-- Container für beide Tabs mit Rahmen -->
-      <div class="tab-container d-flex rounded ">
 
-        <!-- Sign Up -->
-        <div class="tab"
-             [class.tab-active]="isSignUp()"
-             [class.tab-inactive]="!isSignUp()"
-             (click)="setSignUp(true)">
-          Sign Up
-        </div>
-
-        <!-- Sign In -->
-        <div class="tab"
-             [class.tab-active]="!isSignUp()"
-             [class.tab-inactive]="isSignUp()"
-             (click)="setSignUp(false)">
-          Sign In
-        </div>
-
-      </div>
     </div>
 
   <div class="row">
