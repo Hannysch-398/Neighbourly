@@ -1,5 +1,6 @@
 package de.neighbourly.backend.service;
 
+import de.neighbourly.backend.dto.LoginRequest;
 import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.repository.UserRepository;
@@ -30,5 +31,21 @@ public class UserService {
         newUser.setEmailVerified(false);
 
         userRepository.save(newUser);
+    }
+    public User loginUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-Mail oder Passwort falsch"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-Mail oder Passwort falsch");
+        }
+
+        if (!user.isEmailVerified()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bitte verifiziere zuerst deine E-Mail-Adresse.");
+        }
+
+
+
+        return user;
     }
 }

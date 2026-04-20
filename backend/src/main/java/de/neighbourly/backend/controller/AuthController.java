@@ -1,4 +1,5 @@
 package de.neighbourly.backend.controller;
+
 import de.neighbourly.backend.dto.LoginRequest;
 import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.security.CustomUserDetailsService;
