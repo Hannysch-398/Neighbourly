@@ -6,28 +6,6 @@
     </div>
 
   <div class="row">
-    <div class="col-md-6 mb-3">
-    <label>
-      <span>Firstname</span>
-      <input type="text" [formField]="registerForm.firstName"
-             [class.invalid]="registerForm.firstName().invalid() && registerForm.firstName().touched()" />
-      @if (registerForm.firstName().invalid() && registerForm.firstName().touched()) {
-        <span class="error-text">{{ registerForm.firstName().errors()?.[0]?.message }}</span>
-      }
-    </label>
-    </div>
-
-    <div class="col-md-6 mb-3">
-    <label>
-      <span>Lastname</span>
-      <input type="text" [formField]="registerForm.lastName"
-             [class.invalid]="registerForm.lastName().invalid() && registerForm.lastName().touched()" />
-      @if (registerForm.lastName().invalid() && registerForm.lastName().touched()) {
-        <span class="error-text">{{ registerForm.lastName().errors()?.[0]?.message }}</span>
-      }
-    </label>
-    </div>
-
     <label>
       <span>E-Mail</span>
       <input class="form-control" type="email" [formField]="registerForm.email" placeholder=""
@@ -54,6 +32,12 @@
       <button class ="btn btn-primary w-100" type="submit" [disabled]="registerForm().submitting()">
         {{ isSignUp() ? 'Sign Up' : 'Sign In' }}
       </button>
+
+      @if (feedbackMessage()) {
+        <p class="mt-3" [class.text-success]="registrationSucceeded()" [class.text-danger]="!registrationSucceeded()">
+          {{ feedbackMessage() }}
+        </p>
+      }
     </div>
 
     <!-- Switch Link -->

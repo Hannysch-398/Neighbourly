@@ -1,10 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 export interface RegisterUser {
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
 }
@@ -13,29 +11,37 @@ export interface RegisterUser {
   providedIn: 'root'
 })
 export class RegisterFormService {
-  readonly isRegistered = signal(false); // Signal: Registrierung erfolgreich?
-  readonly message = signal<string | null>(null); // Signal: Feedbackmeldung
+  readonly isRegistered = signal(false);
+  readonly message = signal<string | null>(null);
 
-  private apiUrl = 'http://localhost:8080/api/auth/register'; // Dein Spring Boot Endpoint
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = '/api/auth/register';
 
-  constructor(private http: HttpClient) {}
+  register(user: RegisterUser) {
+    const payload = {
+      email: user.email,
+      password: user.password
+    };
 
-  // Registrierungsfunktion
-  register(user: RegisterUser): Observable<any> {
-    return new Observable(observer => {
-      this.http.post<{ message: string }>(this.apiUrl, user).subscribe({
-        next: res => {
-          this.isRegistered.set(true);       // Registrierung erfolgreich
-          this.message.set(res.message);     // Erfolgsmeldung
-          observer.next(res);
-          observer.complete();
-        },
-        error: err => {
-          this.isRegistered.set(false);      // Registrierung fehlgeschlagen
-          this.message.set(err.error ?? 'Registrierung fehlgeschlagen');
-          observer.error(err);
-        }
-      });
-    });
+    return this.http.post(this.apiUrl, payload, { responseType: 'text' }).pipe(
+      tap((responseMessage) => {
+        this.isRegistered.set(true);
+        this.message.set(responseMessage || 'Registrierung erfolgreich');
+      }),
+      catchError((error) => {
+        this.isRegistered.set(false);
+
+        const backendMessage =
+          typeof error.error === 'string'
+            ? error.error
+            : error.error?.message ||
+              error.error?.error ||
+              Object.values(error.error ?? {})[0] ||
+              'Registrierung fehlgeschlagen';
+
+        this.message.set(String(backendMessage));
+        return throwError(() => error);
+      })
+    );
   }
 }
