@@ -1,0 +1,11 @@
+<button
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="handleClick($event)"
+>
+  @if (loading()) {
+    Wird geladen...
+  } @else {
+    {{ label() }}
+  }
+</button>
