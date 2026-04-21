@@ -20,11 +20,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final VerificationTokenRepository tokenRepository; // 1. Variable deklarieren
+    private final VerificationTokenRepository tokenRepository;
     private final EmailService emailService;
 
-    // Konstruktor-basiertes Autowiring (Best Practice)
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository tokenRepository, EmailService emailService) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            VerificationTokenRepository tokenRepository,
+            EmailService emailService
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
@@ -36,6 +40,7 @@ public class UserService {
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setEmailVerified(false);
+
         User savedUser = userRepository.save(newUser);
 
         String tokenValue = java.util.UUID.randomUUID().toString();
@@ -43,8 +48,12 @@ public class UserService {
 
         tokenRepository.save(token);
 
-        String verifyLink = ("http://localhost:8080/api/auth/verify?token=" + tokenValue);
-        emailService.sendSimpleEmail(request.getEmail(),"Neighbourly - E-mail Bestätigung","Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link. " + verifyLink);
+        String verifyLink = "http://localhost:8080/api/auth/verify?token=" + tokenValue;
+        emailService.sendSimpleEmail(
+                request.getEmail(),
+                "Neighbourly - E-mail Bestätigung",
+                "Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link. " + verifyLink
+        );
     }
 
     public void verifyUser(String token) {
@@ -52,8 +61,11 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ungültiger Token"));
 
         if (verificationToken.isExpired()) {
-            tokenRepository.delete(verificationToken); // Aufräumen
-            throw new ResponseStatusException(HttpStatus.GONE, "Verifizierungs-Link abgelaufen. Bitte neu registrieren.");
+            tokenRepository.delete(verificationToken);
+            throw new ResponseStatusException(
+                    HttpStatus.GONE,
+                    "Verifizierungs-Link abgelaufen. Bitte neu registrieren."
+            );
         }
 
         User user = verificationToken.getUser();

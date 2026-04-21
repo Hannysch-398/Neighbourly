@@ -21,4 +21,11 @@ public class RegistrationRequest {
     )
     private String password;
 
+    @NotBlank(message = "Username darf nicht leer sein")
+    @Size(min = 3, max = 20, message = "Username muss zwischen 3 und 20 Zeichen lang sein")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._-]+$",
+            message = "Username darf nur Buchstaben, Zahlen und ._- enthalten"
+    )
+    private String username;
 }
