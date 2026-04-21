@@ -26,8 +26,8 @@ export class SignInFormComponent {
   model = signal<LoginModel>({ ...initial });
 
   form = form(this.model, (path) => {
-    required(path.email, { message: 'Email is required' });
-    required(path.password, { message: 'Password is required' });
+    required(path.email, { message: 'Email ist erforderlich' });
+    required(path.password, { message: 'Password ist erforderlich' });
   });
 
   isValid = () =>

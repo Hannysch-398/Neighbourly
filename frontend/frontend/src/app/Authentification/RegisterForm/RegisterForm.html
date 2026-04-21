@@ -17,17 +17,29 @@
 
 
     <label>
-      <span>Password</span>
+      <span>Passwort</span>
       <input type="password" [formField]="registerForm.password" placeholder=""
              [class.invalid]="registerForm.password().invalid() && registerForm.password().touched()" />
       @if (registerForm.password().invalid() && registerForm.password().touched()) {
         <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
       }
     </label>
+    <label>
+      <span> Passwort bestätigen</span>
+      <input
+        type="password"
+        [value]="registerModel().confirmPassword"
+        (input)="registerModel.set({ ...registerModel(), confirmPassword: $any($event.target).value })"
+        [class.invalid]="registerModel().confirmPassword && !passwordsMatch()"
+      />
+      @if (registerModel().confirmPassword && !passwordsMatch()) {
+        <span class="error-text">Passwort stimmt nicht überein!</span>
+      }
+    </label>
   </div>
     <div class="form-actions">
       <p class="terms-text">
-        By signing up, I agree with the Terms of Use& Privacy Policy
+        Durch die Registrierung, erkläre ich mich mit den Datenschutzbestimmungen einverstanden.
       </p>
       <button class ="btn btn-primary w-100" type="submit" [disabled]="registerForm().submitting()">
         {{ isSignUp() ? 'Sign Up' : 'Sign In' }}
@@ -40,10 +52,6 @@
       }
     </div>
 
-    <!-- Switch Link -->
-    <p class="text-center mt-3">
-      {{ isSignUp() ? 'Already have an account?' : "Don't have an account?" }}
 
-    </p>
   </div>
 </form>

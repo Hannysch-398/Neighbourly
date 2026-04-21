@@ -7,11 +7,13 @@ import { RegisterFormService } from '../../Service/registerForm.service';
 interface RegisterFormModel {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const initialData: RegisterFormModel = {
   email: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 };
 
 @Component({
@@ -41,21 +43,26 @@ export class RegisterForm {
   readonly registerModel = signal<RegisterFormModel>({ ...initialData });
 
   registerForm = form(this.registerModel, (schemaPath) => {
-    required(schemaPath.email, { message: 'enter E-Mail' });
-    pattern(schemaPath.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: 'invalid E-Mail' });
-    required(schemaPath.password, { message: 'enter password' });
+    required(schemaPath.email, { message: 'E-Mail eingeben' });
+    pattern(schemaPath.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: 'ungültige E-Mail' });
+    required(schemaPath.password, { message: 'Passwort eingeben' });
     pattern(
       schemaPath.password,
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!_])(?=\S+$).{8,}$/,
       {
-        message: 'Use 8+ chars with upper, lower, number and special character'
+        message: 'Benutze 8+ Buchstaben mit Klein- und Großschreibung, Nummern und Sonderzeichen'
       }
     );
   });
 
   readonly isFormValid = computed(() =>
     !this.registerForm.email().invalid() &&
-    !this.registerForm.password().invalid()
+    !this.registerForm.password().invalid() &&
+    this.passwordsMatch()
+  );
+
+  readonly passwordsMatch = computed(() =>
+    this.registerModel().password === this.registerModel().confirmPassword
   );
 
   submitForm() {

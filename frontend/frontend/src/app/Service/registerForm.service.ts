@@ -22,7 +22,8 @@ export class RegisterFormService {
       email: user.email,
       password: user.password
     };
-
+    console.log('POST /api/auth/register');
+    console.log('payload:', payload);
     return this.http.post(this.apiUrl, payload, { responseType: 'text' }).pipe(
       tap((responseMessage) => {
         this.isRegistered.set(true);
