@@ -5,12 +5,15 @@ import { RegisterFormService } from '../../Service/registerForm.service';
 
 
 interface RegisterFormModel {
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
+
 }
 
 const initialData: RegisterFormModel = {
+  username: '',
   email: '',
   password: '',
   confirmPassword: ''
@@ -43,6 +46,10 @@ export class RegisterForm {
   readonly registerModel = signal<RegisterFormModel>({ ...initialData });
 
   registerForm = form(this.registerModel, (schemaPath) => {
+    required(schemaPath.username, { message: 'Username eingeben' });
+    pattern(schemaPath.username, /^[a-zA-Z0-9._-]{3,20}$/, {
+      message: '3-20 Zeichen, nur Buchstaben, Zahlen und ._-'
+    });
     required(schemaPath.email, { message: 'E-Mail eingeben' });
     pattern(schemaPath.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: 'ungültige E-Mail' });
     required(schemaPath.password, { message: 'Passwort eingeben' });
@@ -56,6 +63,7 @@ export class RegisterForm {
   });
 
   readonly isFormValid = computed(() =>
+    !this.registerForm.username().invalid() &&
     !this.registerForm.email().invalid() &&
     !this.registerForm.password().invalid() &&
     this.passwordsMatch()

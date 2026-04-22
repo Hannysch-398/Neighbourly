@@ -7,6 +7,14 @@
 
   <div class="row">
     <label>
+      <span>Username</span>
+      <input class="form-control" type="text" [formField]="registerForm.username" placeholder=""
+             [class.invalid]="registerForm.username().invalid() && registerForm.username().touched()" />
+      @if (registerForm.username().invalid() && registerForm.username().touched()) {
+        <span class="error-text">{{ registerForm.username().errors()?.[0]?.message }}</span>
+      }
+    </label>
+    <label>
       <span>E-Mail</span>
       <input class="form-control" type="email" [formField]="registerForm.email" placeholder=""
              [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />

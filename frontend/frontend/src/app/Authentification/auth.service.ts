@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 export interface LoginRequest {
   email: string;
@@ -7,8 +8,7 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -17,26 +17,16 @@ export interface RegisterRequest {
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = '/api/auth';
 
-  login(data: LoginRequest): Observable<any> {
-    console.log('LOGIN payload:', data);
-
-    return of({
-      token: 'fake-jwt-token',
-      user: {
-        email: data.email
-      }
-    }).pipe(delay(500));
+  login(data: LoginRequest) {
+    return this.http.post(`${this.apiUrl}/login`, data, { responseType: 'text' }).pipe(
+      tap((token) => localStorage.setItem('token', token))
+    );
   }
 
-  register(data: RegisterRequest): Observable<any> {
-    console.log('REGISTER payload:', data);
-
-    return of({
-      success: true,
-      user: {
-        email: data.email
-      }
-    }).pipe(delay(500));
+  register(data: RegisterRequest) {
+    return this.http.post(`${this.apiUrl}/register`, data, { responseType: 'text' });
   }
 }

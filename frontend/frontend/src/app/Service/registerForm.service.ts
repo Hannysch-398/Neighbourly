@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, tap, throwError } from 'rxjs';
 
 export interface RegisterUser {
+  username: string;
   email: string;
   password: string;
 }
@@ -19,6 +20,7 @@ export class RegisterFormService {
 
   register(user: RegisterUser) {
     const payload = {
+      username: user.username,
       email: user.email,
       password: user.password
     };

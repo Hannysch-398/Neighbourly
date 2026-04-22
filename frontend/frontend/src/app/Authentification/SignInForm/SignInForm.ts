@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
 import { AuthService, LoginRequest } from '../auth.service';
+import {Router} from '@angular/router';
 
 interface LoginModel {
   email: string;
@@ -20,7 +21,7 @@ const initial: LoginModel = {
   styleUrls: ['./SignInForm.css']
 })
 export class SignInFormComponent {
-
+  private router = inject(Router);
   private authService = inject(AuthService);
 
   model = signal<LoginModel>({ ...initial });
@@ -40,8 +41,8 @@ export class SignInFormComponent {
     const payload: LoginRequest = this.model();
 
     this.authService.login(payload).subscribe({
-      next: res => console.log('LOGIN SUCCESS', res),
-      error: err => console.error(err)
+      next: () => this.router.navigate(['/profile']),
+      error: err => console.error('Login fehlgeschlagen', err)
     });
   }
 }
