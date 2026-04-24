@@ -5,6 +5,5 @@ export const routes: Routes = [
   {
     path: 'profile',
     loadComponent: () => import('./profile/profile').then((m) => m.Profile),
-  },
-  { path: 'profile/:id', component: Rating },
+  }
 ];
