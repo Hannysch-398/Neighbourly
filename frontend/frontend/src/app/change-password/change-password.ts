@@ -30,7 +30,8 @@ export class ChangePassword {
   oldPasswordError = signal('');
   newPasswordBackendError = signal('');
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) {
+  }
 
   passwordModel = signal({
     password: '',
@@ -96,6 +97,14 @@ export class ChangePassword {
       newPassword: '',
       repeatPassword: '',
     });
+
+    this.showOldPassword.set(false);
+    this.showNewPassword.set(false);
+    this.showRepeatPassword.set(false);
+
+    this.oldPasswordError.set('');
+    this.newPasswordBackendError.set('');
+    this.backendError.set('');
   }
 
   private mapBackendError(error: unknown) {
@@ -163,9 +172,12 @@ export class ChangePassword {
 
     try {
       await firstValueFrom(this.userService.submitPasswords(data, this.userId));
-      this.successMessage.set('Das Passwort wurde erfolgreich geändert.');
+
       this.resetForm();
+      this.clearMessages();
+      this.successMessage.set('Das Passwort wurde erfolgreich geändert.');
     } catch (error) {
+      console.log(error);
       this.mapBackendError(error);
     } finally {
       this.loading.set(false);
