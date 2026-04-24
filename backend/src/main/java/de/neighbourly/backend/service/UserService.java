@@ -59,12 +59,10 @@ public class UserService {
         VerificationToken token = new VerificationToken(tokenValue, savedUser);
         tokenRepository.save(token);
 
-        String verifyLink = "http://localhost:8080/api/auth/verify?token=" + tokenValue;
-        emailService.sendSimpleEmail(
-                request.getEmail(),
-                "Neighbourly - E-Mail Bestätigung",
-                "Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link: " + verifyLink
-        );
+
+        String verifyLink = ("http://localhost:4200/verify-email?token=" + tokenValue);
+        emailService.sendSimpleEmail(request.getEmail(),"Neighbourly - E-mail Bestätigung","Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link. " + verifyLink);
+
     }
 
     public void verifyUser(String token) {
