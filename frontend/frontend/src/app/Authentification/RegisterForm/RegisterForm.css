@@ -20,8 +20,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+
 }
 
 button {
@@ -77,5 +76,10 @@ p {
 .tab-container {
   border: 2px solid var(--primary-color); /* komplette Border */
   border-radius: 5px;
+
+}
+button:disabled {
+  cursor: not-allowed;
+  background-color: darkgray;
 
 }

@@ -8,7 +8,7 @@
   <div class="row">
     <label>
       <span>Username</span>
-      <input class="form-control" type="text" [formField]="registerForm.username" placeholder=""
+      <input  type="text" [formField]="registerForm.username" placeholder=""
              [class.invalid]="registerForm.username().invalid() && registerForm.username().touched()" />
       @if (registerForm.username().invalid() && registerForm.username().touched()) {
         <span class="error-text">{{ registerForm.username().errors()?.[0]?.message }}</span>
@@ -16,7 +16,7 @@
     </label>
     <label>
       <span>E-Mail</span>
-      <input class="form-control" type="email" [formField]="registerForm.email" placeholder=""
+      <input  type="email" [formField]="registerForm.email" placeholder=""
              [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
       @if (registerForm.email().invalid() && registerForm.email().touched()) {
         <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
@@ -49,7 +49,8 @@
       <p class="terms-text">
         Durch die Registrierung, erkläre ich mich mit den Datenschutzbestimmungen einverstanden.
       </p>
-      <button class ="btn btn-primary w-100" type="submit" [disabled]="registerForm().submitting()">
+      <button class ="btn btn-primary w-100" type="submit"
+              [disabled]="registerForm().submitting() || !isFormValid()">
         {{ isSignUp() ? 'Sign Up' : 'Sign In' }}
       </button>
 

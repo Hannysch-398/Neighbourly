@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
-import { AuthService, LoginRequest } from '../auth.service';
+import { AuthService, LoginRequest } from '../../Service/auth.service';
 import {Router} from '@angular/router';
 
 interface LoginModel {
