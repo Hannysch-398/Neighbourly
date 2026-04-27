@@ -9,19 +9,29 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
-  // Ziel: JWT nach Login speichern
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  // Ziel: Token für Interceptor bereitstellen
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Akzeptanzkriterium: Logout entfernt Token & Redirect
-  logout(): void {
+  isLoggedIn(): boolean {
+    return this.getToken() !== null;
+  }
+
+  logout(returnUrl?: string): Promise<boolean> {
     localStorage.removeItem(this.TOKEN_KEY);
-    this.router.navigate(['/login']);
+
+    if(returnUrl) {
+      return this.router.navigate(['/login'], {
+        queryParams: {
+          returnUrl,
+        },
+      });
+    }
+
+    return this.router.navigate(['/login']);
   }
 }
