@@ -7,8 +7,8 @@
 
   <div class="row">
     <label>
-      <span>Username</span>
-      <input  type="text" [formField]="registerForm.username" placeholder=""
+      <span>Benutzername</span>
+      <input  type="text" [formField]="registerForm.username"
              [class.invalid]="registerForm.username().invalid() && registerForm.username().touched()" />
       @if (registerForm.username().invalid() && registerForm.username().touched()) {
         <span class="error-text">{{ registerForm.username().errors()?.[0]?.message }}</span>
@@ -16,7 +16,7 @@
     </label>
     <label>
       <span>E-Mail</span>
-      <input  type="email" [formField]="registerForm.email" placeholder=""
+      <input  type="text" [formField]="registerForm.email"
              [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
       @if (registerForm.email().invalid() && registerForm.email().touched()) {
         <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
@@ -26,7 +26,7 @@
 
     <label>
       <span>Passwort</span>
-      <input type="password" [formField]="registerForm.password" placeholder=""
+      <input type="password" [formField]="registerForm.password"
              [class.invalid]="registerForm.password().invalid() && registerForm.password().touched()" />
       @if (registerForm.password().invalid() && registerForm.password().touched()) {
         <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
@@ -37,7 +37,7 @@
       <input
         type="password"
         [value]="registerModel().confirmPassword"
-        (input)="registerModel.set({ ...registerModel(), confirmPassword: $any($event.target).value })"
+        (input)="updateConfirmPassword($any($event.target).value)"
         [class.invalid]="registerModel().confirmPassword && !passwordsMatch()"
       />
       @if (registerModel().confirmPassword && !passwordsMatch()) {
@@ -47,11 +47,11 @@
   </div>
     <div class="form-actions">
       <p class="terms-text">
-        Durch die Registrierung, erkläre ich mich mit den Datenschutzbestimmungen einverstanden.
+        Durch die Registrierung erkläre ich mich mit den Datenschutzbestimmungen einverstanden.
       </p>
       <button class ="btn btn-primary w-100" type="submit"
               [disabled]="registerForm().submitting() || !isFormValid()">
-        {{ isSignUp() ? 'Sign Up' : 'Sign In' }}
+        Registrieren
       </button>
 
       @if (feedbackMessage()) {

@@ -4,8 +4,8 @@
 
     <!-- EMAIL -->
     <label>
-      <span>Email</span>
-      <input type="email"
+      <span>E-Mail</span>
+      <input type="text"
              [formField]="form.email"
              [class.invalid]="form.email().invalid() && form.email().touched()" />
 
@@ -30,11 +30,18 @@
       }
     </label>
 
+    <!-- BACKEND ERROR -->
+    @if (backendError()) {
+      <div class="error-text" style="margin-top: 10px;">
+        {{ backendError() }}
+      </div>
+    }
+
     <!-- BUTTON -->
     <button class="btn btn-primary w-100"
             type="submit"
             [disabled]="form().submitting() || !isValid()">
-      Sign In
+      Anmelden
     </button>
 
 
