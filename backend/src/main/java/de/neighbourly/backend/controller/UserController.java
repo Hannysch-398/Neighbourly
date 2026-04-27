@@ -1,33 +1,54 @@
 package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.PasswordChangeRequest;
+import de.neighbourly.backend.dto.UserProfileDto;
+import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PutMapping("/{id}/change-password")
-    public ResponseEntity<String> changePassword(
-            @PathVariable Long id,
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileDto> getMe(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userService.getCurrentUserByEmail(email);
+
+        UserProfileDto dto = new UserProfileDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+                //null,
+                //null
+        );
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/me/change-password")
+    public ResponseEntity<String> changeMyPassword(
+            Authentication authentication,
             @Valid @RequestBody PasswordChangeRequest request
     ) {
-        userService.changePassword(id, request);
+        String email = authentication.getName();
+        userService.changePasswordByEmail(email, request);
         return ResponseEntity.ok("Passwort erfolgreich geändert!");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
-        userService.deleteUserById(id);
-        return ResponseEntity.ok("User " + id + " erfolgreich gelöscht!");
+    @DeleteMapping("/me")
+    public ResponseEntity<String> deleteMyAccount(Authentication authentication) {
+        String email = authentication.getName();
+        userService.deleteUserByEmail(email);
+        return ResponseEntity.ok("Account erfolgreich gelöscht!");
     }
 }
