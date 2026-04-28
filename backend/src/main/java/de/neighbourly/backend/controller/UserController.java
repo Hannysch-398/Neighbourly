@@ -2,7 +2,6 @@ package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.PasswordChangeRequest;
 import de.neighbourly.backend.dto.UserProfileDto;
-import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +21,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserProfileDto> getMe(Authentication authentication) {
         String email = authentication.getName();
-        User user = userService.getCurrentUserByEmail(email);
-
-        UserProfileDto dto = new UserProfileDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail()
-                //null,
-                //null
-        );
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(userService.getCurrentUserProfile(email));
     }
 
     @PutMapping("/me/change-password")
