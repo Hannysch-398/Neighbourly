@@ -1,22 +1,20 @@
-import { Routes} from '@angular/router';
-
-
+import { Routes } from '@angular/router';
+import { ChangePassword } from './change-password/change-password';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'auth',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page')
-        .then(m => m.AuthPageComponent)
+      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
   },
   {
     path: 'profile',
-    loadComponent: () =>
-      import('./profile/profile').then(m => m.Profile)
-  }
+    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
+  },
+  { path: 'profile/me/change-password', component: ChangePassword },
 ];

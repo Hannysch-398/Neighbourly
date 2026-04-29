@@ -9,6 +9,7 @@
   --red-color: #de3b40;
   --yellow-color: #efb034;
   --gray-light-color: #f3f4f6;
+  --gray-color: gray;
   --border-radius: 12px;
 
   *{
@@ -16,26 +17,26 @@
     font-family: ubuntu, sans-serif;
   }
   h1{
-    font-size: 3rem;
-  }
-  h2{
     font-size: 2.5rem;
   }
-  h3{
+  h2{
     font-size: 2rem;
   }
-  h4{
+  h3{
     font-size: 1.75rem;
   }
-  h5{
+  h4{
     font-size: 1.5rem;
   }
-  h6{
+  h5{
     font-size: 1.25rem;
   }
-  p,a{
+  h6{
+    font-size: 1rem;
+  }
+  p,a,label{
     color: #4e5d69;
-    font-size: 1.25rem;
+    font-size: 1rem;
     text-decoration: none;
   }
 }
