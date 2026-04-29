@@ -27,5 +27,9 @@ export const routes: Routes = [
     path: 'verify-email',
     component: VerifyEmail,
   },
+  {
+    path: '**',
+    redirectTo: 'auth'
+  }
   // {path: "profile/login", component: AuthPage}
 ];
