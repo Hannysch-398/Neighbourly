@@ -1,0 +1,93 @@
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  width: 350px;         /* etwas breiter für Komfort */
+  margin: 50px auto;
+  padding: 20px;
+
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+label {
+  display: flex;
+  flex-direction: column;  /* Label oben, Input darunter */
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+input {
+  padding: 10px;
+  margin-top: 5px;         /* Abstand zwischen Label & Input */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+button {
+  padding: 10px;
+
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background-color 0.2s;
+}
+
+
+
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+p {
+  text-align: center;
+  color: #555;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.tab-active {
+  background-color: var(--primary-color);
+  color: white;
+
+
+}
+.tab-inactive {
+  background-color: white;
+  color: var(--primary-color);
+
+
+}
+/* Jeder Tab */
+.tabs {
+  margin:0;
+  text-align: center;
+  display: flex;
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: background-color 0.2s, color 0.2s;
+}
+/* Container mit Rahmen */
+.tab-container {
+  border: 2px solid var(--primary-color); /* komplette Border */
+  border-radius: 5px;
+
+}
+

@@ -1,0 +1,34 @@
+<div class="auth-container">
+
+  <!-- TOGGLE -->
+  <div class="tabs-wrapper d-flex justify-content-center mb-4">
+
+
+      <div class="tabs">
+        <button
+          (click)="showSignUp()"
+          [class.tab-active]="isSignUp()"
+          [class.tab-inactive]="!isSignUp()">
+          Registrieren
+        </button>
+
+        <button
+          (click)="showSignIn()"
+          [class.tab-active]="!isSignUp()"
+          [class.tab-inactive]="isSignUp()">
+          Einloggen
+        </button>
+      </div>
+
+    </div>
+
+
+  <!-- CONTENT SWITCH -->
+  @if (!isSignUp()) {
+    <app-sign-in/>
+  } @else {
+    <app-register-form/>
+  }
+
+</div>
+
