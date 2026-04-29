@@ -3,6 +3,7 @@ import {AccountDeleteArea} from '../account-delete-area/account-delete-area';
 
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [AccountDeleteArea],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
