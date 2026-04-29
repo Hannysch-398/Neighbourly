@@ -13,8 +13,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String verificationToken;
-
     @Column(unique = true, nullable = false)
     private String username;
 
