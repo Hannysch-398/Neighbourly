@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AccountDeleteArea} from '../account-delete-area/account-delete-area';
+import { AccountDeleteArea } from '../account-delete-area/account-delete-area';
 
 @Component({
   selector: 'app-profile',
@@ -8,6 +8,4 @@ import {AccountDeleteArea} from '../account-delete-area/account-delete-area';
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
-
-}
+export class Profile {}

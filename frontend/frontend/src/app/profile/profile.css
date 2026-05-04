@@ -1,0 +1,148 @@
+.profile-container {
+  padding: 40px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  margin-top: 30px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.avatar-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #e8f5e9;
+  border: 3px solid #6cc070;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+}
+
+.profile-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 60px;
+}
+
+.profile-info h2 {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.profile-info p {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.star {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.star.active {
+  color: #6cc070;
+}
+
+.star.inactive {
+  color: #edf0f2;
+}
+
+.rating-value {
+  margin-left: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.posts-section {
+  margin-top: 60px;
+}
+
+.post-tabs {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 35px;
+}
+
+.active-tab {
+  color: #1f7edb;
+}
+
+.divider {
+  width: 4px;
+  height: 45px;
+  background: #222;
+}
+
+.post-card {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: white;
+  border-radius: 18px;
+  padding: 28px 90px 28px 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  min-height: 150px;
+}
+
+.post-alert {
+  color: #ef3b45;
+  font-size: 56px;
+  font-weight: 900;
+  margin-right: 35px;
+}
+
+.post-content h3 {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+.post-content p {
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
+.post-price {
+  margin-left: auto;
+  font-size: 54px;
+  color: #e8a51a;
+  font-weight: 800;
+}
+
+.post-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 70px;
+  height: 100%;
+  background: #1f7edb;
+  border-radius: 0 18px 18px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.post-actions button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: default;
+}
