@@ -1,4 +1,4 @@
-.profile-container {
+profile-container {
   padding: 40px;
 }
 
@@ -7,7 +7,7 @@
   align-items: center;
   gap: 60px;
   margin-top: 30px;
-  background: #ffffff;
+  background: white;
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
@@ -17,8 +17,8 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #e8f5e9;
-  border: 3px solid #6cc070;
+  background: var(--gray-light-color);
+  border: 3px solid var(--secondary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +34,6 @@
 .profile-info h2 {
   font-size: 16px;
   margin-bottom: 5px;
-  color: #333;
 }
 
 .profile-info p {
@@ -54,11 +53,11 @@
 }
 
 .star.active {
-  color: #6cc070;
+  color: var(--secondary-color);
 }
 
 .star.inactive {
-  color: #edf0f2;
+  color: var(--gray-light-color);
 }
 
 .rating-value {
@@ -81,7 +80,7 @@
 }
 
 .active-tab {
-  color: #1f7edb;
+  color: var(--primary-color);
 }
 
 .divider {
@@ -90,59 +89,6 @@
   background: #222;
 }
 
-.post-card {
-  display: flex;
-  align-items: center;
-  position: relative;
-  background: white;
-  border-radius: 18px;
-  padding: 28px 90px 28px 40px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  min-height: 150px;
-}
-
-.post-alert {
-  color: #ef3b45;
-  font-size: 56px;
-  font-weight: 900;
-  margin-right: 35px;
-}
-
-.post-content h3 {
-  font-size: 24px;
-  margin-bottom: 14px;
-}
-
-.post-content p {
-  margin: 8px 0;
-  line-height: 1.4;
-}
-
-.post-price {
-  margin-left: auto;
-  font-size: 54px;
-  color: #e8a51a;
-  font-weight: 800;
-}
-
-.post-actions {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 70px;
-  height: 100%;
-  background: #1f7edb;
-  border-radius: 0 18px 18px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 16px;
-}
-
-.post-actions button {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: default;
+.post-placeholder {
+  margin-bottom: 60px;
 }
