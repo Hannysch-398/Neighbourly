@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/neighbourly
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: true
+    defer-datasource-initialization: false
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+      schema-locations: classpath:/data.sql
