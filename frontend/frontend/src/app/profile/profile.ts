@@ -1,23 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
-import { AccountDeleteArea } from '../account-delete-area/account-delete-area';
-import { ProfileService, ProfileData } from '../Service/profile.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [AccountDeleteArea],
+  imports: [],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
-  private profileService = inject(ProfileService);
-
-  profile = signal<ProfileData | null>(null);
-
-  constructor() {
-    this.profileService.getProfile().subscribe({
-      next: (data) => this.profile.set(data),
-      error: (err) => console.error('Fehler beim Laden des Profils', err),
-    });
-  }
-}
+export class Profile {}
