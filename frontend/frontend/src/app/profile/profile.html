@@ -62,6 +62,19 @@
       </div>
     </div>
   </section>
-</section>
 
+  @if (profile()) {
+    <div>
+      <p><strong>Name:</strong> {{ profile()?.name ?? '-' }}</p>
+      <p><strong>E-Mail:</strong> {{ profile()?.email ?? '-' }}</p>
+      <p><strong>Rolle:</strong> {{ profile()?.role ?? '-' }}</p>
+      <p><strong>Bewertung:</strong> {{ profile()?.rating ?? '-' }}</p>
+    </div>
+  } @else {
+    <p>Lade Profil...</p>
+  }
+
+</section>
 <app-account-delete-area></app-account-delete-area>
+
+
