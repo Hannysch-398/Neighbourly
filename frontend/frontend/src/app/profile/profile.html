@@ -1,6 +1,6 @@
-<section class="profile-container">
+<section class="profile-container m-lg-2 m-rg-2">
   <h1>Dein Profil</h1>
-
+  @if (profile()) {
   <div class="profile-card">
     <div class="avatar">
       <div class="avatar-placeholder">👤</div>
@@ -9,34 +9,39 @@
     <div class="profile-info">
       <div>
         <h2>Name</h2>
-        <p>-</p>
+        <p>{{ profile()?.name ?? '-' }}</p>
       </div>
 
       <div>
         <h2>E-Mail</h2>
-        <p>-</p>
+        <p>{{ profile()?.email ?? '-' }}</p>
       </div>
 
       <div>
         <h2>Rolle</h2>
-        <p>-</p>
+        <p>{{ profile()?.role ?? '-' }}</p>
       </div>
       <div>
         <h2>Erstellt am</h2>
-        <p>-</p>
+        <p>{{ profile()?.createdAt ?? '-' }}</p>
       </div>
 
       <div>
         <h2>Bewertung</h2>
-        <div class="rating">
-          <span class="star active">★</span>
-          <span class="star active">★</span>
-          <span class="star active">★</span>
-          <span class="star active">★</span>
-          <span class="star inactive">★</span>
-          <span class="rating-value">(4.1)</span>
+        @if (profile()?.rating) {
+          {{ profile()?.rating }}
+        } @else {
 
+
+        <div class="rating">
+          <span class="star inactive">★</span>
+          <span class="star inactive">★</span>
+          <span class="star inactive">★</span>
+          <span class="star inactive">★</span>
+          <span class="star inactive">★</span>
+          <span class="rating-value">(0.0)</span>
         </div>
+        }
       </div>
     </div>
   </div>
@@ -48,40 +53,16 @@
       <span>Archivierte Beiträge</span>
     </div>
 
-    <div class="post-card">
-      <div class="post-alert">!</div>
+    <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
 
-      <div class="post-content">
-        <h3>Haushaltshilfe</h3>
-        <p>
-          Hey,<br />
-          Ich brauche Unterstützung im Garten bei dem Stutzen großer Bäume.
-        </p>
-        <p>Viele Grüße</p>
-      </div>
-
-      <div class="post-price">€€€</div>
-
-      <div class="post-actions">
-        <button>✎</button>
-        <button>⇩</button>
-        <button>🗑</button>
-      </div>
-    </div>
   </section>
 
-  @if (profile()) {
-    <div>
-      <p><strong>Name:</strong> {{ profile()?.name ?? '-' }}</p>
-      <p><strong>E-Mail:</strong> {{ profile()?.email ?? '-' }}</p>
-      <p><strong>Rolle:</strong> {{ profile()?.role ?? '-' }}</p>
-      <p><strong>Bewertung:</strong> {{ profile()?.rating ?? '-' }}</p>
-    </div>
+    <app-account-delete-area></app-account-delete-area>
+
   } @else {
+
     <p>Lade Profil...</p>
   }
-
 </section>
-<app-account-delete-area></app-account-delete-area>
 
 
