@@ -1,6 +1,9 @@
+
+import {MapComponent} from './map-component/map-component';
 import { Routes } from '@angular/router';
 import { VerifyEmail } from './verify-email/verify-email';
 import { Profile } from './profile/profile';
+
 
 export const routes: Routes = [
   {
@@ -15,11 +18,13 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
-  },
+    loadComponent: () =>
+      import('./profile/profile').then(m => m.Profile)
+  }, {path:"map", component: MapComponent}
+,
   {
     path: 'verify-email',
     component: VerifyEmail,
   },
-  // {path: "profile/login", component: AuthPage}
+
 ];
