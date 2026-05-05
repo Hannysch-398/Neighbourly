@@ -7,6 +7,7 @@ export interface ProfileData {
   name: string;
   email: string;
   role?: string;
+  createdAt?: string;
   rating?: number;
 }
 
