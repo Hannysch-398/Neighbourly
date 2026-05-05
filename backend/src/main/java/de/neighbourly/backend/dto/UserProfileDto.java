@@ -11,4 +11,5 @@ public class UserProfileDto {
     private String email;
     //private String role;
     //private String rate;
+    //private String createdAt;
 }
