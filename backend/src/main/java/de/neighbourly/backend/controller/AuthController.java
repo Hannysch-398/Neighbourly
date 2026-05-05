@@ -48,6 +48,6 @@ public class AuthController {
     @GetMapping("/verify")
     public ResponseEntity<String> verify(@RequestParam String token) {
         userService.verifyUser(token);
-        return ResponseEntity.ok("E-Mail erfolgreich verifiziert! Du kannst dich jetzt einloggen.");
+        return ResponseEntity.ok("E-Mail wurde erfolgreich verifiziert! Du kannst dich jetzt einloggen.");
     }
 }
