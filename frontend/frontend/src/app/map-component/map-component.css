@@ -10,8 +10,8 @@
 
 .map-shell {
   width: 80%;
-  height: 560px;
-  min-height: 800px;
+  height: 600px;
+  min-height: 600px;
   border-radius: 32px;
   overflow: hidden;
   position: relative;
@@ -19,6 +19,33 @@
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
   margin: 2rem auto;
 }
+
+@media (min-width: 750px) and (orientation: landscape) {
+  .map-shell {
+    height: 700px;
+  }
+}
+@media (min-width: 750px) and (orientation: portrait) {
+  .map-shell {
+    height: 1100px;
+  }
+}
+@media (min-width: 1100px) and (orientation:portrait) {
+  .map-shell {
+    height: 1100px;
+  }
+}@media (min-width: 1100px) and (orientation:landscape) {
+  .map-shell {
+    height: 900px;
+  }
+}
+@media (min-width: 1500px)  {
+  .map-shell {
+    height: 1100px;
+  }
+}
+
+
 
 .map {
   width: 100%;

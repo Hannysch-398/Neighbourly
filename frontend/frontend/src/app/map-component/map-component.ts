@@ -16,7 +16,7 @@ import 'leaflet/dist/leaflet.css';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
 
@@ -28,10 +28,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     ], 15);
 
-    /**
-     * Moderner, bunter Tile-Layer
-     * Alternative zu klassischem OpenStreetMap-Style
-     */
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
@@ -46,6 +42,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       position: 'bottomright',
     }).addTo(this.map);
 
+// Testmarker inklusive Popup
     const modernIcon = L.divIcon({
       className: 'modern-marker',
       html: `
@@ -64,8 +61,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .addTo(this.map)
       .bindPopup(`
         <div class="custom-popup">
-          <strong>Hamburg</strong>
-          <span>Moderner Standortmarker</span>
+          <strong>Bremen</strong>
         </div>
       `);
 
