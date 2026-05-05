@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AverageRatingResponse } from '../interface/AverageRatingResponse';
 import {RatingResponse} from '../interface/RatingResponse';
-import {RatingRequest} from '../interface/RatingReques';
+import {RatingRequest} from '../interface/RatingRequest';
 
 @Injectable({
   providedIn: 'root'
