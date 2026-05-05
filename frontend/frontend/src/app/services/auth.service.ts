@@ -25,13 +25,13 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
 
     if(returnUrl) {
-      return this.router.navigate(['/login'], {
+      return this.router.navigate(['/auth'], {
         queryParams: {
           returnUrl,
         },
       });
     }
 
-    return this.router.navigate(['/login']);
+    return this.router.navigate(['/auth']);
   }
 }

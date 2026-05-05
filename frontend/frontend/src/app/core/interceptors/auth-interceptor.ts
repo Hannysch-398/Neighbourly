@@ -44,7 +44,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handleUnauthorized(): void {
-    if (this.isOnLoginPage() || this.authRedirectInProgress) {
+    if (this.isOnAuthPage() || this.authRedirectInProgress) {
       return;
     }
 
@@ -71,8 +71,8 @@ export class AuthInterceptor implements HttpInterceptor {
       });
   }
 
-  private isOnLoginPage(): boolean {
-    return this.router.url.split('?')[0] === '/access-denied';
+  private isOnAuthPage(): boolean {
+    return this.router.url.split('?')[0] === '/auth';
   }
 
   private isOnAccessDeniedPage(): boolean {

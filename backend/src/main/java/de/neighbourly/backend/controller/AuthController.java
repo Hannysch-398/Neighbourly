@@ -1,7 +1,5 @@
 package de.neighbourly.backend.controller;
 
-import de.neighbourly.backend.dto.PasswordChangeRequest;
-
 import de.neighbourly.backend.dto.LoginRequest;
 import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.security.CustomUserDetailsService;
@@ -33,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -51,14 +49,5 @@ public class AuthController {
     public ResponseEntity<String> verify(@RequestParam String token) {
         userService.verifyUser(token);
         return ResponseEntity.ok("E-Mail erfolgreich verifiziert! Du kannst dich jetzt einloggen.");
-    }
-
-    @PutMapping("/{id}/change-password")
-    public ResponseEntity<String> changePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody PasswordChangeRequest request
-    ) {
-        userService.changePassword(id, request);
-        return ResponseEntity.ok("Passwort erfolgreich geändert!");
     }
 }
