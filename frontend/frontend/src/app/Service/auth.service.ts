@@ -20,15 +20,13 @@ export interface RegisterRequest {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/auth';
-  private readonly TOKEN_KEY = 'auth_token'; // Wir bleiben einheitlich bei diesem Namen
+  private readonly TOKEN_KEY = 'auth_token';
   private router = inject(Router);
 
   login(data: LoginRequest) {
     return this.http.post(`${this.apiUrl}/login`, data, { responseType: 'text' }).pipe(
       tap((token) => {
-        // Hier lag der Fehler: Nutze die Variable statt des Strings 'token'
-        localStorage.setItem(this.TOKEN_KEY, token);
-        console.log('Token wurde unter ' + this.TOKEN_KEY + ' gespeichert');
+        this.saveToken(token);
       })
     );
   }
