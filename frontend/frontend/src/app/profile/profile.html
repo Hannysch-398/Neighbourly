@@ -1,5 +1,74 @@
-<section>
-  <h1>Mein Profil</h1>
+<section class="profile-container">
+  <h1>Dein Profil</h1>
+
+  <div class="profile-card">
+    <div class="avatar">
+      <div class="avatar-placeholder">👤</div>
+    </div>
+
+    <div class="profile-info">
+      <div>
+        <h2>Name</h2>
+        <p>-</p>
+      </div>
+
+      <div>
+        <h2>E-Mail</h2>
+        <p>-</p>
+      </div>
+
+      <div>
+        <h2>Rolle</h2>
+        <p>-</p>
+      </div>
+      <div>
+        <h2>Erstellt am</h2>
+        <p>-</p>
+      </div>
+
+      <div>
+        <h2>Bewertung</h2>
+        <div class="rating">
+          <span class="star active">★</span>
+          <span class="star active">★</span>
+          <span class="star active">★</span>
+          <span class="star active">★</span>
+          <span class="star inactive">★</span>
+          <span class="rating-value">(4.1)</span>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="posts-section">
+    <div class="post-tabs">
+      <span class="active-tab">Aktive Beiträge</span>
+      <span class="divider"></span>
+      <span>Archivierte Beiträge</span>
+    </div>
+
+    <div class="post-card">
+      <div class="post-alert">!</div>
+
+      <div class="post-content">
+        <h3>Haushaltshilfe</h3>
+        <p>
+          Hey,<br />
+          Ich brauche Unterstützung im Garten bei dem Stutzen großer Bäume.
+        </p>
+        <p>Viele Grüße</p>
+      </div>
+
+      <div class="post-price">€€€</div>
+
+      <div class="post-actions">
+        <button>✎</button>
+        <button>⇩</button>
+        <button>🗑</button>
+      </div>
+    </div>
+  </section>
 
   @if (profile()) {
     <div>
@@ -11,6 +80,6 @@
   } @else {
     <p>Lade Profil...</p>
   }
-</section>
-
 <app-account-delete-area></app-account-delete-area>
+
+
