@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, signal } from '@angular/core';
+import { form, FormField, maxLength, required } from '@angular/forms/signals';
 import { CreatePostRequest, PostType } from '../models/post.model';
 
 type PostTypeOption = {
@@ -7,18 +7,33 @@ type PostTypeOption = {
   label: string;
 };
 
+type PostBasicFormModel = {
+  title: string;
+  description: string;
+  type: PostType;
+  isUrgent: boolean;
+  urgentUntil: string;
+};
+
+const initialData: PostBasicFormModel = {
+  title: '',
+  description: '',
+  type: 'SKILL',
+  isUrgent: false,
+  urgentUntil: '',
+};
+
 @Component({
   selector: 'app-post-basic-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [FormField],
   templateUrl: './post-basic-form.html',
   styleUrl: './post-basic-form.css',
 })
 export class PostBasicForm {
-  private readonly formBuilder = inject(FormBuilder);
-
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
+  readonly postModel = signal<PostBasicFormModel>({ ...initialData });
 
   readonly postTypeOptions: PostTypeOption[] = [
     { value: 'EVENT', label: 'Veranstaltung' },
@@ -27,39 +42,34 @@ export class PostBasicForm {
     { value: 'HOUSING', label: 'Wohnen' },
   ];
 
-  readonly postForm = this.formBuilder.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(120)]],
-    description: ['', [Validators.required, Validators.maxLength(2000)]],
-    type: ['SKILL' as PostType, [Validators.required]],
-    isUrgent: [false],
-    urgentUntil: [{ value: '', disabled: true }],
+  readonly postForm = form(this.postModel, (schemaPath) => {
+    required(schemaPath.title, { message: 'Bitte gib einen Titel ein.' });
+    maxLength(schemaPath.title, 120, {
+      message: 'Der Titel darf maximal 120 Zeichen lang sein.',
+    });
+
+    required(schemaPath.description, { message: 'Bitte gib eine Beschreibung ein.' });
+    maxLength(schemaPath.description, 2000, {
+      message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
+    });
+
+    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
-
-  constructor() {
-    this.postForm.controls.isUrgent.valueChanges.subscribe((isUrgent) => {
-      const urgentUntilControl = this.postForm.controls.urgentUntil;
-
-      if (isUrgent) {
-        urgentUntilControl.enable();
-        urgentUntilControl.addValidators(Validators.required);
-      } else {
-        urgentUntilControl.reset('');
-        urgentUntilControl.clearValidators();
-        urgentUntilControl.disable();
-      }
-
-      urgentUntilControl.updateValueAndValidity();
-    });
-  }
+  readonly isFormValid = computed(
+    () =>
+      !this.postForm.title().invalid() &&
+      !this.postForm.description().invalid() &&
+      !this.postForm.type().invalid() &&
+      (!this.postModel().isUrgent || !!this.postModel().urgentUntil)
+  );
 
   submitForm() {
     this.submitted.set(true);
     this.savedPayload.set(null);
 
-    if (this.postForm.invalid) {
-      this.postForm.markAllAsTouched();
+    if (!this.isFormValid()) {
       return;
     }
 
@@ -69,30 +79,26 @@ export class PostBasicForm {
   resetForm() {
     this.submitted.set(false);
     this.savedPayload.set(null);
-    this.postForm.reset({
-      title: '',
-      description: '',
-      type: 'SKILL',
-      isUrgent: false,
-      urgentUntil: '',
-    });
-    this.postForm.controls.urgentUntil.disable();
+    this.postModel.set({ ...initialData });
   }
 
-  shouldShowError(controlName: keyof typeof this.postForm.controls) {
-    const control = this.postForm.controls[controlName];
-    return control.invalid && (this.submitted() || control.dirty);
+  shouldShowFieldError(field: 'title' | 'description' | 'type') {
+    return this.submitted() && this.postForm[field]().invalid();
+  }
+
+  shouldShowUrgentUntilError() {
+    return this.submitted() && this.postModel().isUrgent && !this.postModel().urgentUntil;
   }
 
   private createPayload(): CreatePostRequest {
-    const rawValue = this.postForm.getRawValue();
+    const value = this.postModel();
 
     return {
-      title: rawValue.title.trim(),
-      description: rawValue.description.trim(),
-      type: rawValue.type,
-      isUrgent: rawValue.isUrgent,
-      urgentUntil: rawValue.isUrgent && rawValue.urgentUntil ? rawValue.urgentUntil : null,
+      title: value.title.trim(),
+      description: value.description.trim(),
+      type: value.type,
+      isUrgent: value.isUrgent,
+      urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
     };
   }
 }

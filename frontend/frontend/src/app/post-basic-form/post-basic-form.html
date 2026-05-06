@@ -5,18 +5,17 @@
 
     </header>
 
-    <form class="post-form" [formGroup]="postForm" (ngSubmit)="submitForm()">
+    <form class="post-form" (submit)="$event.preventDefault(); submitForm()">
       <label class="field">
         <span>Titel</span>
         <input
           type="text"
-          formControlName="title"
-          maxlength="120"
+          [formField]="postForm.title"
           placeholder="Wobei brauchst du Hilfe?"
-          [class.invalid]="shouldShowError('title')"
+          [class.invalid]="shouldShowFieldError('title')"
         />
-        @if (shouldShowError('title')) {
-          <small>Bitte gib einen Titel mit maximal 120 Zeichen ein.</small>
+        @if (shouldShowFieldError('title')) {
+          <small>{{ postForm.title().errors()[0]?.message }}</small>
         }
       </label>
 
@@ -24,42 +23,47 @@
         <span>Beschreibung</span>
         <textarea
           rows="6"
-          formControlName="description"
-          maxlength="2000"
+          [formField]="postForm.description"
           placeholder="Beschreibe kurz, worum es geht."
-          [class.invalid]="shouldShowError('description')"
+          [class.invalid]="shouldShowFieldError('description')"
         ></textarea>
-        @if (shouldShowError('description')) {
-          <small>Bitte gib eine Beschreibung mit maximal 2000 Zeichen ein.</small>
+        @if (shouldShowFieldError('description')) {
+          <small>{{ postForm.description().errors()[0]?.message }}</small>
         }
       </label>
 
       <label class="field">
         <span>Typ</span>
-        <select formControlName="type" [class.invalid]="shouldShowError('type')">
+        <select [formField]="postForm.type" [class.invalid]="shouldShowFieldError('type')">
           @for (option of postTypeOptions; track option.value) {
             <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
+        @if (shouldShowFieldError('type')) {
+          <small>{{ postForm.type().errors()[0]?.message }}</small>
+        }
       </label>
 
       <label class="urgent-toggle">
-        <input type="checkbox" formControlName="isUrgent" />
+        <input
+          type="checkbox"
+          [formField]="postForm.isUrgent"
+        />
         <span>
           <strong>Dringend</strong>
           <small>Aktivieren, wenn der Beitrag zeitkritisch ist.</small>
         </span>
       </label>
 
-      @if (postForm.controls.isUrgent.value) {
+      @if (postModel().isUrgent) {
         <label class="field">
           <span>Dringend bis</span>
           <input
             type="datetime-local"
-            formControlName="urgentUntil"
-            [class.invalid]="shouldShowError('urgentUntil')"
+            [formField]="postForm.urgentUntil"
+            [class.invalid]="shouldShowUrgentUntilError()"
           />
-          @if (shouldShowError('urgentUntil')) {
+          @if (shouldShowUrgentUntilError()) {
             <small>Bitte gib an, bis wann der Beitrag dringend ist.</small>
           }
         </label>
