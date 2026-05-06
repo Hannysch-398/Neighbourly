@@ -1,0 +1,78 @@
+<main class="post-form-page">
+  <section class="post-form-shell">
+    <header class="post-form-header">
+      <h3 class="eyebrow">Post erstellen</h3>
+
+    </header>
+
+    <form class="post-form" [formGroup]="postForm" (ngSubmit)="submitForm()">
+      <label class="field">
+        <span>Titel</span>
+        <input
+          type="text"
+          formControlName="title"
+          maxlength="120"
+          placeholder="Wobei brauchst du Hilfe?"
+          [class.invalid]="shouldShowError('title')"
+        />
+        @if (shouldShowError('title')) {
+          <small>Bitte gib einen Titel mit maximal 120 Zeichen ein.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Beschreibung</span>
+        <textarea
+          rows="6"
+          formControlName="description"
+          maxlength="2000"
+          placeholder="Beschreibe kurz, worum es geht."
+          [class.invalid]="shouldShowError('description')"
+        ></textarea>
+        @if (shouldShowError('description')) {
+          <small>Bitte gib eine Beschreibung mit maximal 2000 Zeichen ein.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Typ</span>
+        <select formControlName="type" [class.invalid]="shouldShowError('type')">
+          @for (option of postTypeOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="urgent-toggle">
+        <input type="checkbox" formControlName="isUrgent" />
+        <span>
+          <strong>Dringend</strong>
+          <small>Aktivieren, wenn der Beitrag zeitkritisch ist.</small>
+        </span>
+      </label>
+
+      @if (postForm.controls.isUrgent.value) {
+        <label class="field">
+          <span>Dringend bis</span>
+          <input
+            type="datetime-local"
+            formControlName="urgentUntil"
+            [class.invalid]="shouldShowError('urgentUntil')"
+          />
+          @if (shouldShowError('urgentUntil')) {
+            <small>Bitte gib an, bis wann der Beitrag dringend ist.</small>
+          }
+        </label>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="resetForm()">Zurucksetzen</button>
+        <button type="submit" class="primary-button">Speichern</button>
+      </div>
+
+      @if (savedPayload()) {
+        <p class="success-message">Die Basisdaten wurden erfolgreich erfasst.</p>
+      }
+    </form>
+  </section>
+</main>
