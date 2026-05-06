@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, output } from '@angular/core';
 
 import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { RegisterFormService } from '../../Service/registerForm.service';
@@ -27,8 +27,10 @@ const initialData: RegisterFormModel = {
   styleUrls: ['./RegisterForm.css']
 })
 export class RegisterForm {
-  private readonly registerService = inject(RegisterFormService);
 
+  readonly registered = output<void>();
+  private readonly registerService = inject(RegisterFormService);
+  readonly submitted = signal(false);
   readonly isSignUp = signal(true);
   readonly feedbackMessage = this.registerService.message;
   readonly registrationSucceeded = this.registerService.isRegistered;
@@ -84,11 +86,16 @@ export class RegisterForm {
 
 
   submitForm() {
+    this.submitted.set(true);
     if (!this.isFormValid()) return;
 
     this.registerService.register(this.registerModel()).subscribe({
       next: () => {
         this.registerModel.set({ ...initialData });
+        this.submitted.set(false);
+        setTimeout(() => {
+          this.registered.emit();
+        }, 3000);
       },
       error: err => console.error('Error', err)
     });

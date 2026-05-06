@@ -8,8 +8,8 @@
             <label>
                 <span>Benutzername</span>
                 <input type="text" [formField]="registerForm.username"
-                       [class.invalid]="registerForm.username().invalid() && registerForm.username().touched()" />
-                @if (registerForm.username().invalid() && registerForm.username().touched()) {
+                       [class.invalid]="registerForm.username().invalid() " />
+                @if (submitted() && registerForm.username().invalid()) {
                     <span class="error-text">{{ registerForm.username().errors()?.[0]?.message }}</span>
                 }
             </label>
@@ -17,8 +17,8 @@
             <label>
                 <span>E-Mail</span>
                 <input type="text" [formField]="registerForm.email"
-                       [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
-                @if (registerForm.email().invalid() && registerForm.email().touched()) {
+                       [class.invalid]="registerForm.email().invalid()" />
+                @if (submitted() && registerForm.email().invalid()) {
                     <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
                 }
             </label>
@@ -26,8 +26,8 @@
             <label>
                 <span>Passwort</span>
                 <input type="password" [formField]="registerForm.password"
-                       [class.invalid]="registerForm.password().invalid() && registerForm.password().touched()" />
-                @if (registerForm.password().invalid() && registerForm.password().touched()) {
+                       [class.invalid]="registerForm.password().invalid()" />
+                @if (submitted() && registerForm.password().invalid()) {
                     <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
                 }
             </label>
@@ -40,7 +40,7 @@
                         (input)="updateConfirmPassword($any($event.target).value)"
                         [class.invalid]="registerModel().confirmPassword && !passwordsMatch()"
                 />
-                @if (registerModel().confirmPassword && !passwordsMatch()) {
+                @if ( submitted() && registerModel().confirmPassword && !passwordsMatch()) {
                     <span class="error-text">Passwort stimmt nicht überein!</span>
                 }
             </label>
@@ -57,7 +57,7 @@
             </button>
 
             @if (feedbackMessage()) {
-                <p class="mt-3"
+                <p class="registration-message mt-3"
                    [class.text-success]="registrationSucceeded()"
                    [class.text-danger]="!registrationSucceeded()">
                     {{ feedbackMessage() }}

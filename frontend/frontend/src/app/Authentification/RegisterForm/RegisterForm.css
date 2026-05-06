@@ -83,3 +83,9 @@ button:disabled {
   background-color: darkgray;
 
 }
+.registration-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}

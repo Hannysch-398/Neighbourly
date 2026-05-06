@@ -7,9 +7,9 @@
             <span>E-Mail</span>
             <input type="text"
                    [formField]="form.email"
-                   [class.invalid]="form.email().invalid() && form.email().touched()" />
+                   [class.invalid]="form.email().invalid()" />
 
-            @if (form.email().invalid() && form.email().touched()) {
+            @if (submitted() && form.email().invalid()) {
                 <span class="error-text">
           {{ form.email().errors()?.[0]?.message }}
         </span>
@@ -21,9 +21,9 @@
             <span>Passwort</span>
             <input type="password"
                    [formField]="form.password"
-                   [class.invalid]="form.password().invalid() && form.password().touched()" />
+                   [class.invalid]="form.password().invalid()" />
 
-            @if (form.password().invalid() && form.password().touched()) {
+            @if (submitted() && form.password().invalid()) {
                 <span class="error-text">
           {{ form.password().errors()?.[0]?.message }}
         </span>
