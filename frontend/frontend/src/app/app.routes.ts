@@ -5,6 +5,7 @@ import { VerifyEmail } from './verify-email/verify-email';
 import { Profile } from './profile/profile';
 
 
+
 export const routes: Routes = [
   {
     path: '',
@@ -18,13 +19,13 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    loadComponent: () =>
-      import('./profile/profile').then(m => m.Profile)
-  }, {path:"map", component: MapComponent}
+    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
+  },
+  {path:"map", component: MapComponent}
 ,
   {
     path: 'verify-email',
     component: VerifyEmail,
   },
-
+  // {path: "profile/login", component: AuthPage}
 ];
