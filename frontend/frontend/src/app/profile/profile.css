@@ -10,7 +10,6 @@ profile-container {
   background: white;
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 .avatar-placeholder {
@@ -41,30 +40,6 @@ profile-container {
   font-weight: 500;
 }
 
-.rating {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.star {
-  font-size: 32px;
-  line-height: 1;
-}
-
-.star.active {
-  color: var(--secondary-color);
-}
-
-.star.inactive {
-  color: var(--gray-light-color);
-}
-
-.rating-value {
-  margin-left: 12px;
-  font-size: 18px;
-  font-weight: 600;
-}
 
 .posts-section {
   margin-top: 60px;
@@ -78,10 +53,16 @@ profile-container {
   font-weight: 800;
   margin-bottom: 35px;
 }
-
-.active-tab {
+.tab-button {
+  background: none;
+}
+.tap-button:hover {
+  color: var(--primary-color-hover);
+}
+.tap-button.active-tab {
   color: var(--primary-color);
 }
+
 
 .divider {
   width: 4px;
