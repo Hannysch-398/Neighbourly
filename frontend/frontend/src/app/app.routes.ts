@@ -6,6 +6,7 @@ import { VerifyEmail } from './verify-email/verify-email';
 import { Profile } from './profile/profile';
 
 
+
 export const routes: Routes = [
   {
     path: '',
@@ -28,5 +29,4 @@ export const routes: Routes = [
     component: VerifyEmail,
   },
   // {path: "profile/login", component: AuthPage}
-
 ];
