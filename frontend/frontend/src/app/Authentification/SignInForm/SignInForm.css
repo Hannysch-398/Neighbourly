@@ -19,7 +19,8 @@ input {
 
 input:focus {
   outline: none;
- ;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(69, 156, 184, 0.18);
 
 }
 

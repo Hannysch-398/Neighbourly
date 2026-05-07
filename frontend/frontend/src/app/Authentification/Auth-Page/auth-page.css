@@ -30,8 +30,8 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(69, 156, 184, 0.18);
 }
 
 button {
@@ -47,7 +47,9 @@ button {
   transition: background-color 0.2s;
 }
 
-
+button:hover {
+  background-color: var(--primary-color-hover);
+}
 
 .error-text {
   color: red;
@@ -90,4 +92,3 @@ p {
   border-radius: 5px;
 
 }
-

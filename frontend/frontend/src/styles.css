@@ -2,8 +2,8 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
 :root {
-  --primary-color: #1d7ddf;
-  --primary-color-hover: #0f3f70;
+  --primary-color: #459cb8;
+  --primary-color-hover: #367f97;
   --secondary-color: #7bcb62;
   --secondary-color-hover: #3e6631;
   --red-color: #de3b40;
@@ -39,5 +39,4 @@
     text-decoration: none;
   }
 }
-
 
