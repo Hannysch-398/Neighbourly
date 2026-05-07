@@ -1,3 +1,5 @@
+import {AverageRatingResponse} from "../interface/AverageRatingResponse";
+
 export interface PostDetailResponse {
   id: number;
   title: string;
@@ -10,7 +12,7 @@ export interface PostDetailResponse {
   tags: string[];
   images: PostImageDto[];
   details: unknown;
-  ratingSummary?: RatingSummaryDto | null;
+  averageRatingResponse?: AverageRatingResponse | null;
   reportSummary?: ReportSummaryDto | null;
 }
 
@@ -27,8 +29,8 @@ export interface PostImageDto {
   altText: string;
 }
 
-export interface RatingSummaryDto {
-  averageRating: number;
+export interface AverageRatingDto {
+  average: number;
   ratingAmount: number;
 }
 
