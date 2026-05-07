@@ -263,6 +263,7 @@ public class PostService {
                 .toList();
     }
 
-
-
+    private SkillDetailsDto getSkillDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
+    }
 }
