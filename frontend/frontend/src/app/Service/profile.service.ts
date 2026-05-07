@@ -8,7 +8,6 @@ export interface ProfileData {
   email: string;
   role?: string;
   createdAt?: string;
-  rating?: number;
 }
 
 @Injectable({
