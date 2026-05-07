@@ -20,21 +20,67 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   private map?: L.Map;
 
+  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.795680
+  ]; // Bremen
+  private readonly defaultZoom = 13;
+  private readonly userZoom = 15;
+
   ngAfterViewInit(): void {
+    this.resolveInitialPosition()
+      .then(({position, zoom}) => {
+        this.initMap(position, zoom);
+      });
+  }
+
+  private resolveInitialPosition(): Promise<{
+    position: L.LatLngExpression;
+    zoom: number;
+  }> {
+    if (!navigator.geolocation) {
+      return Promise.resolve({
+        position: this.defaultPosition,
+        zoom: this.defaultZoom,
+      });
+    }
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            position: [
+              position.coords.latitude,
+              position.coords.longitude,
+            ],
+            zoom: this.userZoom,
+          });
+        },
+        () => {
+          resolve({
+            position: this.defaultPosition,
+            zoom: this.defaultZoom,
+          });
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 60_000,
+        }
+      );
+    });
+  }
+
+  private initMap(position: L.LatLngExpression, zoom: number): void {
     this.map = L.map(this.mapElement.nativeElement, {
       zoomControl: false,
       attributionControl: true,
-    }).setView([53.089135, 8.794616
-
-    ], 15);
+    }).setView(position, zoom);
 
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
         maxZoom: 20,
         subdomains: 'abcd',
-        attribution:
-          '&copy; OpenStreetMap contributors &copy; CARTO',
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       }
     ).addTo(this.map);
 
@@ -42,7 +88,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       position: 'bottomright',
     }).addTo(this.map);
 
-// Testmarker inklusive Popup
     const modernIcon = L.divIcon({
       className: 'modern-marker',
       html: `
@@ -55,13 +100,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       popupAnchor: [0, -38],
     });
 
-    L.marker([53.089135, 8.794616], {
+    L.marker(position, {
       icon: modernIcon,
     })
       .addTo(this.map)
       .bindPopup(`
         <div class="custom-popup">
-          <strong>Bremen</strong>
+          <strong>Startposition</strong>
         </div>
       `);
 
