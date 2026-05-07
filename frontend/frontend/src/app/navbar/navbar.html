@@ -1,0 +1,31 @@
+<nav class="custom-navbar" aria-label="Hauptnavigation">
+  <div class="navbar-shell">
+    <a routerLink="/map" class="brand-card" aria-label="Neighbourly Startseite">
+      <img src="assets/logo.png" alt="Neighbourly" class="brand-logo">
+    </a>
+
+    <div class="navbar-center">
+      <div class="search-field">
+        <input type="text" class="search-input-custom" placeholder="Search" aria-label="Suche">
+        <button class="search-btn-custom" type="button" aria-label="Suche starten">
+          <span class="search-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="nav-links">
+        <a routerLink="/map" routerLinkActive="active" class="nav-item-link">Karte</a>
+        <a routerLink="/uebersicht" routerLinkActive="active" class="nav-item-link">Übersicht</a>
+      </div>
+    </div>
+
+    <div class="navbar-actions">
+      <a routerLink="/auth" class="create-post-btn" aria-label="Zur Anmeldung gehen und Beitrag erstellen">
+        <span aria-hidden="true">+</span>
+        Create Post
+      </a>
+      <a routerLink="/auth" class="profile-circle" aria-label="Zur Anmeldung gehen">
+        <span class="profile-icon" aria-hidden="true"></span>
+      </a>
+    </div>
+  </div>
+</nav>
