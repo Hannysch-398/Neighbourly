@@ -7,12 +7,13 @@ import java.time.Instant;
 
 @Getter
 @AllArgsConstructor
-public class MapDTO {
+public class MapPostMarkerDto {
     private Long id;
     private String type;
     private String title;
     private double lat;
     private double lng;
     private boolean isUrgent;
+    private boolean isSponsored;
     private Instant createdAt;
 }
