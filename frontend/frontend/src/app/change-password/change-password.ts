@@ -1,0 +1,182 @@
+import {Component, computed, inject, input, signal} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
+import {form, FormField, pattern, required} from '@angular/forms/signals';
+import {GenericButton} from '../components/generic-button/generic-button';
+import {UserService} from '../Service/user-service';
+import {ActivatedRoute} from '@angular/router';
+import {firstValueFrom} from 'rxjs';
+
+@Component({
+    selector: 'app-change-password',
+    imports: [FormField, GenericButton],
+    templateUrl: './change-password.html',
+    styleUrl: './change-password.css',
+})
+export class ChangePassword {
+    private userService = inject(UserService);
+
+    userId = this.userService.getUserIdSignal();
+
+    regexp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!_])(?=\S+$).{8,}$/;
+    showOldPassword = signal(false);
+    showNewPassword = signal(false);
+    showRepeatPassword = signal(false);
+
+
+
+    loading = signal(false);
+    successMessage = signal('');
+    backendError = signal('');
+    oldPasswordError = signal('');
+    newPasswordBackendError = signal('');
+
+
+    passwordModel = signal({
+        password: '',
+        newPassword: '',
+        repeatPassword: '',
+    });
+
+    changePasswordForm = form(this.passwordModel, (p) => {
+        required(p.password, {message: 'Bitte das ursprüngliche Passwort eingeben'});
+        required(p.newPassword, {message: 'Bitte das neue Passwort eingeben'});
+        pattern(p.newPassword, this.regexp, {
+            message: 'Das eingegebene Passwort erfüllt nicht die Anforderungen.',
+        });
+        required(p.repeatPassword, {message: 'Bitte das neue Passwort wiederholen'});
+    });
+
+    passwordsMatch = computed(() => {
+        const newPw = this.changePasswordForm.newPassword().value();
+        const repeatPw = this.changePasswordForm.repeatPassword().value();
+        return newPw === repeatPw;
+    });
+
+    oldAndNewAreEqual = computed(() => {
+        const oldPw = this.changePasswordForm.password().value();
+        const newPw = this.changePasswordForm.newPassword().value();
+
+        if (!oldPw || !newPw) {
+            return false;
+        }
+
+        return oldPw === newPw;
+    });
+
+    formValidForSubmit = computed(() => {
+        const password = this.changePasswordForm.password().value().trim();
+        const newPassword = this.changePasswordForm.newPassword().value();
+        const repeatPassword = this.changePasswordForm.repeatPassword().value();
+
+        if (!password) return false;
+        if (!newPassword) return false;
+        if (!repeatPassword) return false;
+        if (!this.passwordsMatch()) return false;
+        if (this.oldAndNewAreEqual()) return false;
+        if (!this.regexp.test(newPassword)) return false;
+
+        return true;
+    });
+
+    buttonDisabled = computed(() => {
+        return this.loading() || !this.formValidForSubmit();
+    });
+
+    clearMessages() {
+        this.successMessage.set('');
+        this.backendError.set('');
+        this.oldPasswordError.set('');
+        this.newPasswordBackendError.set('');
+    }
+
+    resetForm() {
+        this.passwordModel.set({
+            password: '',
+            newPassword: '',
+            repeatPassword: '',
+        });
+
+        this.showOldPassword.set(false);
+        this.showNewPassword.set(false);
+        this.showRepeatPassword.set(false);
+
+        this.oldPasswordError.set('');
+        this.newPasswordBackendError.set('');
+        this.backendError.set('');
+    }
+
+    private mapBackendError(error: unknown) {
+        this.backendError.set('Beim Ändern des Passworts ist ein Fehler aufgetreten.');
+        this.oldPasswordError.set('');
+        this.newPasswordBackendError.set('');
+
+        if (!(error instanceof HttpErrorResponse)) {
+            return;
+        }
+
+        const message =
+            typeof error.error === 'string' ? error.error : error.error?.message || error.message;
+
+        if (error.status === 404) {
+            this.backendError.set('Der Benutzer wurde nicht gefunden.');
+            return;
+        }
+
+        if (error.status === 400) {
+            if (message?.includes('Das alte Passwort ist falsch')) {
+                this.oldPasswordError.set('Das alte Passwort ist falsch.');
+                this.backendError.set('');
+                return;
+            }
+
+            if (message?.includes('Das neue Passwort darf nicht dem alten Passwort entsprechen')) {
+                this.newPasswordBackendError.set(
+                    'Das neue Passwort darf nicht dem alten Passwort entsprechen.',
+                );
+                this.backendError.set('');
+                return;
+            }
+
+            this.backendError.set(message || 'Die Eingaben sind ungültig.');
+            return;
+        }
+
+        if (error.status >= 500) {
+            this.backendError.set('Serverfehler. Bitte versuche es später erneut.');
+            return;
+        }
+
+        this.backendError.set(message || 'Unbekannter Fehler beim Ändern des Passworts.');
+    }
+
+    async submitForm(event: Event) {
+        event.preventDefault();
+        this.clearMessages();
+
+        if (!this.formValidForSubmit()) return;
+
+        const userId = this.userId();
+
+        if (userId === null) {
+            this.backendError.set('Benutzerprofil wird noch geladen. Bitte kurz warten.');
+            return;
+        }
+
+        const data = {
+            oldPassword: this.changePasswordForm.password().value(),
+            newPassword: this.changePasswordForm.newPassword().value(),
+        };
+
+        this.loading.set(true);
+
+        try {
+            await firstValueFrom(this.userService.submitPasswords(data, userId));
+            this.resetForm();
+            this.successMessage.set('Das Passwort wurde erfolgreich geändert.');
+        } catch (error) {
+            this.mapBackendError(error);
+        } finally {
+            this.loading.set(false);
+        }
+    }
+}
