@@ -83,3 +83,59 @@ button:disabled {
   background-color: darkgray;
 
 }
+.registration-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.icon-container {
+  display: flex;
+  width: 4rem;
+  margin-top: 0;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background-color: #1d7ddf;
+  cursor: pointer;
+
+  svg {
+    stroke: white;
+    stroke-width: 2.5;
+    height: 1.5rem;
+  }
+
+}
+.change-password-container {
+  margin-top: 1rem;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.password-field {
+  display: flex;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.password-field input {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+  border-radius: 6px 0 0 6px;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+.password-rules {
+  margin: 0;
+  padding-left: 1.25rem;
+}

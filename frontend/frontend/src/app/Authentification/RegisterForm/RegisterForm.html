@@ -8,8 +8,8 @@
             <label>
                 <span>Benutzername</span>
                 <input type="text" [formField]="registerForm.username"
-                       [class.invalid]="registerForm.username().invalid() && registerForm.username().touched()" />
-                @if (registerForm.username().invalid() && registerForm.username().touched()) {
+                       [class.invalid]="registerForm.username().invalid() " />
+                @if (submitted() && registerForm.username().invalid()) {
                     <span class="error-text">{{ registerForm.username().errors()?.[0]?.message }}</span>
                 }
             </label>
@@ -17,47 +17,105 @@
             <label>
                 <span>E-Mail</span>
                 <input type="text" [formField]="registerForm.email"
-                       [class.invalid]="registerForm.email().invalid() && registerForm.email().touched()" />
-                @if (registerForm.email().invalid() && registerForm.email().touched()) {
+                       [class.invalid]="registerForm.email().invalid()" />
+                @if (submitted() && registerForm.email().invalid()) {
                     <span class="error-text">{{ registerForm.email().errors()?.[0]?.message }}</span>
                 }
             </label>
 
             <label>
                 <span>Passwort</span>
-                <input type="password" [formField]="registerForm.password"
-                       [class.invalid]="registerForm.password().invalid() && registerForm.password().touched()" />
-                @if (registerForm.password().invalid() && registerForm.password().touched()) {
-                    <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
+              <div class="password-field">
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                [formField]="registerForm.password"
+                [class.invalid]="registerForm.password().invalid()"
+              />
+              <div class="icon-container" (click)="showPassword.set(!showPassword())">
+                @if (!showPassword()) {
+                  <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                    </svg>
+                  </div>
+                } @else {
+                  <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                    </svg>
+                  </div>
                 }
+              </div>
+
+              </div>
+              @if (submitted() && registerForm.password().invalid()) {
+                <span class="error-text">{{ registerForm.password().errors()?.[0]?.message }}</span>
+              }
             </label>
 
-            <label>
-                <span>Passwort bestätigen</span>
-                <input
-                        type="password"
-                        [value]="registerModel().confirmPassword"
-                        (input)="updateConfirmPassword($any($event.target).value)"
-                        [class.invalid]="registerModel().confirmPassword && !passwordsMatch()"
-                />
-                @if (registerModel().confirmPassword && !passwordsMatch()) {
-                    <span class="error-text">Passwort stimmt nicht überein!</span>
+          <label>
+          <span>Passwort bestätigen</span>
+          <div class="password-field">
+
+              <input
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                [formField]="registerForm.confirmPassword"
+                [class.invalid]="registerForm.confirmPassword().invalid()"
+              />
+              <div class="icon-container" (click)="showConfirmPassword.set(!showConfirmPassword())">
+                @if (!showConfirmPassword()) {
+                  <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                    </svg>
+                  </div>
+                } @else {
+                  <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                    </svg>
+                  </div>
+
                 }
-            </label>
+              </div>
+
+
+          </div>
+            @if ( submitted() && registerModel().confirmPassword && !passwordsMatch()) {
+              <span class="error-text">Passwort stimmt nicht überein!</span>
+            }
+          </label>
         </div>
+      <ul class="password-rules">
+        <li>Mindestens 8 Zeichen</li>
+        <li>Mindestens 1 Zahl</li>
+        <li>Kleinbuchstaben</li>
+        <li>Großbuchstaben</li>
+        <li>Sonderzeichen</li>
+      </ul>
 
         <div class="form-actions">
             <p class="terms-text">
                 Durch die Registrierung erkläre ich mich mit den Datenschutzbestimmungen einverstanden.
             </p>
 
-            <button class="btn btn-primary w-100" type="submit"
-                    [disabled]="registerForm().submitting() || !isFormValid()">
-                Registrieren
-            </button>
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            [disabled]="registerForm().submitting() || !isFormFilled()">
+            Registrieren
+          </button>
 
             @if (feedbackMessage()) {
-                <p class="mt-3"
+                <p class="registration-message mt-3"
                    [class.text-success]="registrationSucceeded()"
                    [class.text-danger]="!registrationSucceeded()">
                     {{ feedbackMessage() }}

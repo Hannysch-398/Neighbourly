@@ -21,10 +21,12 @@ const initial: LoginModel = {
 })
 
 export class SignInFormComponent {
+
+  readonly submitted = signal(false);
   private router = inject(Router);
   private authService = inject(AuthService);
   backendError = signal('');
-
+  showPassword = signal(false);
   model = signal<LoginModel>({ ...initial });
 
   form = form(this.model, (path) => {
@@ -40,6 +42,7 @@ export class SignInFormComponent {
     !this.form.password().invalid();
 
   submit() {
+    this.submitted.set(true);
     this.backendError.set('');
 
     if (!this.isValid()) return;
