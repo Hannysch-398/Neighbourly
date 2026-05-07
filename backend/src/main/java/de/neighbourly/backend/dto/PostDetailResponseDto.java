@@ -1,11 +1,11 @@
 package de.neighbourly.backend.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -35,7 +35,7 @@ public class PostDetailResponseDto {
 
     private Object details;
 
-    private RatingSummaryDto ratingSummary;
+    private AverageRatingResponse averageRating;
 
     private ReportSummaryDto reportSummary;
 

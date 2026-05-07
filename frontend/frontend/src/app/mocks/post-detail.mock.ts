@@ -28,7 +28,7 @@ export const postDetailMock: PostDetailResponse = {
   },
   ratingSummary: {
     averageRating: 4.5,
-    ratingCount: 12,
+    ratingAmount: 12,
   },
   reportSummary: {
     reportCount: 0,

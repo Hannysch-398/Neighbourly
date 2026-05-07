@@ -29,7 +29,7 @@ export interface PostImageDto {
 
 export interface RatingSummaryDto {
   averageRating: number;
-  ratingCount: number;
+  ratingAmount: number;
 }
 
 export interface ReportSummaryDto {
