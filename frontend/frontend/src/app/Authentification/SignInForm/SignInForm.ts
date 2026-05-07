@@ -26,7 +26,7 @@ export class SignInFormComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
   backendError = signal('');
-
+  showPassword = signal(false);
   model = signal<LoginModel>({ ...initial });
 
   form = form(this.model, (path) => {

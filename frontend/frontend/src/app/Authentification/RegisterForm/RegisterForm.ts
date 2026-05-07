@@ -35,7 +35,8 @@ export class RegisterForm {
   readonly feedbackMessage = this.registerService.message;
   readonly registrationSucceeded = this.registerService.isRegistered;
   readonly registerModel = signal<RegisterFormModel>({ ...initialData });
-
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   toggleForm() {
     this.isSignUp.set(!this.isSignUp());
@@ -64,11 +65,17 @@ export class RegisterForm {
     );
   });
 
+  readonly isFormFilled = computed(() =>
+    !!this.registerModel().username &&
+    !!this.registerModel().email &&
+    !!this.registerModel().password &&
+    !!this.registerModel().confirmPassword
+  );
+
   readonly isFormValid = computed(() =>
     !this.registerForm.username().invalid() &&
     !this.registerForm.email().invalid() &&
     !this.registerForm.password().invalid() &&
-    !!this.registerModel().confirmPassword &&
     this.passwordsMatch()
   );
 
