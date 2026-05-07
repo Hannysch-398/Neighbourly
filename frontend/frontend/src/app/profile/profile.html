@@ -1,12 +1,80 @@
-<section>
-  <h1>Mein Profil</h1>
+<section class="profile-container m-lg-2 m-rg-2">
+  <h1>Dein Profil</h1>
+  @if (profile()) {
+  <div class="profile-card">
+    <div class="avatar">
+      <div class="avatar-placeholder">👤</div>
+    </div>
 
-  <div>
-    <p><strong>Name:</strong> -</p>
-    <p><strong>E-Mail:</strong> -</p>
-    <p><strong>Rating:</strong> -</p>
+    <div class="profile-info">
+      <div>
+        <h2>Name</h2>
+        <p>{{ profile()?.name ?? '-' }}</p>
+      </div>
+
+      <div>
+        <h2>E-Mail</h2>
+        <p>{{ profile()?.email ?? '-' }}</p>
+      </div>
+
+      <div>
+        <h2>Rolle</h2>
+        <p>{{ profile()?.role ?? '-' }}</p>
+      </div>
+      <div>
+        <h2>Mitglied seit</h2>
+        <p>{{ profile()?.createdAt ?? '-' }}</p>
+      </div>
+
+      <div>
+        <h2>Bewertung</h2>
+        <app-rating [userId]="2"></app-rating>
+
+      </div>
+    </div>
   </div>
-  <!--  TODO: dynamically read UserId from profile-->
-  <app-rating [userId]="2"></app-rating>
+
+  <section class="posts-section">
+    <div class="post-tabs">
+      <button
+        class="tab-button"
+        [class.active-tab]="active"
+        (click)="active.set(true)">
+        Aktive Beiträge
+      </button>
+      <span class="divider"></span>
+      <button
+        class="tab-button"
+        [class.active-tab]="!active"
+        (click)="active.set(false)">
+        Archivierte Beiträge
+      </button>
+    </div>
+    @if(active()){
+
+
+    @if(activePosts){
+      //Post-Komponente
+    } @else{
+      <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
+    }
+    }@else{
+    @if(archivedPosts){
+      //Archivierte-Post-Komponente
+    } @else{
+      <h4 class="post-placeholder">Hier würden deine archivierten Posts stehen!</h4>
+    }
+    }
+
+
+  </section>
+
+    <app-account-delete-area></app-account-delete-area>
+
+  } @else {
+
+    <p>Lade Profil...</p>
+  }
 </section>
-<app-account-delete-area></app-account-delete-area>
+
+
