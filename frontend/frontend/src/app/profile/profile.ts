@@ -10,9 +10,13 @@ import { ProfileService, ProfileData } from '../Service/profile.service';
   styleUrl: './profile.css',
 })
 export class Profile {
-  private profileService = inject(ProfileService);
 
+  private profileService = inject(ProfileService);
+  active = signal<boolean>(true);
   profile = signal<ProfileData | null>(null);
+  //Platzhalter-Werte
+  activePosts = false;
+  archivedPosts = false;
 
   constructor() {
     this.profileService.getProfile().subscribe({
