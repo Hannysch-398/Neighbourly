@@ -26,10 +26,7 @@ export const postDetailMock: PostDetailResponse = {
         requestedHelpType: 'REPAIR',
         preferredTime: 'Evening',
     },
-    averageRating: {
-        averageRating: 4.5,
-        ratingAmount: 12,
-    },
+
     reportSummary: {
         reportCount: 0,
     },
