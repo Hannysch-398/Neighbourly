@@ -14,6 +14,10 @@ export interface PostDetailResponse {
   details: unknown;
   averageRatingResponse?: AverageRatingResponse | null;
   reportSummary?: ReportSummaryDto | null;
+  averageRating: {
+    averageRating: number;
+    ratingAmount: number;
+  };
 }
 
 export interface LocationDto {
