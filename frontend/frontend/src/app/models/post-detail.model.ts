@@ -12,12 +12,8 @@ export interface PostDetailResponse {
   tags: string[];
   images: PostImageDto[];
   details: unknown;
-  averageRatingResponse?: AverageRatingResponse | null;
   reportSummary?: ReportSummaryDto | null;
-  averageRating: {
-    averageRating: number;
-    ratingAmount: number;
-  };
+  averageRating?: AverageRatingResponse | null;
 }
 
 export interface LocationDto {
@@ -33,10 +29,6 @@ export interface PostImageDto {
   altText: string;
 }
 
-export interface AverageRatingDto {
-  average: number;
-  ratingAmount: number;
-}
 
 export interface ReportSummaryDto {
   reportCount: number;
