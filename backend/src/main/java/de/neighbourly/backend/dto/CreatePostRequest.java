@@ -1,6 +1,7 @@
 package de.neighbourly.backend.dto;
 
 
+import de.neighbourly.backend.model.PostType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,7 +13,7 @@ public class CreatePostRequest {
 
     private String title;
     private String description;
-    private String type;
+    private PostType type;
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
 }
