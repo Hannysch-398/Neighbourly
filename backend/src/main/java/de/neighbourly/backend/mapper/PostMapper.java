@@ -34,7 +34,9 @@ public class PostMapper {
                 post.getType().name(),
                 post.isUrgent(),
                 post.getUrgentUntil(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                post.getStatus().name(),
+                post.getUpdatedAt()
 
         );
     }

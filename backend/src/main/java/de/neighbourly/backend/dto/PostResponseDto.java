@@ -12,16 +12,12 @@ import java.time.LocalDateTime;
 public class PostResponseDto {
 
     private Long id;
-
     private String title;
-
     private String description;
-
     private String type;
-
     private boolean isUrgent;
-
     private LocalDateTime urgentUntil;
-
     private LocalDateTime createdAt;
+    private String status;
+    private LocalDateTime updatedAt;
 }
