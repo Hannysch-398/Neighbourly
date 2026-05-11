@@ -5,6 +5,8 @@ import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.entity.Post;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.model.PostStatus;
+import de.neighbourly.backend.dto.PostDetailResponseDto;
+import java.util.List;
 
 public class PostMapper {
 
@@ -38,6 +40,24 @@ public class PostMapper {
                 post.getStatus().name(),
                 post.getUpdatedAt()
 
+        );
+    }
+
+    public static PostDetailResponseDto toDetailDto(Post post) {
+        return new PostDetailResponseDto(
+                post.getId(),
+                post.getTitle(),
+                post.getDescription(),
+                post.getType().name(),
+                post.isUrgent(),
+                post.getUrgentUntil(),
+                post.getCreatedAt(),
+                null,
+                List.of(),
+                List.of(),
+                null,
+                null,
+                null
         );
     }
 }

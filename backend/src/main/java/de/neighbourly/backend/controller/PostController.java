@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+<<<<<<< feature/NEBO-295-BE-Validierung-der-Basisdaten-für-Create-Post-umsetzen
 import jakarta.validation.Valid;
+=======
+import de.neighbourly.backend.dto.PostDetailResponseDto;
+>>>>>>> develop
 
 @RestController
 @RequestMapping("/api/posts")
@@ -29,5 +33,11 @@ public class PostController {
         PostResponseDto response = postService.createPost(request, email);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id) {
+        PostDetailResponseDto response = postService.getPostById(id);
+        return ResponseEntity.ok(response);
     }
 }
