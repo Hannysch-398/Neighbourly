@@ -1,44 +1,49 @@
 <form (submit)="$event.preventDefault(); submit()">
 
-  <div class="form-container">
+    <div class="form-container">
 
-    <!-- EMAIL -->
-    <label>
-      <span>E-mail</span>
-      <input type="email"
-             [formField]="form.email"
-             [class.invalid]="form.email().invalid() && form.email().touched()" />
+        <!-- EMAIL -->
+        <label>
+            <span>E-Mail</span>
+            <input type="text"
+                   [formField]="form.email"
+                   [class.invalid]="form.email().invalid() && form.email().touched()" />
 
-      @if (form.email().invalid() && form.email().touched()) {
-        <span class="error-text">
+            @if (form.email().invalid() && form.email().touched()) {
+                <span class="error-text">
           {{ form.email().errors()?.[0]?.message }}
         </span>
-      }
-    </label>
+            }
+        </label>
 
-    <!-- PASSWORD -->
-    <label>
-      <span>Passwort</span>
-      <input type="password"
-             [formField]="form.password"
-             [class.invalid]="form.password().invalid() && form.password().touched()" />
+        <!-- PASSWORD -->
+        <label>
+            <span>Passwort</span>
+            <input type="password"
+                   [formField]="form.password"
+                   [class.invalid]="form.password().invalid() && form.password().touched()" />
 
-      @if (form.password().invalid() && form.password().touched()) {
-        <span class="error-text">
+            @if (form.password().invalid() && form.password().touched()) {
+                <span class="error-text">
           {{ form.password().errors()?.[0]?.message }}
         </span>
-      }
-    </label>
+            }
+        </label>
 
-    <!-- BUTTON -->
-    <button class="btn btn-primary w-100"
-            type="submit"
-            [disabled]="form().submitting() || !isValid()">
-      Einloggen
-    </button>
+        <!-- BACKEND ERROR -->
+        @if (backendError()) {
+            <div class="error-text" style="margin-top: 10px;">
+                {{ backendError() }}
+            </div>
+        }
 
+        <!-- BUTTON -->
+        <button class="btn btn-primary w-100"
+                type="submit"
+                [disabled]="form().submitting() || !isValid()">
+            Anmelden
+        </button>
 
-
-  </div>
+    </div>
 
 </form>

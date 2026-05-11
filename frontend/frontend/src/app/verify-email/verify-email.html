@@ -1,0 +1,10 @@
+<div class="verify">
+
+  @if (!errorMessage) {
+    <h2>Danke, dass du deine E-Mail verifiziert hast!</h2>
+    <p>{{ message }}</p>
+  }
+  <h2>{{ errorMessage }}</h2>
+
+  <a href="/auth"><button type="button" >Zum Login</button></a>
+</div>

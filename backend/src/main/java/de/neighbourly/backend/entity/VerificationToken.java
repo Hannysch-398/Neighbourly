@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "email_verification_tokens")
 @Data
 public class VerificationToken {
     @Id
