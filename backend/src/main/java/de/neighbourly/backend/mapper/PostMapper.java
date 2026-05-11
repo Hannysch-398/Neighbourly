@@ -19,7 +19,7 @@ public class PostMapper {
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setType(request.getType());
-        post.setUrgent(request.isUrgent());
+        post.setUrgent(request.getIsUrgent());
         post.setUrgentUntil(request.getUrgentUntil());
         post.setStatus(PostStatus.ACTIVE);
         post.setUser(user);

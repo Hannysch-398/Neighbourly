@@ -28,6 +28,10 @@ public class PostService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
+            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
+        }
+
         Post post = PostMapper.toEntity(request, user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -37,6 +41,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         return PostMapper.toDto(savedPost);
+
     }
 
     public PostDetailResponseDto getPostById(Long id) {
