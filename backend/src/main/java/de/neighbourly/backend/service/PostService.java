@@ -8,6 +8,9 @@ import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.repository.PostRepository;
 import de.neighbourly.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import de.neighbourly.backend.dto.PostDetailResponseDto;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -34,5 +37,12 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         return PostMapper.toDto(savedPost);
+    }
+
+    public PostDetailResponseDto getPostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        return PostMapper.toDetailDto(post);
     }
 }

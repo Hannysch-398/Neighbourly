@@ -27,7 +27,8 @@ export const postDetailMock: PostDetailResponse = {
         preferredTime: 'Evening',
     },
     averageRating: {
-        averageRating: 4.5,
+      id: 1,
+      average: 4.5,
         ratingAmount: 12,
     },
     reportSummary: {
