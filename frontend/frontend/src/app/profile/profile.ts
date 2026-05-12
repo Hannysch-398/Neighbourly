@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import {Rating} from '../rating/rating';
-import { AccountDeleteArea } from '../account-delete-area/account-delete-area';
 import { ProfileService, ProfileData } from '../Service/profile.service';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-profile',
-  imports: [AccountDeleteArea, Rating],
+  imports: [Rating, RouterLink],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -24,4 +24,5 @@ export class Profile {
       error: (err) => console.error('Fehler beim Laden des Profils', err),
     });
   }
+
 }
