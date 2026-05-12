@@ -22,7 +22,7 @@ export class AuthService {
 
   login(data: LoginRequest) {
     return this.http.post(`${this.apiUrl}/login`, data, { responseType: 'text' }).pipe(
-      tap((token) => localStorage.setItem('token', token))
+      tap((token) => localStorage.setItem('auth_token', token))
     );
   }
 
