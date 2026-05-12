@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-
+import {AccountSettings} from './account-settings/account-settings';
 import { MapComponent } from './map-component/map-component';
-import { ChangePassword } from './change-password/change-password';
 import { VerifyEmail } from './verify-email/verify-email';
 
 export const routes: Routes = [
@@ -18,8 +17,8 @@ export const routes: Routes = [
         .then(m => m.AuthPageComponent),
   },
   {
-    path: 'profile/me/change-password',
-    component: ChangePassword,
+    path: 'profile/settings',
+    component: AccountSettings,
     canActivate: [authGuard],
   },
   {
