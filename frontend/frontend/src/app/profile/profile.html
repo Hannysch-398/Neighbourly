@@ -1,5 +1,5 @@
 <section class="profile-container m-lg-2 m-rg-2">
-  <h1>Dein Profil</h1>
+  <h1 class="profile-title">Dein Profil</h1>
   @if (profile()) {
   <div class="profile-card">
     <div class="avatar">
@@ -7,30 +7,36 @@
     </div>
 
     <div class="profile-info">
+      <div class="profile-info-column">
       <div>
         <h2>Name</h2>
         <p>{{ profile()?.name ?? '-' }}</p>
       </div>
 
-      <div>
-        <h2>E-Mail</h2>
-        <p>{{ profile()?.email ?? '-' }}</p>
-      </div>
-
-      <div>
-        <h2>Rolle</h2>
-        <p>{{ profile()?.role ?? '-' }}</p>
-      </div>
-      <div>
-        <h2>Mitglied seit</h2>
-        <p>{{ profile()?.createdAt ?? '-' }}</p>
-      </div>
-
-      <div>
-        <h2>Bewertung</h2>
-        <app-rating [userId]="2"></app-rating>
+        <div>
+          <h2>Mitglied seit</h2>
+          <p>{{ profile()?.createdAt ?? '-' }}</p>
+        </div>
 
       </div>
+      <div class="profile-info-column">
+        <div>
+          <h2>E-Mail</h2>
+          <p>{{ profile()?.email ?? '-' }}</p>
+        </div>
+
+      <div>
+        <app-rating [userId]="profile()?.id ?? 0"></app-rating>
+
+      </div>
+        </div>
+      <div class="profile-info-column">
+        <div>
+          <h2>Rolle</h2>
+          <p>{{ profile()?.role ?? '-' }}</p>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -40,14 +46,14 @@
         class="tab-button"
         [class.active-tab]="active"
         (click)="active.set(true)">
-        Aktive Beiträge
+        <h4>Aktive Beiträge</h4>
       </button>
-      <span class="divider"></span>
+      <h4 class="divider"></h4>
       <button
         class="tab-button"
         [class.active-tab]="!active"
         (click)="active.set(false)">
-        Archivierte Beiträge
+        <h4>Archivierte Beiträge</h4>
       </button>
     </div>
     @if(active()){
@@ -59,6 +65,8 @@
       <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
     }
     }@else{
+
+
     @if(archivedPosts){
       //Archivierte-Post-Komponente
     } @else{
