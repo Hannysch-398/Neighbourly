@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class AverageRatingResponse {
-    private long id;
+    private long Id;
     private double average;
     private int ratingAmount;
 }

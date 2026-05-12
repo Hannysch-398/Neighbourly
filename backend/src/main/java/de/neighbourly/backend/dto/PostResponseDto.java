@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostResponseDto {
 
-    private Long id;
+    private Long Id;
     private String title;
     private String description;
     private String type;
+    private String postMode;
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
     private LocalDateTime createdAt;

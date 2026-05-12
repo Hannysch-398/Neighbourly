@@ -14,7 +14,7 @@ import java.util.Date;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long Id;
 
     @Column(nullable = false)
     private long raterUserId;
