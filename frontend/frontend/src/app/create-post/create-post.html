@@ -1,17 +1,92 @@
 <section class="create-post-page">
   <header class="create-post-header">
-    <h1>Beitrag erstellen</h1>
+    <h3 class="eyebrow"> Beitrag erstellen</h3>
     <p>Erstelle einen neuen Beitrag für deine Nachbarschaft.</p>
   </header>
 
-  <main class="create-post-card">
-    <h2>Formular</h2>
-    <p class="placeholder">
-      Das Formular zum Erstellen eines Beitrags wird hier vorbereitet.
-    </p>
+  <form class="post-form" (submit)="$event.preventDefault(); submitForm()">
+    <label class="field">
+      <span>Titel</span>
+      <input
+        type="text"
+        [formField]="postForm.title"
+        placeholder="Wobei brauchst du Hilfe?"
+        [class.invalid]="shouldShowFieldError('title')"
+      />
+      @if (shouldShowFieldError('title')) {
+        <small>{{ postForm.title().errors()[0]?.message }}</small>
+      }
+    </label>
 
-    <div class="state-placeholder">
-      <p>Loading-, Error- und Success-Zustände werden hier später angezeigt.</p>
+    <label class="field">
+      <span>Beschreibung</span>
+      <textarea
+        rows="6"
+        [formField]="postForm.description"
+        placeholder="Beschreibe kurz, worum es geht."
+        [class.invalid]="shouldShowFieldError('description')"
+      ></textarea>
+      @if (shouldShowFieldError('description')) {
+        <small>{{ postForm.description().errors()[0]?.message }}</small>
+      }
+    </label>
+
+    <label class="field">
+      <span>Typ</span>
+      <select [formField]="postForm.type" [class.invalid]="shouldShowFieldError('type')">
+        @for (option of postTypeOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+      @if (shouldShowFieldError('type')) {
+        <small>{{ postForm.type().errors()[0]?.message }}</small>
+      }
+    </label>
+
+    <label class="urgent-toggle">
+      <input
+        type="checkbox"
+        [formField]="postForm.isUrgent"
+      />
+      <span>
+          <strong>Dringend</strong>
+          <small>Aktivieren, wenn der Beitrag zeitkritisch ist.</small>
+        </span>
+    </label>
+
+    @if (postModel().isUrgent) {
+      <label class="field">
+        <span>Dringend bis</span>
+        <input
+          type="datetime-local"
+          [formField]="postForm.urgentUntil"
+          [class.invalid]="shouldShowUrgentUntilError()"
+        />
+        @if (shouldShowUrgentUntilError()) {
+          <small>Bitte gib an, bis wann der Beitrag dringend erledigt werden muss.</small>
+        }
+      </label>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="secondary-button" (click)="resetForm()">Zurucksetzen</button>
+      <button type="submit" class="primary-button">Speichern</button>
     </div>
-  </main>
+
+    @if (savedPayload()) {
+      <p class="success-message">Die Basisdaten wurden erfolgreich erfasst.</p>
+    }
+  </form>
+  @if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+    <p class="success-message">{{ successMessage() }}</p>
+  }
+
+  @if (isLoading()) {
+    <p class="loading-message">Beitrag wird gespeichert...</p>
+  }
+
 </section>
