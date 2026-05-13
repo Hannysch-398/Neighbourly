@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+}
+.settings {
+  gap: 3rem;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+}
+.close-settings-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.close-settings-container:hover {
+  cursor: pointer;
+  color: var(--primary-color);
+}
+.setting{
+  margin-bottom: 4rem;
+  margin-top: 1rem;
+  padding: 1rem;
+
+}
