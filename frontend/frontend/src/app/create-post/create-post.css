@@ -1,0 +1,26 @@
+.create-post-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.create-post-header {
+  margin-bottom: 1.5rem;
+}
+
+.create-post-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: white;
+}
+
+.placeholder,
+.state-placeholder {
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .create-post-page {
+    padding: 1rem;
+  }
+}
