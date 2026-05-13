@@ -7,7 +7,18 @@ import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
+import de.neighbourly.backend.dto.CreatePostRequest;
+import de.neighbourly.backend.dto.MapPostMarkerDto;
+import de.neighbourly.backend.dto.PostDetailResponseDto;
+import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.entity.Post;
+import de.neighbourly.backend.entity.User;
+import de.neighbourly.backend.mapper.PostMapper;
+import de.neighbourly.backend.repository.PostRepository;
+import de.neighbourly.backend.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.neighbourly.backend.dto.MapPostMarkerDto;
 import java.time.Instant;
