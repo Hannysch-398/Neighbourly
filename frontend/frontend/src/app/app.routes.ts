@@ -19,21 +19,15 @@ export const routes: Routes = [
         .then(m => m.AuthPageComponent),
   },
   {
-    path: 'profile/me/change-password',
-    component: ChangePassword,
+    path: 'profile/settings',
+    loadComponent: () =>
+      import('./account-settings/account-settings').then(m => m.AccountSettings),
     canActivate: [authGuard],
   },
   {
     path: 'profile',
     loadComponent: () =>
       import('./profile/profile').then(m => m.Profile),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'account-delete-area',
-    loadComponent: () =>
-      import('./account-delete-area/account-delete-area')
-        .then(m => m.AccountDeleteArea),
     canActivate: [authGuard],
   },
   {
