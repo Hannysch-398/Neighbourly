@@ -1,4 +1,3 @@
-
 package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.CreatePostRequest;
@@ -46,14 +45,11 @@ public class PostController {
         PostDetailResponseDto response = postService.getPostDetail(id);
         return ResponseEntity.ok(response);
     }
-    
-        @GetMapping
-    public ResponseEntity<List<MapDTO>> getPosts(
-            @RequestParam double lat,
-            @RequestParam double lng,
-            @RequestParam double radius
-    ) {
-        return ResponseEntity.ok(postService.getMapPosts(lat, lng, radius));
+
+    @GetMapping
+    public ResponseEntity<List<MapPostMarkerDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
+                                                              @RequestParam double radius) {
+        return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 
     @GetMapping("/marker")
