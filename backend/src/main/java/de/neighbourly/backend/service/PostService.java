@@ -50,7 +50,6 @@ public class PostService {
 
         validateTypeSpecificDetails(request);
 
-
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
         }
@@ -62,8 +61,17 @@ public class PostService {
         post.setUpdatedAt(now);
 
         Post savedPost = postRepository.save(post);
+
         saveTypeSpecificDetails(request, savedPost);
+
         return PostMapper.toDto(savedPost);
+    }
+
+    public List<PostResponseDto> getPostList() {
+        return postRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(PostMapper::toDto)
+                .toList();
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
@@ -109,6 +117,7 @@ public class PostService {
                 throw new IllegalArgumentException("venue is required");
             }
         }
+
         if (request.getType() == PostType.SKILL) {
             SkillDetailsDto details = getSkillDetails(request);
 
