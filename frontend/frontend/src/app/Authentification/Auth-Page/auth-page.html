@@ -27,7 +27,7 @@
   @if (!isSignUp()) {
     <app-sign-in/>
   } @else {
-    <app-register-form/>
+    <app-register-form (registered)="showSignIn()"/>
   }
 
 </div>

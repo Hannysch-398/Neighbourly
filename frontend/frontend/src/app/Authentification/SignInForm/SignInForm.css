@@ -4,7 +4,6 @@ label {
   flex-direction: column;  /* Label oben, Input darunter */
   margin-bottom: 15px;
   font-weight: 500;
-  font-size: 14px;
   color: #333;
 }
 
@@ -13,7 +12,6 @@ input {
   margin-top: 5px;         /* Abstand zwischen Label & Input */
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -32,7 +30,6 @@ button {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 15px;
   transition: background-color 0.2s;
 }
 
@@ -50,7 +47,7 @@ p {
   text-align: center;
   color: #555;
   margin-top: 10px;
-  font-size: 13px;
+
 }
 
 .tab-active {
@@ -82,4 +79,50 @@ button:disabled {
   cursor: not-allowed;
   background-color: darkgray;
 
+}
+
+.icon-container {
+  display: flex;
+  width: 4rem;
+  margin-top: 0;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background-color: #1d7ddf;
+  cursor: pointer;
+
+  svg {
+    stroke: white;
+    stroke-width: 2.5;
+    height: 1.5rem;
+  }
+
+}
+.change-password-container {
+  margin-top: 1rem;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.password-field {
+  display: flex;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.password-field input {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+  border-radius: 6px 0 0 6px;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }
