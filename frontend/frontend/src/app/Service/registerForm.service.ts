@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, tap, throwError } from 'rxjs';
 
 export interface RegisterUser {
@@ -19,6 +19,8 @@ export class RegisterFormService {
   private readonly apiUrl = 'api/auth/register';
 
   register(user: RegisterUser) {
+    this.message.set(null);
+
     const payload = {
       username: user.username,
       email: user.email,
@@ -31,18 +33,31 @@ export class RegisterFormService {
       }),
       catchError((error) => {
         this.isRegistered.set(false);
-
-        const backendMessage =
-          typeof error.error === 'string'
-            ? error.error
-            : error.error?.message ||
-              error.error?.error ||
-              Object.values(error.error ?? {})[0] ||
-              'Registrierung fehlgeschlagen';
-
-        this.message.set(String(backendMessage));
+        this.message.set(this.getRegisterErrorMessage(error));
         return throwError(() => error);
       })
     );
+  }
+
+  private getRegisterErrorMessage(error: HttpErrorResponse): string {
+    const backendMessage =
+      typeof error.error === 'string'
+        ? error.error
+        : error.error?.message ||
+          error.error?.error ||
+          Object.values(error.error ?? {})[0] ||
+          '';
+
+    const normalizedMessage = String(backendMessage).toLowerCase();
+
+    if (normalizedMessage.includes('username') || normalizedMessage.includes('benutzername')) {
+      return 'Benutzername ist bereits vergeben.';
+    }
+
+    if (normalizedMessage.includes('email') || normalizedMessage.includes('e-mail')) {
+      return 'E-Mail ist bereits vergeben.';
+    }
+
+    return 'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
   }
 }
