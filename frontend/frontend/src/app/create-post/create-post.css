@@ -61,8 +61,7 @@
 .field input:focus,
 .field textarea:focus,
 .field select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(29, 125, 223, 0.14);
+
   outline: none;
 }
 
