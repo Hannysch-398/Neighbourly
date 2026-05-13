@@ -9,6 +9,8 @@ import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 
+import de.neighbourly.backend.dto.MapPostMarkerDto;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -193,7 +195,10 @@ public class PostService {
 
 
 
-     public List<MapPostMarkerDto> getMapPostMarkers(double lat, double lng, double radius) {
+
+
+     public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
+
         // Contract:
         // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
         // - Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
