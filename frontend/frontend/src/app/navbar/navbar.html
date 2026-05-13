@@ -6,7 +6,7 @@
 
     <div class="navbar-center">
       <div class="search-field">
-        <input type="text" class="search-input-custom" placeholder="Search" aria-label="Suche">
+        <input type="text" class="search-input-custom" placeholder="Suche" aria-label="Suche">
         <button class="search-btn-custom" type="button" aria-label="Suche starten">
           <span class="search-icon" aria-hidden="true"></span>
         </button>
@@ -19,11 +19,19 @@
     </div>
 
     <div class="navbar-actions">
-      <a routerLink="/auth" class="create-post-btn" aria-label="Zur Anmeldung gehen und Beitrag erstellen">
+      <a
+        [routerLink]="accountRoute()"
+        class="create-post-btn"
+        [attr.aria-label]="createPostAriaLabel()"
+      >
         <span aria-hidden="true">+</span>
-        Create Post
+        Post erstellen
       </a>
-      <a routerLink="/auth" class="profile-circle" aria-label="Zur Anmeldung gehen">
+      <a
+        [routerLink]="accountRoute()"
+        class="profile-circle"
+        [attr.aria-label]="accountAriaLabel()"
+      >
         <span class="profile-icon" aria-hidden="true"></span>
       </a>
     </div>
