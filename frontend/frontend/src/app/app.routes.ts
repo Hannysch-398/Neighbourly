@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import {AccountSettings} from './account-settings/account-settings';
 import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 
@@ -18,20 +17,14 @@ export const routes: Routes = [
   },
   {
     path: 'profile/settings',
-    component: AccountSettings,
+    loadComponent: () =>
+      import('./account-settings/account-settings').then(m => m.AccountSettings),
     canActivate: [authGuard],
   },
   {
     path: 'profile',
     loadComponent: () =>
       import('./profile/profile').then(m => m.Profile),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'account-delete-area',
-    loadComponent: () =>
-      import('./account-delete-area/account-delete-area')
-        .then(m => m.AccountDeleteArea),
     canActivate: [authGuard],
   },
   {
