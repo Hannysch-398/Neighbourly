@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -49,6 +50,13 @@ public class PostService {
         Object details = buildDetailsBlock(post);
 
         return PostMapper.toDetailDto(post, details);
+    }
+
+    public List<PostResponseDto> getPostList() {
+        return postRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(PostMapper::toDto)
+                .toList();
     }
 
     private Object buildDetailsBlock(Post post) {

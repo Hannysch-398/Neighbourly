@@ -17,3 +17,25 @@ export const postResponseMock: PostResponse = {
   urgentUntil: '2026-05-10T18:00:00',
   createdAt: '2026-05-05T11:30:00'
 };
+
+export const postListMock: PostResponse[] = [
+  postResponseMock,
+  {
+    id: 2,
+    title: 'Kinderfahrrad abzugeben',
+    description: 'Gut erhaltenes Fahrrad fuer Kinder bis etwa 8 Jahre.',
+    type: 'PRODUCT',
+    isUrgent: false,
+    urgentUntil: null,
+    createdAt: '2026-05-04T16:15:00'
+  },
+  {
+    id: 3,
+    title: 'Mitspieler fuer Hof-Flohmarkt gesucht',
+    description: 'Wir planen einen kleinen Flohmarkt im Innenhof und suchen weitere Staende.',
+    type: 'EVENT',
+    isUrgent: false,
+    urgentUntil: null,
+    createdAt: '2026-05-03T09:00:00'
+  }
+];

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/posts")
@@ -31,6 +33,11 @@ public class PostController {
         PostResponseDto response = postService.createPost(request, email);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostResponseDto>> getPosts() {
+        return ResponseEntity.ok(postService.getPostList());
     }
 
     @GetMapping("/{id}")
