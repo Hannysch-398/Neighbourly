@@ -13,13 +13,15 @@ import java.util.List;
 @Setter
 public class PostDetailResponseDto {
 
-    private Long id;
+    private Long Id;
 
     private String title;
 
     private String description;
 
     private String type;
+
+    private String postMode;
 
     private boolean isUrgent;
 

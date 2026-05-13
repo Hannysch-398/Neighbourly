@@ -1,5 +1,6 @@
 package de.neighbourly.backend.entity;
 
+import de.neighbourly.backend.model.PostMode;
 import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import jakarta.persistence.*;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
 
     @Column(nullable = false)
     private String title;
@@ -48,7 +49,12 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_mode", nullable = false)
+    private PostMode postMode;
+
     public Post() {
     }
+
 
 }
