@@ -1,9 +1,10 @@
-
-import {MapComponent} from './map-component/map-component';
 import { Routes } from '@angular/router';
-import { VerifyEmail } from './verify-email/verify-email';
-import { Profile } from './profile/profile';
+import { authGuard } from './core/guards/auth.guard';
 
+import { MapComponent } from './map-component/map-component';
+import { ChangePassword } from './change-password/change-password';
+import { VerifyEmail } from './verify-email/verify-email';
+import { CreatePost } from './create-post/create-post';
 
 export const routes: Routes = [
   {
@@ -14,17 +15,43 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
+      import('./Authentification/Auth-Page/auth-page')
+        .then(m => m.AuthPageComponent),
+  },
+  {
+    path: 'profile/me/change-password',
+    component: ChangePassword,
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
     loadComponent: () =>
-      import('./profile/profile').then(m => m.Profile)
-  }, {path:"map", component: MapComponent}
-,
+      import('./profile/profile').then(m => m.Profile),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'account-delete-area',
+    loadComponent: () =>
+      import('./account-delete-area/account-delete-area')
+        .then(m => m.AccountDeleteArea),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'access-denied',
+    loadComponent: () =>
+      import('./access-denied/access-denied')
+        .then(m => m.AccessDenied),
+  },
+  {
+    path: 'map',
+    component: MapComponent,
+  },
   {
     path: 'verify-email',
     component: VerifyEmail,
   },
-
+  {
+    path: 'posts/create',
+    component: CreatePost
+  }
 ];
