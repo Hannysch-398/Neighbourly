@@ -1,23 +1,33 @@
 <section class="profile-container m-lg-2 m-rg-2">
   <h1 class="profile-title">Dein Profil</h1>
   @if (profile()) {
-  <div class="profile-card">
-    <div class="avatar">
-      <div class="avatar-placeholder">👤</div>
-    </div>
-
-    <div class="profile-info">
-      <div class="profile-info-column">
-      <div>
-        <h2>Name</h2>
-        <p>{{ profile()?.name ?? '-' }}</p>
+    <div class="profile-card">
+      <div class="avatar">
+        <div class="avatar-placeholder">👤</div>
       </div>
+
+      <div class="profile-info">
+        <div class="profile-info-column">
+          <div class="name-row">
+            <div>
+              <h2>Name</h2>
+              <p>{{ profile()?.name ?? '-' }}</p>
+            </div>
+
+            <a routerLink="/profile/settings" class="settings-link settings-button mobile-settings">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-gear-fill"
+                   viewBox="0 0 16 16">
+                <path
+                  d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+              </svg>
+            </a>
+          </div>
+
 
         <div>
           <h2>Mitglied seit</h2>
           <p>{{ profile()?.createdAt ?? '-' }}</p>
         </div>
-
       </div>
       <div class="profile-info-column">
         <div>
@@ -25,66 +35,65 @@
           <p>{{ profile()?.email ?? '-' }}</p>
         </div>
 
-      <div>
-        <app-rating [userId]="profile()?.id ?? 0"></app-rating>
+        <div>
+          <app-rating [userId]="profile()?.id ?? 0"></app-rating>
 
-      </div>
         </div>
+      </div>
       <div class="profile-info-column">
         <div>
           <h2>Rolle</h2>
           <p>{{ profile()?.role ?? '-' }}</p>
         </div>
       </div>
-      <div class="settings-container">
-        <a routerLink="/profile/settings" class="settings-link">
+      <div class="settings-container desktop-settings">
+        <a routerLink="/profile/settings" class="settings-link settings-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-gear-fill" viewBox="0 0 16 16">
-            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+            <path
+              d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
           </svg>
         </a>
       </div>
     </div>
 
 
-
-  </div>
-
-  <section class="posts-section">
-    <div class="post-tabs">
-      <button
-        class="tab-button"
-
-        (click)="active.set(true)">
-        <h4 class="tab-text" [class.active-tab]="active()">Aktive Beiträge</h4>
-      </button>
-      <h4 class="divider"></h4>
-      <button
-        class="tab-button"
-        (click)="active.set(false)">
-        <h4 class="tab-text" [class.active-tab]="!active()">Archivierte Beiträge</h4>
-      </button>
     </div>
-    @if(active()){
+
+    <section class="posts-section">
+      <div class="post-tabs">
+        <button
+          class="tab-button"
+
+          (click)="active.set(true)">
+          <h4 class="tab-text" [class.active-tab]="active()">Aktive Beiträge</h4>
+        </button>
+        <h4 class="divider"></h4>
+        <button
+          class="tab-button"
+          (click)="active.set(false)">
+          <h4 class="tab-text" [class.active-tab]="!active()">Archivierte Beiträge</h4>
+        </button>
+      </div>
+      @if (active()) {
 
 
-    @if(activePosts){
-      //Post-Komponente
-    } @else{
-      <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
-    }
-    }@else{
+        @if (activePosts) {
+          //Post-Komponente
+        } @else {
+          <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
+        }
+      } @else {
 
 
-    @if(archivedPosts){
-      //Archivierte-Post-Komponente
-    } @else{
-      <h4 class="post-placeholder">Hier würden deine archivierten Posts stehen!</h4>
-    }
-    }
+        @if (archivedPosts) {
+          //Archivierte-Post-Komponente
+        } @else {
+          <h4 class="post-placeholder">Hier würden deine archivierten Posts stehen!</h4>
+        }
+      }
 
 
-  </section>
-
+    </section>
 
 
   } @else {
