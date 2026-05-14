@@ -36,7 +36,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("urgentUntil", ex.getMessage());
+
+        String message = ex.getMessage() != null ? ex.getMessage() : "Invalid request";
+        String field = "request";
+
+        if (message.contains("urgentUntil")) {
+            field = "urgentUntil";
+        } else if (message.contains("venue")) {
+            field = "venue";
+        } else if (message.contains("startDate")) {
+            field = "startDate";
+        } else if (message.contains("endDate")) {
+            field = "endDate";
+        } else if (message.contains("Event details")) {
+            field = "details";
+        }
+
+        errors.put(field, message);
 
         ErrorResponseDto response = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.value(),
@@ -46,6 +62,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
         Map<String, Object> body = new HashMap<>();

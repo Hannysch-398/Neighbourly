@@ -29,6 +29,7 @@ public class CreatePostRequest {
     private PostMode postMode;
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
+    private EventDetailsDto details;
 
     public boolean getIsUrgent() {
         return isUrgent;
