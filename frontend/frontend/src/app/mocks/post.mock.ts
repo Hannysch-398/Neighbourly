@@ -2,7 +2,7 @@ import { CreatePostRequest, PostResponse } from '../models/post.model';
 
 export const createPostMock: CreatePostRequest = {
   title: 'Hilfe beim Umzug',
-  description: 'Ich brauche Hilfe beim Tragen von Moebeln.',
+  description: 'Ich brauche Hilfe beim Tragen von Möbeln.',
   type: 'SKILL',
   isUrgent: true,
   urgentUntil: '2026-05-10T18:00:00',
@@ -11,7 +11,7 @@ export const createPostMock: CreatePostRequest = {
 export const postResponseMock: PostResponse = {
   id: 1,
   title: 'Hilfe beim Umzug',
-  description: 'Ich brauche Hilfe beim Tragen von Moebeln.',
+  description: 'Ich brauche Hilfe beim Tragen von Möbeln.',
   type: 'SKILL',
   postMode: 'REQUEST',
   isUrgent: true,
@@ -29,7 +29,7 @@ export const postListMock: PostResponse[] = [
   {
     id: 2,
     title: 'Kinderfahrrad abzugeben',
-    description: 'Gut erhaltenes Fahrrad fuer Kinder bis etwa 8 Jahre.',
+    description: 'Gut erhaltenes Fahrrad für Kinder bis etwa 8 Jahre.',
     type: 'PRODUCT',
     postMode: 'OFFER',
     isUrgent: false,
@@ -43,8 +43,8 @@ export const postListMock: PostResponse[] = [
   },
   {
     id: 3,
-    title: 'Mitspieler fuer Hof-Flohmarkt gesucht',
-    description: 'Wir planen einen kleinen Flohmarkt im Innenhof und suchen weitere Staende.',
+    title: 'Mitspieler für Hof-Flohmarkt gesucht',
+    description: 'Wir planen einen kleinen Flohmarkt im Innenhof und suchen weitere Stände.',
     type: 'EVENT',
     postMode: 'REQUEST',
     isUrgent: false,
