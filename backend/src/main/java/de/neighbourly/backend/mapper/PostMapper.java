@@ -1,6 +1,8 @@
 package de.neighbourly.backend.mapper;
 
 import de.neighbourly.backend.dto.CreatePostRequest;
+import de.neighbourly.backend.dto.PostListItemResponseDto;
+import de.neighbourly.backend.dto.PostListMetadataDto;
 import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.entity.Post;
 import de.neighbourly.backend.entity.User;
@@ -43,6 +45,24 @@ public class PostMapper {
                 post.getStatus().name(),
                 post.getUpdatedAt()
 
+        );
+    }
+
+    public static PostListItemResponseDto toListDto(Post post) {
+        return new PostListItemResponseDto(
+                post.getId(),
+                post.getTitle(),
+                post.getDescription(),
+                post.getType().name(),
+                post.getPostMode().name(),
+                post.isUrgent(),
+                post.getUrgentUntil(),
+                post.getCreatedAt(),
+                new PostListMetadataDto(
+                        post.getStatus().name(),
+                        post.getUpdatedAt(),
+                        null
+                )
         );
     }
 

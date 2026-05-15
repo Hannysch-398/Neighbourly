@@ -1,6 +1,7 @@
 package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.CreatePostRequest;
+import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponseDto>> getPosts() {
+    public ResponseEntity<List<PostListItemResponseDto>> getPosts() {
         return ResponseEntity.ok(postService.getPostList());
     }
 

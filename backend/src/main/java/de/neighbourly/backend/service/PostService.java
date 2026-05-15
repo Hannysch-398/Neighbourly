@@ -7,8 +7,6 @@ import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.repository.PostRepository;
 import de.neighbourly.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,10 +50,10 @@ public class PostService {
         return PostMapper.toDetailDto(post, details);
     }
 
-    public List<PostResponseDto> getPostList() {
+    public List<PostListItemResponseDto> getPostList() {
         return postRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(PostMapper::toDto)
+                .map(PostMapper::toListDto)
                 .toList();
     }
 
