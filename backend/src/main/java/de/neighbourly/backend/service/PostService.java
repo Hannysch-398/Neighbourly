@@ -67,10 +67,10 @@ public class PostService {
         return PostMapper.toDto(savedPost);
     }
 
-    public List<PostResponseDto> getPostList() {
+    public List<PostListItemResponseDto> getPostList() {
         return postRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(PostMapper::toDto)
+                .map(PostMapper::toListDto)
                 .toList();
     }
 

@@ -2,7 +2,7 @@ import { CreatePostRequest, PostResponse } from '../models/post.model';
 
 export const createPostMock: CreatePostRequest = {
   title: 'Hilfe beim Umzug',
-  description: 'Ich brauche Hilfe beim Tragen von Möbeln.',
+  description: 'Ich brauche Hilfe beim Tragen von Moebeln.',
   type: 'SKILL',
   isUrgent: true,
   urgentUntil: '2026-05-10T18:00:00',
@@ -11,7 +11,7 @@ export const createPostMock: CreatePostRequest = {
 export const postResponseMock: PostResponse = {
   id: 1,
   title: 'Hilfe beim Umzug',
-  description: 'Ich brauche Hilfe beim Tragen von Möbeln.',
+  description: 'Ich brauche Hilfe beim Tragen von Moebeln.',
   type: 'SKILL',
   postMode: 'REQUEST',
   isUrgent: true,
