@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnDestroy,
   ViewChild,
+  input,
 } from '@angular/core';
 
 import * as L from 'leaflet';
@@ -19,6 +20,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
+
+  latitude = input<number | null>(null);
+  longitude = input<number | null>(null);
 
   private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.795680
   ]; // Bremen

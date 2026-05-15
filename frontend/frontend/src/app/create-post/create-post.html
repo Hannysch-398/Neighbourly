@@ -68,8 +68,40 @@
       </label>
     }
 
+    <label class="location-toggle">
+      <input
+        type="checkbox"
+        [formField]="postForm.hasLocation"
+      />
+      <span>
+          <strong>Location</strong>
+          <small>Aktivieren, wenn der Beitrag eine Adresse haben soll.</small>
+        </span>
+    </label>
+    @if (postModel().hasLocation) {
+      <app-modern-map
+        [latitude]="postModel().latitude"
+        [longitude]="postModel().longitude"
+      />
+    }
+
+    @if (postModel().hasLocation) {
+      <label class="field">
+        <span>Adresse</span>
+        <input
+          type="text"
+          [formField]="postForm.locationAddress"
+          placeholder="Straße, Hausnummer, Ort"
+          [class.invalid]="shouldShowLocationAddressError()"
+        />
+        @if (shouldShowLocationAddressError()) {
+          <small>Bitte gib eine Adresse ein.</small>
+        }
+      </label>
+    }
+
     <div class="form-actions">
-      <button type="button" class="secondary-button" (click)="resetForm()">Zurucksetzen</button>
+      <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
       <button type="submit" class="primary-button">Speichern</button>
     </div>
 

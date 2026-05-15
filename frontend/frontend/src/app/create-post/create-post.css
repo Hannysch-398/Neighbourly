@@ -20,6 +20,7 @@
   .primary-button,
   .secondary-button {
     width: 100%;
+
   }
 }
 
@@ -37,7 +38,8 @@
 }
 
 .field span,
-.urgent-toggle strong {
+.urgent-toggle strong,
+.location-toggle strong {
   color: #344453;
   font-size: 1rem;
   font-weight: 700;
@@ -74,7 +76,8 @@
   font-size: 0.9rem;
 }
 
-.urgent-toggle {
+.urgent-toggle,
+.location-toggle {
   align-items: flex-start;
   background: #f9fafb;
   border: 1px solid #e3e8ef;
@@ -83,21 +86,25 @@
   display: flex;
   gap: 12px;
   padding: 14px;
+  margin-top: 5px;
 }
 
-.urgent-toggle input {
+.urgent-toggle input,
+.location-toggle input {
   accent-color: var(--primary-color);
   height: 20px;
   margin-top: 2px;
   width: 20px;
 }
 
-.urgent-toggle span {
+.urgent-toggle span,
+.location-toggle span {
   display: grid;
   gap: 2px;
 }
 
-.urgent-toggle small {
+.urgent-toggle small,
+.location-toggle small {
   color: #667789;
   font-size: 0.95rem;
 }
@@ -147,6 +154,7 @@
   font-weight: 700;
   margin: 0;
   padding: 12px 14px;
+  margin-top: 8px;
 }
 
 
