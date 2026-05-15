@@ -19,5 +19,6 @@ public class PostListItemResponseDto {
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
     private LocalDateTime createdAt;
-    private PostListMetadataDto metadata;
+    private String status;
+    private LocalDateTime updatedAt;
 }

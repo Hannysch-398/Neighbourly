@@ -17,11 +17,6 @@ export interface PostResponse {
   isUrgent: boolean;
   urgentUntil?: string | null;
   createdAt: string;
-  metadata: PostListMetadata;
-}
-
-export interface PostListMetadata {
   status: string;
   updatedAt: string;
-  locationLabel?: string | null;
 }

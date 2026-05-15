@@ -17,11 +17,8 @@ export const postResponseMock: PostResponse = {
   isUrgent: true,
   urgentUntil: '2026-05-10T18:00:00',
   createdAt: '2026-05-05T11:30:00',
-  metadata: {
-    status: 'ACTIVE',
-    updatedAt: '2026-05-05T11:30:00',
-    locationLabel: null,
-  },
+  status: 'ACTIVE',
+  updatedAt: '2026-05-05T11:30:00',
 };
 
 export const postListMock: PostResponse[] = [
@@ -35,11 +32,8 @@ export const postListMock: PostResponse[] = [
     isUrgent: false,
     urgentUntil: null,
     createdAt: '2026-05-04T16:15:00',
-    metadata: {
-      status: 'ACTIVE',
-      updatedAt: '2026-05-04T16:15:00',
-      locationLabel: null,
-    },
+    status: 'ACTIVE',
+    updatedAt: '2026-05-04T16:15:00',
   },
   {
     id: 3,
@@ -50,10 +44,7 @@ export const postListMock: PostResponse[] = [
     isUrgent: false,
     urgentUntil: null,
     createdAt: '2026-05-03T09:00:00',
-    metadata: {
-      status: 'ACTIVE',
-      updatedAt: '2026-05-03T09:00:00',
-      locationLabel: null,
-    },
+    status: 'ACTIVE',
+    updatedAt: '2026-05-03T09:00:00',
   },
 ];
