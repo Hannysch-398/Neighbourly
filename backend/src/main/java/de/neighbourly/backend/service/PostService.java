@@ -1,15 +1,9 @@
 package de.neighbourly.backend.service;
 
 import de.neighbourly.backend.dto.*;
-import de.neighbourly.backend.entity.Event;
-import de.neighbourly.backend.entity.Post;
-import de.neighbourly.backend.entity.User;
+import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostType;
-import de.neighbourly.backend.repository.EventRepository;
-import de.neighbourly.backend.repository.PostRepository;
-import de.neighbourly.backend.repository.UserRepository;
-import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -18,35 +12,35 @@ import java.util.List;
 
 @Service
 public class PostService {
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-
-    public PostService(PostRepository postRepository, UserRepository userRepository, EventRepository eventRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
-
     private final PostLocationRepository postLocationRepository;
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository,
-                       PostLocationRepository postLocationRepository, PostTagRepository postTagRepository,
-                       PostImageRepository postImageRepository) {
+    public PostService(
+            PostRepository postRepository,
+            UserRepository userRepository,
+            EventRepository eventRepository,
+            PostLocationRepository postLocationRepository,
+            PostTagRepository postTagRepository,
+            PostImageRepository postImageRepository
+    ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
-
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (request.getType() == PostType.EVENT) {
 
+        if (request.getType() == PostType.EVENT) {
             EventDetailsDto details = request.getDetails();
 
             if (details == null) {
@@ -79,11 +73,9 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         if (request.getType() == PostType.EVENT) {
-
             EventDetailsDto details = request.getDetails();
 
             Event event = new Event();
-
             event.setPost(savedPost);
             event.setStartDate(details.getStartDate());
             event.setEndDate(details.getEndDate());
@@ -93,7 +85,6 @@ public class PostService {
         }
 
         return PostMapper.toDto(savedPost);
-
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
@@ -101,6 +92,7 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
+
         LocationDto location = postLocationRepository.findByPostId(postId)
                 .map(this::mapLocation)
                 .orElse(null);
@@ -120,25 +112,13 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(
-                    null,
-                    null,
-                    null
-            );
-            case SKILL -> new SkillDetailsDto(
-                    null,
-                    null
-            );
-            case PRODUCT -> new ProductDetailsDto(
-                    null,
-                    null
-            );
-            case HOUSING -> new HousingDetailsDto(
-                    null,
-                    null
-            );
+            case EVENT -> new EventDetailsDto(null, null, null);
+            case SKILL -> new SkillDetailsDto(null, null);
+            case PRODUCT -> new ProductDetailsDto(null, null);
+            case HOUSING -> new HousingDetailsDto(null, null);
         };
     }
+
     private LocationDto mapLocation(PostLocation location) {
         return new LocationDto(
                 location.getCity(),
