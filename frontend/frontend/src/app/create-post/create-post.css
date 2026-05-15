@@ -156,5 +156,26 @@
   padding: 12px 14px;
   margin-top: 8px;
 }
+.location-map-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
 
+.location-map {
+  height: 200px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.location-map.large {
+  height: 620px;
+}
+
+.location-map app-modern-map {
+  display: block;
+  height: 100%;
+}
 
