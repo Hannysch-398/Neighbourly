@@ -9,9 +9,12 @@ import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.EventRepository;
 import de.neighbourly.backend.repository.PostRepository;
 import de.neighbourly.backend.repository.UserRepository;
+import de.neighbourly.backend.entity.*;
+import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -23,6 +26,20 @@ public class PostService {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+
+    private final PostLocationRepository postLocationRepository;
+    private final PostTagRepository postTagRepository;
+    private final PostImageRepository postImageRepository;
+
+    public PostService(PostRepository postRepository, UserRepository userRepository,
+                       PostLocationRepository postLocationRepository, PostTagRepository postTagRepository,
+                       PostImageRepository postImageRepository) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.postLocationRepository = postLocationRepository;
+        this.postTagRepository = postTagRepository;
+        this.postImageRepository = postImageRepository;
+
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
@@ -84,8 +101,21 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
+        LocationDto location = postLocationRepository.findByPostId(postId)
+                .map(this::mapLocation)
+                .orElse(null);
 
-        return PostMapper.toDetailDto(post, details);
+        List<String> tags = postTagRepository.findAllByPostId(postId)
+                .stream()
+                .map(PostTag::getName)
+                .toList();
+
+        List<PostImageDto> images = postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId)
+                .stream()
+                .map(this::mapImage)
+                .toList();
+
+        return PostMapper.toDetailDto(post, location, tags, images, details);
     }
 
     private Object buildDetailsBlock(Post post) {
@@ -108,5 +138,21 @@ public class PostService {
                     null
             );
         };
+    }
+    private LocationDto mapLocation(PostLocation location) {
+        return new LocationDto(
+                location.getCity(),
+                location.getDistrict(),
+                location.getLatitude(),
+                location.getLongitude()
+        );
+    }
+
+    private PostImageDto mapImage(PostImage image) {
+        return new PostImageDto(
+                image.getId(),
+                image.getUrl(),
+                image.getAltText()
+        );
     }
 }
