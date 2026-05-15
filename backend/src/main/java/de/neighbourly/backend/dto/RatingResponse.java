@@ -9,7 +9,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 public class RatingResponse {
-    private long id;
+    private long Id;
     private long raterUserId;
     private long ratedUserId;
     private int rating;

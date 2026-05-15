@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, output } from '@angular/core';
 
 import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { RegisterFormService } from '../../Service/registerForm.service';
@@ -27,13 +27,16 @@ const initialData: RegisterFormModel = {
   styleUrls: ['./RegisterForm.css']
 })
 export class RegisterForm {
-  private readonly registerService = inject(RegisterFormService);
 
+  readonly registered = output<void>();
+  private readonly registerService = inject(RegisterFormService);
+  readonly submitted = signal(false);
   readonly isSignUp = signal(true);
   readonly feedbackMessage = this.registerService.message;
   readonly registrationSucceeded = this.registerService.isRegistered;
   readonly registerModel = signal<RegisterFormModel>({ ...initialData });
-
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   toggleForm() {
     this.isSignUp.set(!this.isSignUp());
@@ -62,11 +65,17 @@ export class RegisterForm {
     );
   });
 
+  readonly isFormFilled = computed(() =>
+    !!this.registerModel().username &&
+    !!this.registerModel().email &&
+    !!this.registerModel().password &&
+    !!this.registerModel().confirmPassword
+  );
+
   readonly isFormValid = computed(() =>
     !this.registerForm.username().invalid() &&
     !this.registerForm.email().invalid() &&
     !this.registerForm.password().invalid() &&
-    !!this.registerModel().confirmPassword &&
     this.passwordsMatch()
   );
 
@@ -84,11 +93,16 @@ export class RegisterForm {
 
 
   submitForm() {
+    this.submitted.set(true);
     if (!this.isFormValid()) return;
 
     this.registerService.register(this.registerModel()).subscribe({
       next: () => {
         this.registerModel.set({ ...initialData });
+        this.submitted.set(false);
+        setTimeout(() => {
+          this.registered.emit();
+        }, 3000);
       },
       error: err => console.error('Error', err)
     });

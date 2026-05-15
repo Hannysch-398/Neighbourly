@@ -1,6 +1,7 @@
 package de.neighbourly.backend.dto;
 
 
+import de.neighbourly.backend.model.PostMode;
 import de.neighbourly.backend.model.PostType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +26,10 @@ public class CreatePostRequest {
 
     @NotNull(message = "Type must not be null")
     private PostType type;
+    private PostMode postMode;
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
+
     public boolean getIsUrgent() {
         return isUrgent;
     }

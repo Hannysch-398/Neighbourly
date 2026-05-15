@@ -1,14 +1,12 @@
 package de.neighbourly.backend.service;
 
-import de.neighbourly.backend.dto.CreatePostRequest;
-import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.entity.Post;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.repository.PostRepository;
 import de.neighbourly.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import de.neighbourly.backend.dto.PostDetailResponseDto;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
@@ -44,10 +42,33 @@ public class PostService {
 
     }
 
-    public PostDetailResponseDto getPostById(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    public PostDetailResponseDto getPostDetail(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return PostMapper.toDetailDto(post);
+        Object details = buildDetailsBlock(post);
+
+        return PostMapper.toDetailDto(post, details);
+    }
+
+    private Object buildDetailsBlock(Post post) {
+        return switch (post.getType()) {
+            case EVENT -> new EventDetailsDto(
+                    null,
+                    null
+            );
+            case SKILL -> new SkillDetailsDto(
+                    null,
+                    null
+            );
+            case PRODUCT -> new ProductDetailsDto(
+                    null,
+                    null
+            );
+            case HOUSING -> new HousingDetailsDto(
+                    null,
+                    null
+            );
+        };
     }
 }

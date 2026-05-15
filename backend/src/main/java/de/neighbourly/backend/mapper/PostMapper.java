@@ -8,6 +8,7 @@ import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 import java.util.List;
 
+
 public class PostMapper {
 
     private PostMapper() {
@@ -19,6 +20,7 @@ public class PostMapper {
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setType(request.getType());
+        post.setPostMode(request.getPostMode());
         post.setUrgent(request.getIsUrgent());
         post.setUrgentUntil(request.getUrgentUntil());
         post.setStatus(PostStatus.ACTIVE);
@@ -34,6 +36,7 @@ public class PostMapper {
                 post.getTitle(),
                 post.getDescription(),
                 post.getType().name(),
+                post.getPostMode().name(),
                 post.isUrgent(),
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
@@ -43,19 +46,20 @@ public class PostMapper {
         );
     }
 
-    public static PostDetailResponseDto toDetailDto(Post post) {
+    public static PostDetailResponseDto toDetailDto(Post post, Object details) {
         return new PostDetailResponseDto(
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
                 post.getType().name(),
+                post.getPostMode().name(),
                 post.isUrgent(),
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 null,
                 List.of(),
                 List.of(),
-                null,
+                details,
                 null,
                 null
         );

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal} from '@angular/core';
 import { RegisterForm } from '../RegisterForm/RegisterForm';
 import {SignInFormComponent} from '../SignInForm/SignInForm';
 
@@ -11,6 +11,8 @@ import {SignInFormComponent} from '../SignInForm/SignInForm';
   styleUrls: ['./auth-page.css']
 })
 export class AuthPageComponent {
+
+
 
   isSignUp = signal(false);
 
