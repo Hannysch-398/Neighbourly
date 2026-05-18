@@ -3,6 +3,7 @@ package de.neighbourly.backend.dto;
 
 import de.neighbourly.backend.model.PostMode;
 import de.neighbourly.backend.model.PostType;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -26,10 +27,21 @@ public class CreatePostRequest {
 
     @NotNull(message = "Type must not be null")
     private PostType type;
+
+    @NotNull(message = "Post mode must not be null")
     private PostMode postMode;
+
     private boolean isUrgent;
+
     private LocalDateTime urgentUntil;
-    private EventDetailsDto details;
+
+    @Valid
+    @NotNull(message = "Location must not be null")
+    private CreatePostLocationDto location;
+
+    @Valid
+    @NotNull(message = "Details must not be null")
+    private PostDetailsDto details;
 
     public boolean getIsUrgent() {
         return isUrgent;

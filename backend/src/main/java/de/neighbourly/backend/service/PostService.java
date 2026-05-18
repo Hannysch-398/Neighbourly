@@ -41,9 +41,7 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (request.getType() == PostType.EVENT) {
-            EventDetailsDto details = request.getDetails();
-
-            if (details == null) {
+            if (!(request.getDetails() instanceof EventDetailsDto details)) {
                 throw new IllegalArgumentException("Event details are required");
             }
 
@@ -73,7 +71,9 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         if (request.getType() == PostType.EVENT) {
-            EventDetailsDto details = request.getDetails();
+            if (!(request.getDetails() instanceof EventDetailsDto details)) {
+                throw new IllegalArgumentException("Event details are required");
+            }
 
             Event event = new Event();
             event.setPost(savedPost);
@@ -119,10 +119,10 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null);
-            case HOUSING -> new HousingDetailsDto(null, null);
+            case EVENT -> new EventDetailsDto("EVENT", null, null, null);
+            case SKILL -> new SkillDetailsDto("SKILL", null, null);
+            case PRODUCT -> new ProductDetailsDto("PRODUCT", null, null);
+            case HOUSING -> new HousingDetailsDto("HOUSING", null, null);
         };
     }
 

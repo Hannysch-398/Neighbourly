@@ -1,5 +1,12 @@
 import { CreatePostRequest } from '../models/create-post-request.model';
 
+const mockLocation = {
+  lat: 53.0793,
+  lng: 8.8017,
+  precision: 'APPROXIMATE',
+  radius_m: 500
+};
+
 export const eventCreatePostMock: CreatePostRequest = {
   title: 'Community dinner',
   description: 'Dinner with neighbours',
@@ -7,9 +14,12 @@ export const eventCreatePostMock: CreatePostRequest = {
   postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: null,
+  location: mockLocation,
   details: {
-    eventDate: '2026-06-01T18:00:00',
-    locationName: 'Community Center'
+    detailType: 'EVENT',
+    startDate: '2026-06-01T18:00:00',
+    endDate: '2026-06-01T20:00:00',
+    venue: 'Community Center'
   }
 };
 
@@ -20,7 +30,9 @@ export const skillCreatePostMock: CreatePostRequest = {
   postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: null,
+  location: mockLocation,
   details: {
+    detailType: 'SKILL',
     skillName: 'German',
     experienceLevel: 'ADVANCED'
   }
@@ -33,7 +45,9 @@ export const productCreatePostMock: CreatePostRequest = {
   postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: null,
+  location: mockLocation,
   details: {
+    detailType: 'PRODUCT',
     productName: 'City Bike',
     price: 150
   }
@@ -46,7 +60,9 @@ export const housingCreatePostMock: CreatePostRequest = {
   postMode: 'REQUEST',
   isUrgent: false,
   urgentUntil: null,
+  location: mockLocation,
   details: {
+    detailType: 'HOUSING',
     housingType: 'APARTMENT',
     rent: 900
   }

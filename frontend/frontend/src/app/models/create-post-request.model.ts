@@ -2,22 +2,34 @@ export type PostType = 'EVENT' | 'SKILL' | 'PRODUCT' | 'HOUSING';
 
 export type PostMode = 'OFFER' | 'REQUEST';
 
+export interface CreatePostLocation {
+  lat: number;
+  lng: number;
+  precision: string;
+  radius_m: number;
+}
+
 export interface EventDetails {
-  eventDate: string;
-  locationName: string;
+  detailType: 'EVENT';
+  startDate: string;
+  endDate: string;
+  venue: string;
 }
 
 export interface SkillDetails {
+  detailType: 'SKILL';
   skillName: string;
   experienceLevel: string;
 }
 
 export interface ProductDetails {
+  detailType: 'PRODUCT';
   productName: string;
   price: number;
 }
 
 export interface HousingDetails {
+  detailType: 'HOUSING';
   housingType: string;
   rent: number;
 }
@@ -35,5 +47,6 @@ export interface CreatePostRequest {
   postMode: PostMode;
   isUrgent: boolean;
   urgentUntil?: string | null;
+  location: CreatePostLocation;
   details: PostDetails;
 }
