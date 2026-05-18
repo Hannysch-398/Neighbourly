@@ -26,6 +26,7 @@ public class PostLocation {
 
         private String precision;
 
+        @Column(name = "radius_m")
         private Integer radiusM;
 
         @OneToOne

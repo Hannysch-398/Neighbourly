@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 @Service
 public class PostService {
 
@@ -69,6 +70,17 @@ public class PostService {
         post.setUpdatedAt(now);
 
         Post savedPost = postRepository.save(post);
+
+        CreatePostLocationDto locationDto = request.getLocation();
+
+        PostLocation location = new PostLocation();
+        location.setPost(savedPost);
+        location.setLatitude(locationDto.getLat());
+        location.setLongitude(locationDto.getLng());
+        location.setPrecision(locationDto.getPrecision());
+        location.setRadiusM(locationDto.getRadiusM());
+
+        postLocationRepository.save(location);
 
         if (request.getType() == PostType.EVENT) {
             if (!(request.getDetails() instanceof EventDetailsDto details)) {
