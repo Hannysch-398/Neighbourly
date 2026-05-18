@@ -17,20 +17,39 @@ export class Rating implements OnInit {
   ratingSignal = signal<AverageRatingResponse | null>(null);
   averageValue = signal(0);
   allRatings = signal<RatingResponse[]>([]);
+  isLoading = signal(false);
+  errorMessage = signal('');
 
   stars: number[] = [0, 0, 0, 0, 0];
 
   constructor(private ratingService: RatingService) {}
 
   ngOnInit(): void {
-    this.ratingService.getAverageRating(this.userId).subscribe(res => {
-      this.ratingSignal.set(res);
-      this.averageValue.set(res.average);
-      this.stars = this.createRatingArray(res.average);
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.ratingService.getAverageRating(this.userId).subscribe({
+      next: res => {
+        this.ratingSignal.set(res);
+        this.averageValue.set(res.average);
+        this.stars = this.createRatingArray(res.average);
+      },
+      error: () => {
+        this.errorMessage.set('Bewertungen konnten nicht geladen werden.');
+        this.isLoading.set(false);
+      },
+      complete: () => {
+        this.isLoading.set(false);
+      },
     });
 
-    this.ratingService.getAllRatingsForUser(this.userId).subscribe(res => {
-      this.allRatings.set(res);
+    this.ratingService.getAllRatingsForUser(this.userId).subscribe({
+      next: res => {
+        this.allRatings.set(res);
+      },
+      error: () => {
+        this.errorMessage.set('Bewertungen konnten nicht geladen werden.');
+      },
     });
   }
 
