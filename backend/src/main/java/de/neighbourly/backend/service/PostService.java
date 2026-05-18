@@ -110,6 +110,13 @@ public class PostService {
         return PostMapper.toDetailDto(post, location, tags, images, details);
     }
 
+    public List<PostListItemResponseDto> getPostList() {
+        return postRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(PostMapper::toListDto)
+                .toList();
+    }
+
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
             case EVENT -> new EventDetailsDto(null, null, null);

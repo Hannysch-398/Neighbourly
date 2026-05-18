@@ -1,6 +1,7 @@
 package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.CreatePostRequest;
+import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
+
+import java.util.List;
 
 
 @RestController
@@ -31,6 +34,11 @@ public class PostController {
         PostResponseDto response = postService.createPost(request, email);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostListItemResponseDto>> getPosts() {
+        return ResponseEntity.ok(postService.getPostList());
     }
 
     @GetMapping("/{id}")
