@@ -56,8 +56,10 @@ export class SignInFormComponent {
           this.backendError.set('E-Mail oder Passwort ist falsch.');
         } else if (err.status === 403) {
           this.backendError.set('Bitte verifiziere zuerst deine E-Mail-Adresse.');
+        } else if (err.status === 0 || err.status === 500) {
+          this.backendError.set('Server momentan nicht erreichbar. Bitte versuche es später erneut.');
         } else {
-          this.backendError.set('Login fehlgeschlagen. Bitte versuche es erneut.');
+          this.backendError.set('Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.');
         }
       }
     });
