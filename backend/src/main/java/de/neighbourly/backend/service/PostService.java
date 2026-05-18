@@ -147,56 +147,6 @@ public class PostService {
         );
     }
 
-        public List<MapDTO> getMapPosts(double lat, double lng, double radius) {
-        // Contract: Es werden nur Posts mit status=ACTIVE zurückgegeben.
-        // Contract: Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-        // TODO: Sobald echte Post-Entity/Repository verfügbar ist, hier technisch filtern und maskieren.
-        return List.of(new MapDTO(1L, "HELP_REQUEST", "Unterstützung gesucht", 52.52, 13.405, true, Instant.now()));
-    }
-
-
-    // public PostResponseDto createPost(CreatePostRequest request, String email) {
-    //     User user = userRepository.findByEmail(email)
-    //             .orElseThrow(() -> new RuntimeException("User not found"));
-
-    //     if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-    //         throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-    //     }
-
-    //     Post post = PostMapper.toEntity(request, user);
-
-    //     LocalDateTime now = LocalDateTime.now();
-    //     post.setCreatedAt(now);
-    //     post.setUpdatedAt(now);
-
-    //     Post savedPost = postRepository.save(post);
-
-    //     return PostMapper.toDto(savedPost);
-
-    // }
-
-    // public PostDetailResponseDto getPostDetail(Long postId) {
-    //     Post post = postRepository.findById(postId)
-    //             .orElseThrow(() -> new RuntimeException("Post not found"));
-
-    //     Object details = buildDetailsBlock(post);
-
-    //     return PostMapper.toDetailDto(post, details);
-    // }
-
-
-
-    //     public List<MapDTO> getMapPosts(double lat, double lng, double radius) {
-    //     // Contract: Es werden nur Posts mit status=ACTIVE zurückgegeben.
-    //     // Contract: Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-    //     // TODO: Sobald echte Post-Entity/Repository verfügbar ist, hier technisch filtern und maskieren.
-    //     return List.of(new MapDTO(1L, "HELP_REQUEST", "Unterstützung gesucht", 52.52, 13.405, true, Instant.now()));
-    // }
-
-
-
-
-
      public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
 
         // Contract:
