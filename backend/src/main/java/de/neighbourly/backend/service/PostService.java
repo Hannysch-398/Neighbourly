@@ -268,3 +268,4 @@ public class PostService {
         return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
     }
 }
+
