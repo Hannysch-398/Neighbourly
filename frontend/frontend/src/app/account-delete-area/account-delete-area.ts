@@ -46,7 +46,6 @@ export class AccountDeleteArea {
         this.router.navigate(['/auth']);
       }, 2000);
     } catch (e) {
-      console.log(e);
       this.successMessage.set('');
       this.errorMessage.set('Fehler beim Löschen des Accounts. Bitte versuche es später erneut.');
     }
