@@ -43,6 +43,7 @@ export class AccountDeleteArea {
       this.isConfirming = false;
       setTimeout(() => {
         localStorage.removeItem('token');
+        localStorage.removeItem('auth_token');
         this.router.navigate(['/auth']);
       }, 2000);
     } catch (e) {
