@@ -30,9 +30,7 @@ export class AccountDeleteArea {
   async confirmDelete() {
     console.log('Confirm delete');
     try{
-      if (this.userId() === null) {
-        throw new Error();
-      }
+      this.userId();
     }catch(e){
       this.errorMessage.set('Dein Benutzerprofil konnte nicht geladen werden. Bitte versuche es später erneut.');
       this.isConfirming = false;
