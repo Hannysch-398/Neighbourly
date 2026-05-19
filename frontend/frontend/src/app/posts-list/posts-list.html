@@ -2,15 +2,15 @@
   <header class="posts-list-header">
     <div>
       <p class="eyebrow">Neighbourly</p>
-      <h1>Beitrage</h1>
-      <p class="header-copy">Alle aktuellen Nachbarschaftsbeitrage in einer kompakten Listenansicht.</p>
+      <h1>Beiträge</h1>
+      <p class="header-copy">Alle aktuellen Nachbarschaftsbeiträge in einer kompakten Listenansicht.</p>
     </div>
   </header>
 
   <main class="posts-list-shell" aria-live="polite">
     @if (isLoading()) {
       <div class="list-state">
-        <h2>Beitrage werden geladen</h2>
+        <h2>Beiträge werden geladen</h2>
         <p>Die Liste wird vorbereitet.</p>
       </div>
     } @else if (errorMessage()) {
@@ -21,8 +21,8 @@
       </div>
     } @else if (!hasPosts()) {
       <div class="list-state">
-        <h2>Noch keine Beitrage</h2>
-        <p>Sobald Beitrage vorhanden sind, erscheinen sie hier.</p>
+        <h2>Noch keine Beiträge</h2>
+        <p>Sobald Beiträge vorhanden sind, erscheinen sie hier.</p>
       </div>
     } @else {
       <div class="posts-list" role="list">
