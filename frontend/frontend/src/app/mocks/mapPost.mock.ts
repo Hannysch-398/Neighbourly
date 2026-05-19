@@ -40,4 +40,14 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     isSponsored: false,
     createdAt: '2026-05-07T10:45:00Z',
   },
+  {
+    id: 5,
+    type: '',
+    title: 'Zimmer kurzfristig gesucht',
+    lat: 53.0869,
+    lng: 8.7984,
+    isUrgent: true,
+    isSponsored: false,
+    createdAt: '2026-05-07T10:45:00Z',
+  }
 ];
