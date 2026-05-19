@@ -49,4 +49,10 @@ export class UserService {
       }
     );
   }
+  deleteAccount() {
+    return this.http.delete(`${this.baseUrl}/me`, {
+      headers: this.getHeaders(),
+      responseType: 'text'
+    });
+  }
 }
