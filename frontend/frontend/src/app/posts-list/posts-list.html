@@ -1,0 +1,56 @@
+<section class="posts-list-page">
+  <header class="posts-list-header">
+    <div>
+      <p class="eyebrow">Neighbourly</p>
+      <h1>Beitrage</h1>
+      <p class="header-copy">Alle aktuellen Nachbarschaftsbeitrage in einer kompakten Listenansicht.</p>
+    </div>
+  </header>
+
+  <main class="posts-list-shell" aria-live="polite">
+    @if (isLoading()) {
+      <div class="list-state">
+        <h2>Beitrage werden geladen</h2>
+        <p>Die Liste wird vorbereitet.</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="list-state error-state">
+        <h2>Laden fehlgeschlagen</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="retry-button" (click)="loadPosts()">Erneut versuchen</button>
+      </div>
+    } @else if (!hasPosts()) {
+      <div class="list-state">
+        <h2>Noch keine Beitrage</h2>
+        <p>Sobald Beitrage vorhanden sind, erscheinen sie hier.</p>
+      </div>
+    } @else {
+      <div class="posts-list" role="list">
+        @for (post of posts(); track trackPostById($index, post)) {
+          <article class="post-list-item" role="listitem">
+            <div class="post-main">
+              <div class="post-title-row">
+                <h2>{{ post.title }}</h2>
+                @if (post.isUrgent) {
+                  <span class="urgent-badge">Dringend</span>
+                }
+              </div>
+
+              <p class="post-description">{{ post.description }}</p>
+
+              <div class="post-meta" aria-label="Beitragsdetails">
+                <span>{{ getPostTypeLabel(post.type) }}</span>
+                <span>{{ getPostModeLabel(post.postMode) }}</span>
+                <span>{{ post.createdAt | date: 'dd.MM.yyyy' }}</span>
+              </div>
+            </div>
+
+            <div class="post-status">
+              <span>{{ post.status }}</span>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </main>
+</section>

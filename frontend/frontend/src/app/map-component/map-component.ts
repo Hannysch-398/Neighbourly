@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 
 import * as L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
 @Component({
   selector: 'app-modern-map',
