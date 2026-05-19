@@ -15,7 +15,10 @@ export interface PostResponse {
   title: string;
   description: string;
   type: PostType;
+  postMode: string;
   isUrgent: boolean;
   urgentUntil?: string | null;
   createdAt: string;
+  status: string;
+  updatedAt: string;
 }
