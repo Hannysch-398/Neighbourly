@@ -49,6 +49,16 @@ public class GlobalExceptionHandler {
             field = "endDate";
         } else if (message.contains("Event details")) {
             field = "details";
+        } else if (message.contains("productName")) {
+            field = "productName";
+        } else if (message.contains("price")) {
+            field = "price";
+        } else if (message.contains("currency")) {
+            field = "currency";
+        } else if (message.contains("condition")) {
+            field = "condition";
+        } else if (message.contains("Product details")) {
+            field = "details";
         }
 
         errors.put(field, message);
