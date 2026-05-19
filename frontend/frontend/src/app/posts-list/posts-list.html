@@ -1,11 +1,4 @@
 <section class="posts-list-page">
-  <header class="posts-list-header">
-    <div>
-      <p class="eyebrow">Neighbourly</p>
-      <h1>Beiträge</h1>
-      <p class="header-copy">Alle aktuellen Nachbarschaftsbeiträge in einer kompakten Listenansicht.</p>
-    </div>
-  </header>
 
   <main class="posts-list-shell" aria-live="polite">
     @if (isLoading()) {
@@ -30,7 +23,7 @@
           <article class="post-list-item" role="listitem">
             <div class="post-main">
               <div class="post-title-row">
-                <h2>{{ post.title }}</h2>
+                <h3>{{ post.title }}</h3>
                 @if (post.isUrgent) {
                   <span class="urgent-badge">Dringend</span>
                 }
