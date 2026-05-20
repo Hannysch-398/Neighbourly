@@ -1,6 +1,7 @@
 package de.neighbourly.backend.dto;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.neighbourly.backend.model.PostMode;
 import de.neighbourly.backend.model.PostType;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +30,7 @@ public class CreatePostRequest {
     private PostMode postMode;
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
-    private EventDetailsDto details;
+    private JsonNode details;
 
     public boolean getIsUrgent() {
         return isUrgent;

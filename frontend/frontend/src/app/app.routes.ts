@@ -4,6 +4,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
+import { PostsListComponent } from './posts-list/posts-list';
 
 export const routes: Routes = [
   {
@@ -14,30 +15,30 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page')
-        .then(m => m.AuthPageComponent),
+      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
   },
   {
     path: 'profile/settings',
     loadComponent: () =>
-      import('./account-settings/account-settings').then(m => m.AccountSettings),
+      import('./account-settings/account-settings').then((m) => m.AccountSettings),
     canActivate: [authGuard],
   },
   {
     path: 'profile',
-    loadComponent: () =>
-      import('./profile/profile').then(m => m.Profile),
+    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
     canActivate: [authGuard],
   },
   {
     path: 'access-denied',
-    loadComponent: () =>
-      import('./access-denied/access-denied')
-        .then(m => m.AccessDenied),
+    loadComponent: () => import('./access-denied/access-denied').then((m) => m.AccessDenied),
   },
   {
     path: 'map',
     component: MapComponent,
+  },
+  {
+    path: 'posts',
+    component: PostsListComponent,
   },
   {
     path: 'verify-email',
@@ -45,6 +46,6 @@ export const routes: Routes = [
   },
   {
     path: 'posts/create',
-    component: CreatePost
-  }
+    component: CreatePost,
+  },
 ];
