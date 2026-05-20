@@ -1,11 +1,15 @@
-
 import { Component, computed, signal } from '@angular/core';
 import { form, FormField, maxLength, required } from '@angular/forms/signals';
-import { CreatePostRequest, PostType } from '../models/post.model';
-import {MapComponent} from '../map-component/map-component';
+import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
+import { MapComponent } from '../map-component/map-component';
 
 type PostTypeOption = {
   value: PostType;
+  label: string;
+};
+
+type PostModeOption = {
+  value: PostMode;
   label: string;
 };
 
@@ -13,9 +17,22 @@ type PostBasicFormModel = {
   title: string;
   description: string;
   type: PostType;
+  postMode: PostMode;
   isUrgent: boolean;
   urgentUntil: string;
   hasLocation: boolean;
+  city: string;
+  district: string;
+  address: string;
+  eventStartDate: string;
+  eventEndDate: string;
+  eventVenue: string;
+  skillName: string;
+  experienceLevel: string;
+  productName: string;
+  price: string;
+  housingType: string;
+  rent: string;
   showLargeMap: boolean;
 };
 
@@ -23,23 +40,32 @@ const initialData: PostBasicFormModel = {
   title: '',
   description: '',
   type: 'SKILL',
+  postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: '',
   hasLocation: false,
+  city: '',
+  district: '',
+  address: '',
+  eventStartDate: '',
+  eventEndDate: '',
+  eventVenue: '',
+  skillName: '',
+  experienceLevel: '',
+  productName: '',
+  price: '',
+  housingType: '',
+  rent: '',
   showLargeMap: false,
 };
 
 @Component({
   selector: 'app-create-post',
-  imports: [
-    FormField,
-    MapComponent
-  ],
+  imports: [FormField, MapComponent],
   templateUrl: './create-post.html',
   styleUrl: './create-post.css',
 })
 export class CreatePost {
-
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
@@ -54,6 +80,11 @@ export class CreatePost {
     { value: 'HOUSING', label: 'Wohnen' },
   ];
 
+  readonly postModeOptions: PostModeOption[] = [
+    { value: 'OFFER', label: 'Angebot' },
+    { value: 'REQUEST', label: 'Gesuch' },
+  ];
+
   readonly postForm = form(this.postModel, (schemaPath) => {
     required(schemaPath.title, { message: 'Bitte gib einen Titel ein.' });
     maxLength(schemaPath.title, 120, {
@@ -65,7 +96,8 @@ export class CreatePost {
       message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
     });
 
-    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
+    required(schemaPath.type, { message: 'Bitte waehle einen Typ aus.' });
+    required(schemaPath.postMode, { message: 'Bitte waehle Angebot oder Gesuch aus.' });
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
@@ -74,7 +106,10 @@ export class CreatePost {
       !this.postForm.title().invalid() &&
       !this.postForm.description().invalid() &&
       !this.postForm.type().invalid() &&
-      (!this.postModel().isUrgent || !!this.postModel().urgentUntil)
+      !this.postForm.postMode().invalid() &&
+      (!this.postModel().isUrgent || !!this.postModel().urgentUntil) &&
+      this.hasRequiredDetails() &&
+      (!this.postModel().hasLocation || !!this.postModel().city.trim()),
   );
 
   submitForm() {
@@ -94,7 +129,7 @@ export class CreatePost {
     this.postModel.set({ ...initialData });
   }
 
-  shouldShowFieldError(field: 'title' | 'description' | 'type') {
+  shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode') {
     return this.submitted() && this.postForm[field]().invalid();
   }
 
@@ -102,6 +137,13 @@ export class CreatePost {
     return this.submitted() && this.postModel().isUrgent && !this.postModel().urgentUntil;
   }
 
+  shouldShowDetailsError() {
+    return this.submitted() && !this.hasRequiredDetails();
+  }
+
+  shouldShowLocationError() {
+    return this.submitted() && this.postModel().hasLocation && !this.postModel().city.trim();
+  }
 
   private createPayload(): CreatePostRequest {
     const value = this.postModel();
@@ -110,18 +152,67 @@ export class CreatePost {
       title: value.title.trim(),
       description: value.description.trim(),
       type: value.type,
+      postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-
-
+      location: value.hasLocation
+        ? {
+            city: value.city.trim(),
+            district: value.district.trim() || null,
+            address: value.address.trim() || null,
+            latitude: null,
+            longitude: null,
+          }
+        : null,
+      details: this.createDetails(),
     };
   }
-  /*toggleMapSize() {
-    this.postModel.update((value) => ({
-      ...value,
-      showLargeMap: !value.showLargeMap,
-    }));
+
+  private hasRequiredDetails() {
+    const value = this.postModel();
+
+    switch (value.type) {
+      case 'EVENT':
+        return !!value.eventStartDate && !!value.eventEndDate && !!value.eventVenue.trim();
+      case 'SKILL':
+        return !!value.skillName.trim() && !!value.experienceLevel.trim();
+      case 'PRODUCT':
+        return !!value.productName.trim() && !!value.price;
+      case 'HOUSING':
+        return !!value.housingType.trim() && !!value.rent;
+    }
   }
 
-   */
+  private createDetails(): CreatePostRequest['details'] {
+    const value = this.postModel();
+
+    switch (value.type) {
+      case 'EVENT':
+        return {
+          startDate: value.eventStartDate,
+          endDate: value.eventEndDate,
+          venue: value.eventVenue.trim(),
+        };
+      case 'SKILL':
+        return {
+          skillName: value.skillName.trim(),
+          experienceLevel: value.experienceLevel.trim(),
+        };
+      case 'PRODUCT':
+        return {
+          productName: value.productName.trim(),
+          price: this.toOptionalNumber(value.price),
+        };
+      case 'HOUSING':
+        return {
+          housingType: value.housingType.trim(),
+          rent: this.toOptionalNumber(value.rent),
+        };
+    }
+  }
+
+  private toOptionalNumber(value: string) {
+    const normalizedValue = value.trim();
+    return normalizedValue ? Number(normalizedValue) : null;
+  }
 }
