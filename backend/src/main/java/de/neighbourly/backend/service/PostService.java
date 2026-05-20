@@ -1,24 +1,13 @@
-
-
 package de.neighbourly.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
-import de.neighbourly.backend.dto.CreatePostRequest;
-import de.neighbourly.backend.dto.MapPostMarkerDto;
-import de.neighbourly.backend.dto.PostDetailResponseDto;
-import de.neighbourly.backend.dto.PostResponseDto;
-import de.neighbourly.backend.entity.Post;
-import de.neighbourly.backend.entity.User;
-import de.neighbourly.backend.repository.PostRepository;
-import de.neighbourly.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import de.neighbourly.backend.dto.MapPostMarkerDto;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,49 +17,38 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final SkillDetailRepository skillDetailRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
+    private final ObjectMapper objectMapper;
 
     public PostService(
             PostRepository postRepository,
             UserRepository userRepository,
             EventRepository eventRepository,
+            SkillDetailRepository skillDetailRepository,
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
-            PostImageRepository postImageRepository
+            PostImageRepository postImageRepository,
+            ObjectMapper objectMapper
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.skillDetailRepository = skillDetailRepository;
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
+        this.objectMapper = objectMapper;
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (request.getType() == PostType.EVENT) {
-            EventDetailsDto details = request.getDetails();
+        validateTypeSpecificDetails(request);
 
-            if (details == null) {
-                throw new IllegalArgumentException("Event details are required");
-            }
-
-            if (details.getStartDate() == null) {
-                throw new IllegalArgumentException("startDate is required");
-            }
-
-            if (details.getEndDate() == null) {
-                throw new IllegalArgumentException("endDate is required");
-            }
-
-            if (details.getVenue() == null || details.getVenue().isBlank()) {
-                throw new IllegalArgumentException("venue is required");
-            }
-        }
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
@@ -83,19 +61,7 @@ public class PostService {
         post.setUpdatedAt(now);
 
         Post savedPost = postRepository.save(post);
-
-        if (request.getType() == PostType.EVENT) {
-            EventDetailsDto details = request.getDetails();
-
-            Event event = new Event();
-            event.setPost(savedPost);
-            event.setStartDate(details.getStartDate());
-            event.setEndDate(details.getEndDate());
-            event.setVenue(details.getVenue());
-
-            eventRepository.save(event);
-        }
-
+        saveTypeSpecificDetails(request, savedPost);
         return PostMapper.toDto(savedPost);
     }
 
@@ -122,17 +88,77 @@ public class PostService {
         return PostMapper.toDetailDto(post, location, tags, images, details);
     }
 
-    public List<PostListItemResponseDto> getPostList() {
-        return postRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(PostMapper::toListDto)
-                .toList();
+    private void validateTypeSpecificDetails(CreatePostRequest request) {
+        if (request.getType() == PostType.EVENT) {
+            EventDetailsDto details = getEventDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Event details are required");
+            }
+
+            if (details.getStartDate() == null) {
+                throw new IllegalArgumentException("startDate is required");
+            }
+
+            if (details.getEndDate() == null) {
+                throw new IllegalArgumentException("endDate is required");
+            }
+
+            if (details.getVenue() == null || details.getVenue().isBlank()) {
+                throw new IllegalArgumentException("venue is required");
+            }
+        }
+        if (request.getType() == PostType.SKILL) {
+            SkillDetailsDto details = getSkillDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Skill details are required");
+            }
+
+            if (details.getSkillTags() == null || details.getSkillTags().isEmpty()) {
+                throw new IllegalArgumentException("skillTags are required");
+            }
+
+            if (details.getAvailabilityNote() == null || details.getAvailabilityNote().isBlank()) {
+                throw new IllegalArgumentException("availabilityNote is required");
+            }
+
+            if (details.getExperienceLevel() == null || details.getExperienceLevel().isBlank()) {
+                throw new IllegalArgumentException("experienceLevel is required");
+            }
+        }
+    }
+
+    private void saveTypeSpecificDetails(CreatePostRequest request, Post savedPost) {
+        if (request.getType() == PostType.EVENT) {
+            EventDetailsDto details = getEventDetails(request);
+
+            Event event = new Event();
+            event.setPost(savedPost);
+            event.setStartDate(details.getStartDate());
+            event.setEndDate(details.getEndDate());
+            event.setVenue(details.getVenue());
+
+            eventRepository.save(event);
+        }
+
+        if (request.getType() == PostType.SKILL) {
+            SkillDetailsDto details = getSkillDetails(request);
+
+            SkillDetail skillDetail = new SkillDetail();
+            skillDetail.setPost(savedPost);
+            skillDetail.setSkillTags(String.join(",", details.getSkillTags()));
+            skillDetail.setAvailabilityNote(details.getAvailabilityNote());
+            skillDetail.setExperienceLevel(details.getExperienceLevel());
+
+            skillDetailRepository.save(skillDetail);
+        }
     }
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
             case EVENT -> new EventDetailsDto(null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null);
+            case SKILL -> new SkillDetailsDto(null, null, null);
             case PRODUCT -> new ProductDetailsDto(null, null);
             case HOUSING -> new HousingDetailsDto(null, null);
         };
@@ -155,62 +181,11 @@ public class PostService {
         );
     }
 
-     public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
-
-        // Contract:
-        // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
-        // - Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-        // - isSponsored ist temporär/mockbar, falls Sponsoring noch nicht im Modell existiert.
-        //
-        // TODO: Sobald echte Post-Entity/Repository verfügbar ist:
-        // - nach status=ACTIVE filtern
-        // - Radius-Filter anwenden
-        // - precision=RADIUS berücksichtigen und Koordinaten maskieren
-        // - isSponsored aus Modell übernehmen
-
-        return List.of(
-                new MapPostMarkerDto(
-                        1L,
-                        "EVENT",
-                        "Nachbarschaftstreffen",
-                        52.52,
-                        13.405,
-                        true,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        2L,
-                        "SKILL",
-                        "Biete Fahrradreparatur",
-                        52.518,
-                        13.407,
-                        false,
-                        true,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        3L,
-                        "PRODUCT",
-                        "Werkzeug zu verschenken",
-                        52.521,
-                        13.402,
-                        false,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        4L,
-                        "HOUSING",
-                        "Zimmer kurzfristig gesucht",
-                        52.519,
-                        13.41,
-                        true,
-                        false,
-                        Instant.now()
-                )
-        );
+    private EventDetailsDto getEventDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), EventDetailsDto.class);
     }
 
+    private SkillDetailsDto getSkillDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
+    }
 }
-
