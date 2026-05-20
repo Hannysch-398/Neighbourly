@@ -1,5 +1,6 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'leaflet/dist/leaflet.css';
 
 :root {
   --primary-color: #1d7ddf;

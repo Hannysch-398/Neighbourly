@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 
 import * as L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
 import { PostService } from '../Service/post-service';
 import { createMapMarkerIcon } from '../map-marker/map-marker';

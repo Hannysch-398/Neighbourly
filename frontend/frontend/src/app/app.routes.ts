@@ -4,6 +4,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
+import { PostsListComponent } from './posts-list/posts-list';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,10 @@ export const routes: Routes = [
   {
     path: 'map',
     component: MapComponent,
+  },
+  {
+    path: 'posts',
+    component: PostsListComponent,
   },
   {
     path: 'verify-email',
