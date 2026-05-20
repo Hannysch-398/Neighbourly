@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDetailsDto {
+
     private String productName;
     private BigDecimal price;
     private String currency;
     private String condition;
-
 }
