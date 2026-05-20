@@ -52,10 +52,4 @@ public class PostController {
         return ResponseEntity.ok(postService.getMapPostMarkers(lat, lng, radius));
     }
 
-    @GetMapping("/marker")
-    public ResponseEntity<List<MapPostMarkerDto>> getMapPosts(@RequestParam double lat,
-                                                              @RequestParam double lng,
-                                                              @RequestParam double radius) {
-        return ResponseEntity.ok(postService.getMapPostMarkers(lat, lng, radius));
-    }
 }
