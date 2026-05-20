@@ -15,26 +15,22 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page')
-        .then(m => m.AuthPageComponent),
+      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
   },
   {
     path: 'profile/settings',
     loadComponent: () =>
-      import('./account-settings/account-settings').then(m => m.AccountSettings),
+      import('./account-settings/account-settings').then((m) => m.AccountSettings),
     canActivate: [authGuard],
   },
   {
     path: 'profile',
-    loadComponent: () =>
-      import('./profile/profile').then(m => m.Profile),
+    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
     canActivate: [authGuard],
   },
   {
     path: 'access-denied',
-    loadComponent: () =>
-      import('./access-denied/access-denied')
-        .then(m => m.AccessDenied),
+    loadComponent: () => import('./access-denied/access-denied').then((m) => m.AccessDenied),
   },
   {
     path: 'map',
@@ -50,6 +46,6 @@ export const routes: Routes = [
   },
   {
     path: 'posts/create',
-    component: CreatePost
-  }
+    component: CreatePost,
+  },
 ];
