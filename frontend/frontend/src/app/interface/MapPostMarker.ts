@@ -1,4 +1,4 @@
-export type MapPostMarkerType = 'EVENT' | 'SKILL' | 'PRODUCT' | 'HOUSING';
+export type MapPostMarkerType = 'EVENT' | 'SKILL' | 'PRODUCT' | 'HOUSING'| '';
 
 export interface MapPostMarker {
   id: number;

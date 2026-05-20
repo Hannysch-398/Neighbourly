@@ -9,6 +9,9 @@ import {
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import { PostService } from '../Service/post-service';
+import { createMapMarkerIcon } from '../map-marker/map-marker';
+
 @Component({
   selector: 'app-modern-map',
   standalone: true,
@@ -16,20 +19,20 @@ import 'leaflet/dist/leaflet.css';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
 
-  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.795680
-  ]; // Bremen
+  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.79568]; // Bremen
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
 
+  constructor(private readonly postService: PostService) {}
+
   ngAfterViewInit(): void {
-    this.resolveInitialPosition()
-      .then(({position, zoom}) => {
-        this.initMap(position, zoom);
-      });
+    this.resolveInitialPosition().then(({ position, zoom }) => {
+      this.initMap(position, zoom);
+    });
   }
 
   private resolveInitialPosition(): Promise<{
@@ -84,12 +87,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
     ).addTo(this.map);
 
-    L.control.zoom({
-      position: 'bottomright',
-    }).addTo(this.map);
+    L.control
+      .zoom({
+        position: 'bottomright',
+      })
+      .addTo(this.map);
 
-    const modernIcon = L.divIcon({
-      className: 'modern-marker',
+    this.addStartMarker(position);
+    this.addPostMarkers();
+
+    setTimeout(() => {
+      this.map?.invalidateSize();
+    }, 0);
+  }
+
+  private addStartMarker(position: L.LatLngExpression): void {
+    if (!this.map) {
+      return;
+    }
+
+    const startIcon = L.divIcon({
+      className: 'modern-marker marker-default',
       html: `
         <div class="marker-pin">
           <div class="marker-dot"></div>
@@ -101,7 +119,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     L.marker(position, {
-      icon: modernIcon,
+      icon: startIcon,
     })
       .addTo(this.map)
       .bindPopup(`
@@ -109,10 +127,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           <strong>Startposition</strong>
         </div>
       `);
+  }
 
-    setTimeout(() => {
-      this.map?.invalidateSize();
-    }, 0);
+  private addPostMarkers(): void {
+    if (!this.map) {
+      return;
+    }
+
+    this.postService.getMapPosts().forEach((post) => {
+      L.marker([post.lat, post.lng], {
+        icon: createMapMarkerIcon(post.type),
+      })
+        .addTo(this.map!)
+        .bindPopup(`
+          <div class="custom-popup">
+            <strong>${post.title}</strong><br />
+            <span>${post.type}</span>
+          </div>
+        `);
+    });
   }
 
   ngOnDestroy(): void {

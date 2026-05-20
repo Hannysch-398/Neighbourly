@@ -12,6 +12,9 @@
   --gray-color: gray;
   --border-radius: 12px;
   --spacing: 1rem;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.82);
 
   p,h1,h2,h3,h4,h5,h6 {
     color: #4e5d69;
