@@ -81,13 +81,11 @@
 
     @if (postModel().hasLocation) {
       <div class="location-map-actions">
-        <button type="button" class="secondary-button" (click)="toggleMapSize()">
-          {{ postModel().showLargeMap ? 'Karte kleiner anzeigen' : 'Karte groß anzeigen' }}
-        </button>
+
       </div>
 
-      <div class="location-map" [class.large]="postModel().showLargeMap">
-        <app-modern-map />
+      <div >
+
       </div>
     }
 

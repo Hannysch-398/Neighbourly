@@ -113,12 +113,15 @@ export class CreatePost {
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
 
+
     };
   }
-  toggleMapSize() {
+  /*toggleMapSize() {
     this.postModel.update((value) => ({
       ...value,
       showLargeMap: !value.showLargeMap,
     }));
   }
+
+   */
 }
