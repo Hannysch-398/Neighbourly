@@ -1,0 +1,124 @@
+<section class="post-detail-page">
+  <header class="post-detail-header">
+    <a class="back-link" routerLink="/map">Zur Übersicht</a>
+
+    <div class="title-group">
+      <p class="eyebrow">{{ typeLabel() }}</p>
+
+      @if (post(); as post) {
+        <h1>{{ post.title }}</h1>
+        <p class="meta">
+          Erstellt am {{ post.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
+          @if (post.isUrgent) {
+            <span class="urgent-badge">Dringend</span>
+          }
+        </p>
+      } @else {
+        <h1>Beitrag</h1>
+        <p class="meta">Post-ID {{ postId() ?? '-' }}</p>
+      }
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state-panel">Beitrag wird geladen...</div>
+  }
+
+  @if (errorMessage()) {
+    <div class="state-panel error">{{ errorMessage() }}</div>
+  }
+
+  <main class="detail-grid">
+    <section class="content-panel main-panel">
+      <h2>Beschreibung</h2>
+      @if (post(); as post) {
+        <p class="description">{{ post.description }}</p>
+      } @else {
+        <p class="placeholder">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
+      }
+    </section>
+
+    <section class="content-panel">
+      <h2>Tags</h2>
+      @if (post()?.tags?.length) {
+        <div class="tag-list">
+          @for (tag of post()?.tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
+      } @else {
+        <p class="placeholder">Keine Tags hinterlegt.</p>
+      }
+    </section>
+
+    <section class="content-panel image-panel">
+      <h2>Bilder</h2>
+      @if (post()?.images?.length) {
+        <div class="image-grid">
+          @for (image of post()?.images; track image.id) {
+            <figure>
+              <img [src]="image.url" [alt]="image.altText || post()?.title || 'Beitragsbild'" />
+              @if (image.altText) {
+                <figcaption>{{ image.altText }}</figcaption>
+              }
+            </figure>
+          }
+        </div>
+      } @else {
+        <div class="image-placeholder">Keine Bilder verfügbar</div>
+      }
+    </section>
+
+    <aside class="side-column">
+      <section class="content-panel">
+        <h2>Location</h2>
+        <p class="location-title">{{ locationText(post()?.location) }}</p>
+        <p class="location-subtitle">{{ coordinatesText(post()?.location) }}</p>
+      </section>
+
+      <section class="content-panel">
+        <h2>Typspezifische Daten</h2>
+        @if (detailEntries().length) {
+          <dl class="detail-list">
+            @for (entry of detailEntries(); track entry.label) {
+              <div>
+                <dt>{{ entry.label }}</dt>
+                <dd>{{ entry.value }}</dd>
+              </div>
+            }
+          </dl>
+        } @else {
+          <p class="placeholder">Keine typspezifischen Daten hinterlegt.</p>
+        }
+      </section>
+
+      <section class="content-panel">
+        <h2>Status</h2>
+        @if (post(); as post) {
+          <dl class="detail-list compact">
+            <div>
+              <dt>Post-ID</dt>
+              <dd>{{ post.id }}</dd>
+            </div>
+            <div>
+              <dt>Typ</dt>
+              <dd>{{ typeLabel() }}</dd>
+            </div>
+            <div>
+              <dt>Meldungen</dt>
+              <dd>{{ post.reportSummary?.reportCount ?? 0 }}</dd>
+            </div>
+            @if (post.urgentUntil) {
+              <div>
+                <dt>Dringend bis</dt>
+                <dd>{{ post.urgentUntil | date: 'dd.MM.yyyy, HH:mm' }}</dd>
+              </div>
+            }
+          </dl>
+        } @else {
+          <p class="placeholder">Statusdaten werden nach dem Laden angezeigt.</p>
+        }
+      </section>
+    </aside>
+  </main>
+</section>
