@@ -231,6 +231,8 @@ public class PostService {
         );
     }
 
+    private static final double MAX_RADIUS = 20_000;
+
 
     private EventDetailsDto getEventDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), EventDetailsDto.class);
@@ -256,6 +258,7 @@ public class PostService {
         // - Radius-Filter anwenden
         // - precision=RADIUS berücksichtigen und Koordinaten maskieren
         // - isSponsored aus Modell übernehmen
+        validateGeoParameters(lat, lng, radius);
 
         return List.of(
                 new MapPostMarkerDto(
@@ -299,6 +302,39 @@ public class PostService {
                         Instant.now()
                 )
         );
+    }
+
+    private void validateGeoParameters(Double lat, Double lng, Double radius) {
+
+        if (lat == null) {
+            throw new IllegalArgumentException("lat is required");
+        }
+
+        if (lng == null) {
+            throw new IllegalArgumentException("lng is required");
+        }
+
+        if (radius == null) {
+            throw new IllegalArgumentException("radius is required");
+        }
+
+        if (lat < -90 || lat > 90) {
+            throw new IllegalArgumentException("lat must be between -90 and 90");
+        }
+
+        if (lng < -180 || lng > 180) {
+            throw new IllegalArgumentException("lng must be between -180 and 180");
+        }
+
+        if (radius <= 0) {
+            throw new IllegalArgumentException("radius must be greater than 0");
+        }
+
+        if (radius > MAX_RADIUS) {
+            throw new IllegalArgumentException(
+                    "radius must be less than or equal to " + MAX_RADIUS
+            );
+        }
     }
 
 }
