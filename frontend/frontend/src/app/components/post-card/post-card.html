@@ -1,23 +1,23 @@
-<div class="post-card">
-  <div class="post-header">
-    <h3>{{ post.title }}</h3>
+<article class="post-list-item" role="listitem">
+    <div class="post-main">
+        <div class="post-title-row">
+            <h2>{{ post.title }}</h2>
 
-    <span class="type-badge">
-      {{ post.type }}
-    </span>
-  </div>
+            @if (post.isUrgent) {
+                <span class="urgent-badge">Dringend</span>
+            }
+        </div>
 
-  <p class="description">
-    {{ post.description }}
-  </p>
+        <p class="post-description">{{ post.description }}</p>
 
-  <div class="meta">
-    <span>{{ post.createdAt | date:'short' }}</span>
+        <div class="post-meta">
+            <span>{{ post.type }}</span>
+            <span>{{ post.postMode }}</span>
+            <span>{{ post.createdAt | date: 'dd.MM.yyyy' }}</span>
+        </div>
+    </div>
 
-    @if (post.isUrgent) {
-      <span class="urgent">
-        Dringend
-      </span>
-    }
-  </div>
-</div>
+    <div class="post-status">
+        <span>{{ post.status }}</span>
+    </div>
+</article>
