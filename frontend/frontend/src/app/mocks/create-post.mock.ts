@@ -48,6 +48,8 @@ export const housingCreatePostMock: CreatePostRequest = {
   urgentUntil: null,
   details: {
     housingType: 'APARTMENT',
-    rent: 900
+    rent: 900,
+    rooms: 2,
+    availableFrom: '2026-06-01'
   }
 };
