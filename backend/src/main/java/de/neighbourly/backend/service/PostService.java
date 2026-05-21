@@ -19,6 +19,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final SkillDetailRepository skillDetailRepository;
+    private final ProductDetailRepository productDetailRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
@@ -29,19 +30,23 @@ public class PostService {
             UserRepository userRepository,
             EventRepository eventRepository,
             SkillDetailRepository skillDetailRepository,
+            ProductDetailRepository productDetailRepository,
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
             ObjectMapper objectMapper
+
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.skillDetailRepository = skillDetailRepository;
+        this.productDetailRepository = productDetailRepository;
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
         this.objectMapper = objectMapper;
+
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
@@ -49,7 +54,6 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         validateTypeSpecificDetails(request);
-
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
@@ -62,8 +66,17 @@ public class PostService {
         post.setUpdatedAt(now);
 
         Post savedPost = postRepository.save(post);
+
         saveTypeSpecificDetails(request, savedPost);
+
         return PostMapper.toDto(savedPost);
+    }
+
+    public List<PostListItemResponseDto> getPostList() {
+        return postRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(PostMapper::toListDto)
+                .toList();
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
@@ -109,6 +122,7 @@ public class PostService {
                 throw new IllegalArgumentException("venue is required");
             }
         }
+
         if (request.getType() == PostType.SKILL) {
             SkillDetailsDto details = getSkillDetails(request);
 
@@ -126,6 +140,29 @@ public class PostService {
 
             if (details.getExperienceLevel() == null || details.getExperienceLevel().isBlank()) {
                 throw new IllegalArgumentException("experienceLevel is required");
+            }
+        }
+        if (request.getType() == PostType.PRODUCT) {
+            ProductDetailsDto details = getProductDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Product details are required");
+            }
+
+            if (details.getProductName() == null || details.getProductName().isBlank()) {
+                throw new IllegalArgumentException("productName is required");
+            }
+
+            if (details.getPrice() == null) {
+                throw new IllegalArgumentException("price is required");
+            }
+
+            if (details.getCurrency() == null || details.getCurrency().isBlank()) {
+                throw new IllegalArgumentException("currency is required");
+            }
+
+            if (details.getCondition() == null || details.getCondition().isBlank()) {
+                throw new IllegalArgumentException("condition is required");
             }
         }
     }
@@ -154,13 +191,25 @@ public class PostService {
 
             skillDetailRepository.save(skillDetail);
         }
+        if (request.getType() == PostType.PRODUCT) {
+            ProductDetailsDto details = getProductDetails(request);
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setPost(savedPost);
+            productDetail.setProductName(details.getProductName());
+            productDetail.setPrice(details.getPrice());
+            productDetail.setCurrency(details.getCurrency());
+            productDetail.setCondition(details.getCondition());
+
+            productDetailRepository.save(productDetail);
+        }
     }
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
             case EVENT -> new EventDetailsDto(null, null, null);
             case SKILL -> new SkillDetailsDto(null, null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null);
+            case PRODUCT -> new ProductDetailsDto(null, null, null, null);
             case HOUSING -> new HousingDetailsDto(null, null);
         };
     }
@@ -182,6 +231,7 @@ public class PostService {
         );
     }
 
+
     private EventDetailsDto getEventDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), EventDetailsDto.class);
     }
@@ -190,7 +240,11 @@ public class PostService {
         return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
     }
 
-    public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
+    private ProductDetailsDto getProductDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
+    }
+
+    public List<MapPostMarkerDto> getMapPostMarkers(double lat, double lng, double radius) {
 
         // Contract:
         // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
@@ -247,13 +301,5 @@ public class PostService {
         );
     }
 
-    public List<PostListItemResponseDto> getPostList() {
-        return postRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(PostMapper::toListDto)
-                .toList();
-    }
-
-
-
 }
+
