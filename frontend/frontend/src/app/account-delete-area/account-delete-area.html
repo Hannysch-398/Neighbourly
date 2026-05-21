@@ -6,19 +6,19 @@
 
     <div class="card-body">
 
-      @if (successMessage) {
+      @if (successMessage()) {
       <div class="alert alert-success">
-        {{ successMessage }}
+        {{ successMessage() }}
       </div>
       }
 
-      @if (errorMessage){
+      @if (errorMessage()){
       <div class="alert alert-danger">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
       }
 
-      @if (!isConfirming && !successMessage){
+      @if (!isConfirming && !successMessage()){
       <button class="btn btn-outline-danger" (click)="triggerConfirmation()">
         Löschen
       </button>
