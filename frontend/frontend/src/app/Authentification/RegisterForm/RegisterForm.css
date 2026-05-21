@@ -55,7 +55,6 @@ p {
   text-align: center;
   color: #555;
   margin-top: 10px;
-  font-size: 13px;
 }
 
 .tab-active {
@@ -150,6 +149,5 @@ input[type="password"]::-ms-clear {
 @media (max-width: 480px) {
   .password-rules,
   .terms-text {
-    font-size: 0.9rem;
   }
 }
