@@ -56,3 +56,4 @@ export interface PostResponse {
   status: PostStatus;
   updatedAt: string;
 }
+

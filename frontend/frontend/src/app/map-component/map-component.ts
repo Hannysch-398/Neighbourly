@@ -8,7 +8,7 @@ import {
 
 import * as L from 'leaflet';
 
-import { PostService } from '../Service/post-service';
+import { PostsService as  PostService}  from '../Service/posts.service';
 import { createMapMarkerIcon } from '../map-marker/map-marker';
 
 @Component({
@@ -133,20 +133,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.postService.getMapPosts().forEach((post) => {
-      L.marker([post.lat, post.lng], {
-        icon: createMapMarkerIcon(post.type),
-      })
-        .addTo(this.map!)
-        .bindPopup(`
-          <div class="custom-popup">
-            <strong>${post.title}</strong><br />
-            <span>${post.type}</span>
-          </div>
-        `);
-    });
-  }
+    const center = this.map.getCenter();
+    const radius = 15; // km
 
+    this.postService.getMapPostMarker(center.lat, center.lng, radius)
+      .subscribe((posts) => {
+        posts.forEach((post) => {
+          L.marker([post.lat, post.lng], {
+            icon: createMapMarkerIcon(post.type),
+          })
+            .addTo(this.map!)
+            .bindPopup(`
+            <div class="custom-popup">
+              <strong>${post.title}</strong><br />
+              <span>${post.type}</span>
+            </div>
+          `);
+        });
+      });
+  }
   ngOnDestroy(): void {
     this.map?.remove();
   }
