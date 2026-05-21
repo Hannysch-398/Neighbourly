@@ -2,8 +2,10 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 import { MapComponent } from './map-component/map-component';
+import { ChangePassword } from './change-password/change-password';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
+import { PostDetailComponent } from './post-detail/post-detail';
 import { PostsListComponent } from './posts-list/posts-list';
 
 export const routes: Routes = [
@@ -15,17 +17,25 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
+      import('./Authentification/Auth-Page/auth-page')
+        .then(m => m.AuthPageComponent),
   },
   {
-    path: 'profile/settings',
-    loadComponent: () =>
-      import('./account-settings/account-settings').then((m) => m.AccountSettings),
+    path: 'profile/me/change-password',
+    component: ChangePassword,
     canActivate: [authGuard],
   },
   {
     path: 'profile',
-    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
+    loadComponent: () =>
+      import('./profile/profile').then(m => m.Profile),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'account-delete-area',
+    loadComponent: () =>
+      import('./account-delete-area/account-delete-area')
+        .then(m => m.AccountDeleteArea),
     canActivate: [authGuard],
   },
   {
@@ -41,11 +51,15 @@ export const routes: Routes = [
     component: PostsListComponent,
   },
   {
-    path: 'verify-email',
-    component: VerifyEmail,
+    path: 'posts/create',
+    component: CreatePost
   },
   {
-    path: 'posts/create',
-    component: CreatePost,
+    path: 'posts/:id',
+    component: PostDetailComponent
   },
+  {
+    path: 'verify-email',
+    component: VerifyEmail,
+  }
 ];
