@@ -258,7 +258,6 @@ public class PostService {
         // - Radius-Filter anwenden
         // - precision=RADIUS berücksichtigen und Koordinaten maskieren
         // - isSponsored aus Modell übernehmen
-    public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
         validateGeoParameters(lat, lng, radius);
 
         return List.of(
