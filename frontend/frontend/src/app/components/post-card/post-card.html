@@ -1,0 +1,23 @@
+<div class="post-card">
+  <div class="post-header">
+    <h3>{{ post.title }}</h3>
+
+    <span class="type-badge">
+      {{ post.type }}
+    </span>
+  </div>
+
+  <p class="description">
+    {{ post.description }}
+  </p>
+
+  <div class="meta">
+    <span>{{ post.createdAt | date:'short' }}</span>
+
+    @if (post.isUrgent) {
+      <span class="urgent">
+        Dringend
+      </span>
+    }
+  </div>
+</div>

@@ -1,0 +1,37 @@
+.post-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background: white;
+  margin-bottom: 16px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.type-badge {
+  background: #f0f0f0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.description {
+  margin: 12px 0;
+  color: #555;
+}
+
+.meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #777;
+}
+
+.urgent {
+  color: red;
+  font-weight: bold;
+}
