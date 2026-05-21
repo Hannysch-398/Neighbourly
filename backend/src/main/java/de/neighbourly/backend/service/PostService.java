@@ -305,7 +305,20 @@ public class PostService {
         );
     }
 
-    private void validateGeoParameters(double lat, double lng, double radius) {
+    private void validateGeoParameters(Double lat, Double lng, Double radius) {
+
+        if (lat == null) {
+            throw new IllegalArgumentException("lat is required");
+        }
+
+        if (lng == null) {
+            throw new IllegalArgumentException("lng is required");
+        }
+
+        if (radius == null) {
+            throw new IllegalArgumentException("radius is required");
+        }
+
         if (lat < -90 || lat > 90) {
             throw new IllegalArgumentException("lat must be between -90 and 90");
         }
@@ -319,7 +332,9 @@ public class PostService {
         }
 
         if (radius > MAX_RADIUS) {
-            throw new IllegalArgumentException("radius must be less than or equal to " + MAX_RADIUS);
+            throw new IllegalArgumentException(
+                    "radius must be less than or equal to " + MAX_RADIUS
+            );
         }
     }
 
