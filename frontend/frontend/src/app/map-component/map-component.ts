@@ -135,7 +135,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     this.postService.getMapPosts().forEach((post) => {
       L.marker([post.lat, post.lng], {
-        icon: createMapMarkerIcon(post.type),
+        icon: createMapMarkerIcon(post.type, post.isUrgent),
       })
         .addTo(this.map!)
         .bindPopup(`

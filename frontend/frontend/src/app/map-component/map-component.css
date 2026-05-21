@@ -95,10 +95,9 @@
   background: rgba(255, 255, 255, 0.92);
   font-size: 20px;
   font-weight: 800;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease,
+  color 0.2s ease,
+  transform 0.2s ease;
 }
 
 :host ::ng-deep .leaflet-control-zoom a:hover {
@@ -127,9 +126,8 @@
   border-radius: 50% 50% 50% 10%;
   background: linear-gradient(135deg, #1f88d2 0%, #57c77a 70%);
   transform: rotate(-45deg);
-  box-shadow:
-    0 16px 30px rgba(29, 125, 223, 0.35),
-    0 0 0 8px rgba(123, 203, 98, 0.2);
+  box-shadow: 0 16px 30px rgba(29, 125, 223, 0.35),
+  0 0 0 8px rgba(123, 203, 98, 0.2);
   position: relative;
   animation: markerPulse 2s infinite;
   transition: transform 0.2s ease;
@@ -140,24 +138,20 @@
 }
 
 
-
 @keyframes markerPulse {
   0% {
-    box-shadow:
-      0 16px 30px rgba(29, 125, 223, 0.35),
-      0 0 0 8px rgba(123, 203, 98, 0.2);
+    box-shadow: 0 16px 30px rgba(29, 125, 223, 0.35),
+    0 0 0 8px rgba(123, 203, 98, 0.2);
   }
 
   70% {
-    box-shadow:
-      0 16px 30px rgba(29, 125, 223, 0.35),
-      0 0 0 18px rgba(123, 203, 98, 0);
+    box-shadow: 0 16px 30px rgba(29, 125, 223, 0.35),
+    0 0 0 18px rgba(123, 203, 98, 0);
   }
 
   100% {
-    box-shadow:
-      0 16px 30px rgba(29, 125, 223, 0.35),
-      0 0 0 8px rgba(123, 203, 98, 0);
+    box-shadow: 0 16px 30px rgba(29, 125, 223, 0.35),
+    0 0 0 8px rgba(123, 203, 98, 0);
   }
 }
 
@@ -215,4 +209,13 @@
   font-size: 15px;
   line-height: 1;
   transform: rotate(45deg);
+}
+
+.modern-marker.marker-urgent .marker-pin {
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+}
+
+.modern-marker.marker-urgent .marker-dot {
+  border: 3px solid #ef4444;
+  box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.22);
 }
