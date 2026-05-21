@@ -61,7 +61,7 @@ const initialData: PostBasicFormModel = {
 
 @Component({
   selector: 'app-create-post',
-  imports: [FormField, MapComponent],
+  imports: [FormField],
   templateUrl: './create-post.html',
   styleUrl: './create-post.css',
 })
@@ -96,8 +96,8 @@ export class CreatePost {
       message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
     });
 
-    required(schemaPath.type, { message: 'Bitte waehle einen Typ aus.' });
-    required(schemaPath.postMode, { message: 'Bitte waehle Angebot oder Gesuch aus.' });
+    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
+    required(schemaPath.postMode, { message: 'Bitte wähle Angebot oder Gesuch aus.' });
   });
 
   readonly payloadPreview = computed(() => this.createPayload());

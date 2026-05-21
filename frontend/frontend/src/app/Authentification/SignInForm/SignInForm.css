@@ -2,12 +2,16 @@
 label {
   display: flex;
   flex-direction: column;  /* Label oben, Input darunter */
+  width: 100%;
   margin-bottom: 15px;
   font-weight: 500;
   color: #333;
 }
 
 input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 10px;
   margin-top: 5px;         /* Abstand zwischen Label & Input */
   border-radius: 6px;
@@ -84,7 +88,7 @@ button:disabled {
 
 .icon-container {
   display: flex;
-  width: 4rem;
+  flex: 0 0 3.5rem;
   margin-top: 0;
   justify-content: center;
   align-items: center;
@@ -114,11 +118,13 @@ button:disabled {
 .password-field {
   display: flex;
   width: 100%;
+  min-width: 0;
   margin-top: 5px;
 }
 
 .password-field input {
   flex: 1;
+  min-width: 0;
   width: auto;
   margin-top: 0;
   border-radius: 6px 0 0 6px;
