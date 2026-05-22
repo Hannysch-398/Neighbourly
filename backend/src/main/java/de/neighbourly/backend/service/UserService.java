@@ -5,9 +5,11 @@ import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.dto.UserProfileDto;
 import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.entity.VerificationToken;
+import de.neighbourly.backend.exception.AccountException;
 import de.neighbourly.backend.mapper.UserMapper;
 import de.neighbourly.backend.repository.UserRepository;
 import de.neighbourly.backend.repository.VerificationTokenRepository;
+import org.hibernate.engine.spi.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ public class UserService {
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setEmailVerified(false);
-
+        newUser.setStatus("ACTIVE");
         User savedUser = userRepository.save(newUser);
 
         String tokenValue = java.util.UUID.randomUUID().toString();
@@ -75,7 +77,18 @@ public class UserService {
                     "registrieren.");
         }
 
+
+
         User user = verificationToken.getUser();
+        if ("DELETED".equals(user.getStatus())) {
+            throw new AccountException(
+                    HttpStatus.FORBIDDEN,
+                    "ACCOUNT_DELETED",
+                    "auth",
+                    "Account wurde gelöscht"
+            );
+        }
+
         user.setEmailVerified(true);
         userRepository.save(user);
 
@@ -85,18 +98,29 @@ public class UserService {
 
     public void changePasswordByEmail(String email, PasswordChangeRequest request) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User nicht gefunden"));
+                .orElseThrow(() -> new AccountException(
+                        HttpStatus.NOT_FOUND,
+                        "USER_NOT_FOUND",
+                        "auth",
+                        "User nicht gefunden"
+                ));
 
         if (Objects.equals(request.getOldPassword(), request.getNewPassword())) {
-            throw new ResponseStatusException(
+
+            throw new AccountException(
                     HttpStatus.BAD_REQUEST,
+                    "PASSWORD_EQUAL",
+                    "newPassword",
                     "Das neue Passwort darf nicht dem alten Passwort entsprechen"
             );
         }
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new ResponseStatusException(
+
+            throw new AccountException(
                     HttpStatus.BAD_REQUEST,
+                    "INVALID_OLD_PASSWORD",
+                    "oldPassword",
                     "Das alte Passwort ist falsch"
             );
         }
@@ -107,9 +131,15 @@ public class UserService {
 
     public void deleteUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User nicht gefunden"));
+                .orElseThrow(() -> new AccountException(
+                        HttpStatus.NOT_FOUND,
+                        "USER_NOT_FOUND",
+                        "auth",
+                        "User nicht gefunden"
+                ));
 
-        userRepository.delete(user);
+        user.setStatus("DELETED");
+        userRepository.save(user);
     }
 
     public User getCurrentUserByEmail(String email) {

@@ -23,4 +23,6 @@ public class User {
     private String password;
 
     private boolean emailVerified = false;
+
+    private String status;
 }

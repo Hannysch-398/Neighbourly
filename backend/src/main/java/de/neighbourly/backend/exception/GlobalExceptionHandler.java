@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import de.neighbourly.backend.exception.AccountException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,4 +107,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(AccountException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccountException(AccountException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getField(), ex.getMessage());
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                ex.getStatus().value(),
+                ex.getCode(),
+                errors
+        );
+
+        return ResponseEntity.status(ex.getStatus()).body(response);
+    }
+
+
 }
