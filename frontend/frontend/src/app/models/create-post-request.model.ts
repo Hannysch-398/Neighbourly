@@ -20,6 +20,8 @@ export interface ProductDetails {
 export interface HousingDetails {
   housingType: string;
   rent: number;
+  rooms: number;
+  availableFrom: string;
 }
 
 export type PostDetails =
