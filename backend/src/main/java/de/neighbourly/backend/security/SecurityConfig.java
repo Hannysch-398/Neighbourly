@@ -49,10 +49,15 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
 
+//                            objectMapper.writeValue(response.getWriter(), Map.of(
+//                                    "status", HttpServletResponse.SC_UNAUTHORIZED,
+//                                    "message", "Unauthorized",
+//                                    "errors", Map.of("auth", "Unauthorized")
+//                            ));
                             objectMapper.writeValue(response.getWriter(), Map.of(
-                                    "status", HttpServletResponse.SC_UNAUTHORIZED,
-                                    "message", "Unauthorized",
-                                    "errors", Map.of("auth", "Unauthorized")
+                                    "status", 401,
+                                    "message", authException.getMessage(),
+                                    "errors", Map.of("auth", "AUTH_FAILED")
                             ));
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
