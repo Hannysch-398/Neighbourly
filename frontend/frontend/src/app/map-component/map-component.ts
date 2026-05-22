@@ -8,8 +8,8 @@ import {
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../Service/posts.service';
-import { createMapMarkerIcon } from '../map-marker/map-marker';
+import {PostsService as PostService} from '../Service/posts.service';
+import {createMapMarkerIcon} from '../map-marker/map-marker';
 
 @Component({
   selector: 'app-modern-map',
@@ -18,7 +18,7 @@ import { createMapMarkerIcon } from '../map-marker/map-marker';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
   private postMarkersLayer = L.layerGroup();
@@ -28,10 +28,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
 
-  constructor(private readonly postService: PostService) {}
+  constructor(private readonly postService: PostService) {
+  }
 
   ngAfterViewInit(): void {
-    this.resolveInitialPosition().then(({ position, zoom }) => {
+    this.resolveInitialPosition().then(({position, zoom}) => {
       this.initMap(position, zoom);
     });
   }
@@ -152,11 +153,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     const center = this.map.getCenter();
-    const radius = this.getRadiusByZoom(this.map.getZoom());
+    const radius = 1000;
 
     this.postService
       .getMapPostMarker(center.lat, center.lng, radius)
       .subscribe((posts) => {
+        console.log('map posts:', posts);
         this.postMarkersLayer.clearLayers();
 
         posts.forEach((post) => {
