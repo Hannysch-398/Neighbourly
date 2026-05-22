@@ -31,6 +31,7 @@ public class CreatePostRequest {
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
     private JsonNode details;
+    private LocationDto location;
 
     public boolean getIsUrgent() {
         return isUrgent;

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
+import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 public class PostService {
 
@@ -54,8 +54,7 @@ public class PostService {
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         validateTypeSpecificDetails(request);
 
@@ -71,37 +70,23 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
+        saveLocation(request, savedPost);
         saveTypeSpecificDetails(request, savedPost);
 
         return PostMapper.toDto(savedPost);
     }
 
-    public List<PostListItemResponseDto> getPostList() {
-        return postRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(PostMapper::toListDto)
-                .toList();
-    }
-
     public PostDetailResponseDto getPostDetail(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
 
-        LocationDto location = postLocationRepository.findByPostId(postId)
-                .map(this::mapLocation)
-                .orElse(null);
+        LocationDto location = postLocationRepository.findByPostId(postId).map(this::mapLocation).orElse(null);
 
-        List<String> tags = postTagRepository.findAllByPostId(postId)
-                .stream()
-                .map(PostTag::getName)
-                .toList();
+        List<String> tags = postTagRepository.findAllByPostId(postId).stream().map(PostTag::getName).toList();
 
-        List<PostImageDto> images = postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId)
-                .stream()
-                .map(this::mapImage)
-                .toList();
+        List<PostImageDto> images =
+                postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId).stream().map(this::mapImage).toList();
 
         return PostMapper.toDetailDto(post, location, tags, images, details);
     }
@@ -250,20 +235,12 @@ public class PostService {
     }
 
     private LocationDto mapLocation(PostLocation location) {
-        return new LocationDto(
-                location.getCity(),
-                location.getDistrict(),
-                location.getLatitude(),
-                location.getLongitude()
-        );
+        return new LocationDto(location.getCity(), location.getDistrict(), location.getLatitude(),
+                location.getLongitude());
     }
 
     private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(
-                image.getId(),
-                image.getUrl(),
-                image.getAltText()
-        );
+        return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
     }
 
     private static final double MAX_RADIUS = 20_000;
@@ -277,71 +254,16 @@ public class PostService {
         return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
     }
 
+
     private ProductDetailsDto getProductDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
     }
+
 
     private HousingDetailsDto getHousingDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), HousingDetailsDto.class);
     }
 
-    public List<MapPostMarkerDto> getMapPostMarkers(double lat, double lng, double radius) {
-
-        // Contract:
-        // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
-        // - Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-        // - isSponsored ist temporär/mockbar, falls Sponsoring noch nicht im Modell existiert.
-        //
-        // TODO: Sobald echte Post-Entity/Repository verfügbar ist:
-        // - nach status=ACTIVE filtern
-        // - Radius-Filter anwenden
-        // - precision=RADIUS berücksichtigen und Koordinaten maskieren
-        // - isSponsored aus Modell übernehmen
-        validateGeoParameters(lat, lng, radius);
-
-        return List.of(
-                new MapPostMarkerDto(
-                        1L,
-                        "EVENT",
-                        "Nachbarschaftstreffen",
-                        52.52,
-                        13.405,
-                        true,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        2L,
-                        "SKILL",
-                        "Biete Fahrradreparatur",
-                        52.518,
-                        13.407,
-                        false,
-                        true,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        3L,
-                        "PRODUCT",
-                        "Werkzeug zu verschenken",
-                        52.521,
-                        13.402,
-                        false,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        4L,
-                        "HOUSING",
-                        "Zimmer kurzfristig gesucht",
-                        52.519,
-                        13.41,
-                        true,
-                        false,
-                        Instant.now()
-                )
-        );
-    }
 
     private void validateGeoParameters(Double lat, Double lng, Double radius) {
 
@@ -375,6 +297,34 @@ public class PostService {
             );
         }
     }
+
+
+    public List<PostListItemResponseDto> getPostList() {
+        return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
+    }
+
+    public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
+        validateGeoParameters(lat,lng,radius);
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
+    }
+
+    private void saveLocation(CreatePostRequest request, Post savedPost) {
+        if (request.getLocation() == null) {
+            return;
+        }
+
+        LocationDto dto = request.getLocation();
+
+        PostLocation location = new PostLocation();
+        location.setPost(savedPost);
+        location.setCity(dto.getCity());
+        location.setDistrict(dto.getDistrict());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+
+        postLocationRepository.save(location);
+    }
+
 
 }
 
