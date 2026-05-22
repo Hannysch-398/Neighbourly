@@ -4,11 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
+import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +23,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
     private final ObjectMapper objectMapper;
+    private final HousingDetailRepository housingDetailRepository;
 
     public PostService(
             PostRepository postRepository,
@@ -34,7 +34,9 @@ public class PostService {
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            HousingDetailRepository housingDetailRepository
+
 
     ) {
         this.postRepository = postRepository;
@@ -45,13 +47,13 @@ public class PostService {
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
+        this.housingDetailRepository = housingDetailRepository;
         this.objectMapper = objectMapper;
 
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         validateTypeSpecificDetails(request);
 
@@ -67,6 +69,7 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
+        saveLocation(request, savedPost);
         saveTypeSpecificDetails(request, savedPost);
 
         return PostMapper.toDto(savedPost);
@@ -80,24 +83,16 @@ public class PostService {
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
 
-        LocationDto location = postLocationRepository.findByPostId(postId)
-                .map(this::mapLocation)
-                .orElse(null);
+        LocationDto location = postLocationRepository.findByPostId(postId).map(this::mapLocation).orElse(null);
 
-        List<String> tags = postTagRepository.findAllByPostId(postId)
-                .stream()
-                .map(PostTag::getName)
-                .toList();
+        List<String> tags = postTagRepository.findAllByPostId(postId).stream().map(PostTag::getName).toList();
 
-        List<PostImageDto> images = postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId)
-                .stream()
-                .map(this::mapImage)
-                .toList();
+        List<PostImageDto> images =
+                postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId).stream().map(this::mapImage).toList();
 
         return PostMapper.toDetailDto(post, location, tags, images, details);
     }
@@ -165,6 +160,25 @@ public class PostService {
                 throw new IllegalArgumentException("condition is required");
             }
         }
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Housing details are required");
+            }
+
+            if (details.getRent() == null) {
+                throw new IllegalArgumentException("rent is required");
+            }
+
+            if (details.getRooms() == null) {
+                throw new IllegalArgumentException("rooms are required");
+            }
+
+            if (details.getAvailableFrom() == null) {
+                throw new IllegalArgumentException("availableFrom is required");
+            }
+        }
     }
 
     private void saveTypeSpecificDetails(CreatePostRequest request, Post savedPost) {
@@ -203,6 +217,18 @@ public class PostService {
 
             productDetailRepository.save(productDetail);
         }
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            HousingDetail housingDetail = new HousingDetail();
+            housingDetail.setPost(savedPost);
+            housingDetail.setHousingType(details.getHousingType());
+            housingDetail.setRent(details.getRent());
+            housingDetail.setRooms(details.getRooms());
+            housingDetail.setAvailableFrom(details.getAvailableFrom());
+
+            housingDetailRepository.save(housingDetail);
+        }
     }
 
     private Object buildDetailsBlock(Post post) {
@@ -210,26 +236,20 @@ public class PostService {
             case EVENT -> new EventDetailsDto(null, null, null);
             case SKILL -> new SkillDetailsDto(null, null, null);
             case PRODUCT -> new ProductDetailsDto(null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null);
+            case HOUSING -> new HousingDetailsDto(null, null, null, null);
         };
     }
 
     private LocationDto mapLocation(PostLocation location) {
-        return new LocationDto(
-                location.getCity(),
-                location.getDistrict(),
-                location.getLatitude(),
-                location.getLongitude()
-        );
+        return new LocationDto(location.getCity(), location.getDistrict(), location.getLatitude(),
+                location.getLongitude());
     }
 
     private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(
-                image.getId(),
-                image.getUrl(),
-                image.getAltText()
-        );
+        return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
     }
+
+    private static final double MAX_RADIUS = 20_000;
 
 
     private EventDetailsDto getEventDetails(CreatePostRequest request) {
@@ -244,62 +264,72 @@ public class PostService {
         return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
     }
 
-    public List<MapPostMarkerDto> getMapPostMarkers(double lat, double lng, double radius) {
 
-        // Contract:
-        // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
-        // - Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-        // - isSponsored ist temporär/mockbar, falls Sponsoring noch nicht im Modell existiert.
-        //
-        // TODO: Sobald echte Post-Entity/Repository verfügbar ist:
-        // - nach status=ACTIVE filtern
-        // - Radius-Filter anwenden
-        // - precision=RADIUS berücksichtigen und Koordinaten maskieren
-        // - isSponsored aus Modell übernehmen
-
-        return List.of(
-                new MapPostMarkerDto(
-                        1L,
-                        "EVENT",
-                        "Nachbarschaftstreffen",
-                        52.52,
-                        13.405,
-                        true,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        2L,
-                        "SKILL",
-                        "Biete Fahrradreparatur",
-                        52.518,
-                        13.407,
-                        false,
-                        true,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        3L,
-                        "PRODUCT",
-                        "Werkzeug zu verschenken",
-                        52.521,
-                        13.402,
-                        false,
-                        false,
-                        Instant.now()
-                ),
-                new MapPostMarkerDto(
-                        4L,
-                        "HOUSING",
-                        "Zimmer kurzfristig gesucht",
-                        52.519,
-                        13.41,
-                        true,
-                        false,
-                        Instant.now()
-                )
-        );
+    private HousingDetailsDto getHousingDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), HousingDetailsDto.class);
     }
+
+
+    private void validateGeoParameters(Double lat, Double lng, Double radius) {
+
+        if (lat == null) {
+            throw new IllegalArgumentException("lat is required");
+        }
+
+        if (lng == null) {
+            throw new IllegalArgumentException("lng is required");
+        }
+
+        if (radius == null) {
+            throw new IllegalArgumentException("radius is required");
+        }
+
+        if (lat < -90 || lat > 90) {
+            throw new IllegalArgumentException("lat must be between -90 and 90");
+        }
+
+        if (lng < -180 || lng > 180) {
+            throw new IllegalArgumentException("lng must be between -180 and 180");
+        }
+
+        if (radius <= 0) {
+            throw new IllegalArgumentException("radius must be greater than 0");
+        }
+
+        if (radius > MAX_RADIUS) {
+            throw new IllegalArgumentException(
+                    "radius must be less than or equal to " + MAX_RADIUS
+            );
+        }
+    }
+
+
+    public List<PostListItemResponseDto> getPostList() {
+        return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
+    }
+
+    public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
+        validateGeoParameters(lat,lng,radius);
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
+    }
+
+    private void saveLocation(CreatePostRequest request, Post savedPost) {
+        if (request.getLocation() == null) {
+            return;
+        }
+
+        LocationDto dto = request.getLocation();
+
+        PostLocation location = new PostLocation();
+        location.setPost(savedPost);
+        location.setCity(dto.getCity());
+        location.setDistrict(dto.getDistrict());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+
+        postLocationRepository.save(location);
+    }
+
 
 }
 

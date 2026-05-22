@@ -15,13 +15,17 @@ export class Navbar {
     this.authService.isLoggedIn() ? '/profile' : '/auth'
   );
 
+  readonly createPostRoute = computed(() =>
+    this.authService.isLoggedIn() ? '/posts/create' : '/auth'
+  );
+
   readonly accountAriaLabel = computed(() =>
     this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen'
   );
 
   readonly createPostAriaLabel = computed(() =>
     this.authService.isLoggedIn()
-      ? 'Zum Profil gehen'
+      ? 'Beitrag erstellen'
       : 'Zur Anmeldung gehen und Beitrag erstellen'
   );
 }

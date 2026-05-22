@@ -39,7 +39,13 @@ public class GlobalExceptionHandler {
         String message = ex.getMessage() != null ? ex.getMessage() : "Invalid request";
         String field = "request";
 
-        if (message.contains("urgentUntil")) {
+        if (message.contains("lat")) {
+            field = "lat";
+        } else if (message.contains("lng")) {
+            field = "lng";
+        } else if (message.contains("radius")) {
+            field = "radius";
+        } else if (message.contains("urgentUntil")) {
             field = "urgentUntil";
         } else if (message.contains("venue")) {
             field = "venue";
@@ -60,7 +66,6 @@ public class GlobalExceptionHandler {
         } else if (message.contains("Product details")) {
             field = "details";
         }
-
         errors.put(field, message);
 
         ErrorResponseDto response = new ErrorResponseDto(

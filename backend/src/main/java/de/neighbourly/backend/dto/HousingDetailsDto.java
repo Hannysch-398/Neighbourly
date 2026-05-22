@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -12,4 +13,6 @@ import java.math.BigDecimal;
 public class HousingDetailsDto {
     private String housingType;
     private BigDecimal rent;
+    private Integer rooms;
+    private LocalDate availableFrom;
 }
