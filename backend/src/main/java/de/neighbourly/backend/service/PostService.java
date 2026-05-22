@@ -23,6 +23,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
     private final ObjectMapper objectMapper;
+    private final HousingDetailRepository housingDetailRepository;
 
     public PostService(
             PostRepository postRepository,
@@ -33,7 +34,9 @@ public class PostService {
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            HousingDetailRepository housingDetailRepository
+
 
     ) {
         this.postRepository = postRepository;
@@ -44,7 +47,9 @@ public class PostService {
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
+        this.housingDetailRepository = housingDetailRepository;
         this.objectMapper = objectMapper;
+
 
     }
 
@@ -149,6 +154,25 @@ public class PostService {
                 throw new IllegalArgumentException("condition is required");
             }
         }
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Housing details are required");
+            }
+
+            if (details.getRent() == null) {
+                throw new IllegalArgumentException("rent is required");
+            }
+
+            if (details.getRooms() == null) {
+                throw new IllegalArgumentException("rooms are required");
+            }
+
+            if (details.getAvailableFrom() == null) {
+                throw new IllegalArgumentException("availableFrom is required");
+            }
+        }
     }
 
     private void saveTypeSpecificDetails(CreatePostRequest request, Post savedPost) {
@@ -187,6 +211,18 @@ public class PostService {
 
             productDetailRepository.save(productDetail);
         }
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            HousingDetail housingDetail = new HousingDetail();
+            housingDetail.setPost(savedPost);
+            housingDetail.setHousingType(details.getHousingType());
+            housingDetail.setRent(details.getRent());
+            housingDetail.setRooms(details.getRooms());
+            housingDetail.setAvailableFrom(details.getAvailableFrom());
+
+            housingDetailRepository.save(housingDetail);
+        }
     }
 
     private Object buildDetailsBlock(Post post) {
@@ -194,7 +230,7 @@ public class PostService {
             case EVENT -> new EventDetailsDto(null, null, null);
             case SKILL -> new SkillDetailsDto(null, null, null);
             case PRODUCT -> new ProductDetailsDto(null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null);
+            case HOUSING -> new HousingDetailsDto(null, null, null, null);
         };
     }
 
@@ -222,6 +258,12 @@ public class PostService {
     private ProductDetailsDto getProductDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
     }
+
+
+    private HousingDetailsDto getHousingDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), HousingDetailsDto.class);
+    }
+
 
     private void validateGeoParameters(Double lat, Double lng, Double radius) {
 
@@ -256,63 +298,6 @@ public class PostService {
         }
     }
 
-
-//    public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
-//
-//        // Contract:
-//        // - Es werden nur Posts mit status=ACTIVE zurückgegeben.
-//        // - Bei precision=RADIUS werden lat/lng nur maskiert geliefert.
-//        // - isSponsored ist temporär/mockbar, falls Sponsoring noch nicht im Modell existiert.
-//        //
-//        // TODO: Sobald echte Post-Entity/Repository verfügbar ist:
-//        // - nach status=ACTIVE filtern
-//        // - Radius-Filter anwenden
-//        // - precision=RADIUS berücksichtigen und Koordinaten maskieren
-//        // - isSponsored aus Modell übernehmen
-//
-//        return List.of(
-//                new MapPostMarkerDto(
-//                        1L,
-//                        "EVENT",
-//                        "Nachbarschaftstreffen",
-//                        52.52,
-//                        13.405,
-//                        true,
-//                        false,
-//                        Instant.now()
-//                ),
-//                new MapPostMarkerDto(
-//                        2L,
-//                        "SKILL",
-//                        "Biete Fahrradreparatur",
-//                        52.518,
-//                        13.407,
-//                        false,
-//                        true,
-//                        Instant.now()
-//                ),
-//                new MapPostMarkerDto(
-//                        3L,
-//                        "PRODUCT",
-//                        "Werkzeug zu verschenken",
-//                        52.521,
-//                        13.402,
-//                        false,
-//                        false,
-//                        Instant.now()
-//                ),
-//                new MapPostMarkerDto(
-//                        4L,
-//                        "HOUSING",
-//                        "Zimmer kurzfristig gesucht",
-//                        52.519,
-//                        13.41,
-//                        true,
-//                        false,
-//                        Instant.now()
-//                )
-//        );
-//    }
 
     public List<PostListItemResponseDto> getPostList() {
         return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
