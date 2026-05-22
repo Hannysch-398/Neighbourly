@@ -151,4 +151,27 @@ public class UserService {
         User user = getCurrentUserByEmail(email);
         return UserMapper.toDto(user);
     }
+
+    public void validateLoginAllowed(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Invalid credentials"
+                ));
+
+        if ("DELETED".equals(user.getStatus())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Account wurde gelöscht"
+            );
+        }
+
+        if ("DISABLED".equals(user.getStatus())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Account ist deaktiviert"
+            );
+        }
+    }
 }
