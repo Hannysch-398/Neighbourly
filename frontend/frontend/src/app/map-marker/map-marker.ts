@@ -20,7 +20,7 @@ export function createMapMarkerIcon(type?: MapPostMarkerType, isUrgent = false):
   const icon = getMarkerIcon(type);
 
   return L.divIcon({
-    className: `modern-marker ${type ? `marker-${type.toLowerCase()}` : 'marker-default'}${isUrgent ? 'marker-urgent' : ''}`,
+    className: `modern-marker ${type ? `marker-${type.toLowerCase()}` : 'marker-default'} ${isUrgent ? 'marker-urgent' : ''}`,
     html: `
       <div class="marker-pin">
         <div class="marker-dot">
