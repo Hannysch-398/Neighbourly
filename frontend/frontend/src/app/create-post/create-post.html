@@ -62,12 +62,12 @@
         <div class="details-grid">
           <label class="field">
             <span>Start</span>
-            <input type="datetime-local" [formField]="postForm.eventStartDate" />
+            <input type="datetime-local" [formField]="postForm.eventStartDate"/>
           </label>
 
           <label class="field">
             <span>Ende</span>
-            <input type="datetime-local" [formField]="postForm.eventEndDate" />
+            <input type="datetime-local" [formField]="postForm.eventEndDate"/>
           </label>
 
           <label class="field span-two">
@@ -80,56 +80,55 @@
           </label>
         </div>
       }
-
       @case ('SKILL') {
         <div class="details-grid">
           <label class="field">
             <span>Skill</span>
-            <input type="text" [formField]="postForm.skillName" placeholder="z. B. Fahrradreparatur" />
+            <input type="text" [formField]="postForm.skillName" placeholder="z. B. Fahrradreparatur"/>
           </label>
 
           <label class="field">
             <span>Erfahrungslevel</span>
-            <input type="text" [formField]="postForm.experienceLevel" placeholder="z. B. Fortgeschritten" />
+            <input type="text" [formField]="postForm.experienceLevel" placeholder="z. B. Fortgeschritten"/>
           </label>
         </div>
       }
-
       @case ('PRODUCT') {
         <div class="details-grid">
           <label class="field">
             <span>Produktname</span>
-            <input type="text" [formField]="postForm.productName" placeholder="z. B. Akkuschrauber" />
+            <input type="text" [formField]="postForm.productName" placeholder="z. B. Akkuschrauber"/>
           </label>
 
           <label class="field">
             <span>Preis</span>
-            <input type="number" step="0.01" [formField]="postForm.price" placeholder="0.00" />
+            <input type="number" step="0.01" [formField]="postForm.price" placeholder="0.00"/>
           </label>
         </div>
       }
-
       @case ('HOUSING') {
         <div class="details-grid">
           <label class="field">
             <span>Wohnart</span>
-            <input type="text" [formField]="postForm.housingType" placeholder="z. B. WG-Zimmer" />
+            <input type="text" [formField]="postForm.housingType" placeholder="z. B. WG-Zimmer"/>
           </label>
 
           <label class="field">
             <span>Miete</span>
-            <input type="number" step="0.01" [formField]="postForm.rent" placeholder="650.00" />
+            <input type="number" step="0.01" [formField]="postForm.rent" placeholder="650.00"/>
           </label>
         </div>
       }
     }
 
     @if (shouldShowDetailsError()) {
-      <small class="form-error">Bitte fuelle die Detailfelder fuer diesen Beitragstyp aus.</small>
+      <small class="form-error">
+        Bitte fülle alle Pflichtfelder für den ausgewählten Beitragstyp aus.
+      </small>
     }
 
     <label class="urgent-toggle">
-      <input type="checkbox" [formField]="postForm.isUrgent" />
+      <input type="checkbox" [formField]="postForm.isUrgent"/>
       <span>
         <strong>Dringend</strong>
         <small>Aktivieren, wenn der Beitrag zeitkritisch ist.</small>
@@ -151,7 +150,7 @@
     }
 
     <label class="location-toggle">
-      <input type="checkbox" [formField]="postForm.hasLocation" />
+      <input type="checkbox" [formField]="postForm.hasLocation"/>
       <span>
         <strong>Location</strong>
         <small>Aktivieren, wenn der Beitrag einen Ort haben soll.</small>
@@ -175,7 +174,7 @@
 
         <label class="field">
           <span>Stadtteil</span>
-          <input type="text" [formField]="postForm.district" placeholder="z. B. Kreuzberg" />
+          <input type="text" [formField]="postForm.district" placeholder="z. B. Kreuzberg"/>
         </label>
 
         <label class="field span-two">
@@ -191,7 +190,7 @@
 
     <div class="form-actions">
       <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
-      <button type="submit" class="primary-button">Speichern</button>
+      <button type="submit" class="primary-button" [disabled]="submitted() && !isFormValid()">Speichern</button>
     </div>
 
     @if (savedPayload()) {
