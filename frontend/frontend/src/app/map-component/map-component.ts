@@ -8,7 +8,7 @@ import {
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../Service/posts.service';
+import { PostsService as PostService } from '../service/posts.service';
 import { createMapMarkerIcon } from '../map-marker/map-marker';
 
 @Component({
