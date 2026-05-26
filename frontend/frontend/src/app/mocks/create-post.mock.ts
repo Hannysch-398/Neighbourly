@@ -3,7 +3,7 @@ import { CreatePostRequest } from '../models/create-post-request.model';
 const mockLocation = {
   lat: 53.0793,
   lng: 8.8017,
-  precision: 'APPROXIMATE',
+  precision: 'EXACT / RADIUS',
   radius_m: 500
 };
 
