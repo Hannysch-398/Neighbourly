@@ -2,7 +2,7 @@ import {Component, computed, inject, input, signal} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
 import {form, FormField, pattern, required} from '@angular/forms/signals';
 import {GenericButton} from '../components/generic-button/generic-button';
-import {UserService} from '../Service/user-service';
+import {UserService} from '../service/user-service';
 import {ActivatedRoute} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 
