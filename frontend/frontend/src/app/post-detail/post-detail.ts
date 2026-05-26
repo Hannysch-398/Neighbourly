@@ -19,7 +19,7 @@ interface PostDetailState {
 
 @Component({
   selector: 'app-post-detail',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css',
 })

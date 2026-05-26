@@ -1,6 +1,5 @@
 <section class="post-detail-page">
   <header class="post-detail-header">
-    <a class="back-link" routerLink="/map">Zur Übersicht</a>
 
     <div class="title-group">
       <p class="eyebrow">{{ typeLabel() }}</p>
@@ -34,7 +33,7 @@
       @if (post(); as post) {
         <p class="description">{{ post.description }}</p>
       } @else {
-        <p class="placeholder">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
+        <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
       }
     </section>
 
@@ -47,7 +46,7 @@
           }
         </div>
       } @else {
-        <p class="placeholder">Keine Tags hinterlegt.</p>
+        <p class="fallback-text">Keine Tags hinterlegt.</p>
       }
     </section>
 
@@ -88,7 +87,7 @@
             }
           </dl>
         } @else {
-          <p class="placeholder">Keine typspezifischen Daten hinterlegt.</p>
+          <p class="fallback-text">Keine typspezifischen Daten hinterlegt.</p>
         }
       </section>
 
@@ -116,7 +115,7 @@
             }
           </dl>
         } @else {
-          <p class="placeholder">Statusdaten werden nach dem Laden angezeigt.</p>
+          <p class="fallback-text">Statusdaten werden nach dem Laden angezeigt.</p>
         }
       </section>
     </aside>

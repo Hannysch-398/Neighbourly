@@ -12,17 +12,6 @@
   margin-bottom: 1.5rem;
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.5rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid #d7dde3;
-  border-radius: 8px;
-  background: #ffffff;
-  font-weight: 600;
-}
-
 .title-group {
   flex: 1;
 }
@@ -118,7 +107,7 @@ h2 {
   white-space: pre-wrap;
 }
 
-.placeholder {
+.fallback-text {
   margin-bottom: 0;
   color: #74808b;
 }
