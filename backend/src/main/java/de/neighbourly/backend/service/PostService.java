@@ -8,6 +8,7 @@ import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -74,13 +75,6 @@ public class PostService {
         saveTypeSpecificDetails(request, savedPost);
 
         return PostMapper.toDto(savedPost);
-    }
-
-    public List<PostListItemResponseDto> getPostList() {
-        return postRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(PostMapper::toListDto)
-                .toList();
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
@@ -310,7 +304,7 @@ public class PostService {
     }
 
     public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
-        validateGeoParameters(lat,lng,radius);
+        validateGeoParameters(lat, lng, radius);
         return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
     }
 

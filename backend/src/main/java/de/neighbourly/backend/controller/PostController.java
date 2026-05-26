@@ -49,7 +49,7 @@ public class PostController {
     @GetMapping("/marker")
     public ResponseEntity<List<MapPostMarkerDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
                                                               @RequestParam double radius) {
-        return ResponseEntity.ok(postService.getMapPostMarkers(lat, lng, radius));
+        return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 
 }
