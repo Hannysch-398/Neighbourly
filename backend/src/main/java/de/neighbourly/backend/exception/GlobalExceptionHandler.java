@@ -3,6 +3,7 @@ package de.neighbourly.backend.exception;
 import de.neighbourly.backend.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -92,6 +93,20 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(response, ex.getStatusCode());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("auth", "E-Mail oder Passwort ist falsch.");
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Invalid credentials",
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(Exception.class)
