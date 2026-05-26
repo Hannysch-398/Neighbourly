@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 
 import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
-import { PostService } from '../services/post.service';
+import { PostsService } from '../Service/posts.service';
 
 interface DetailEntry {
   label: string;
@@ -25,7 +25,7 @@ interface PostDetailState {
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly postService = inject(PostService);
+  private readonly postService = inject(PostsService);
   private readonly destroy$ = new Subject<void>();
 
   protected readonly post = signal<PostDetailResponse | null>(null);

@@ -4,6 +4,8 @@ import { catchError, Observable, of } from 'rxjs';
 
 import { PostResponse } from '../models/post.model';
 import { postListMock } from '../mocks/post.mock';
+import { postDetailMock } from  '../mocks/post-detail.mock'
+import { PostDetailResponse } from '../models/post-detail.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,5 +23,11 @@ export class PostsService {
     return this.http.get<PostResponse[]>(this.apiUrl).pipe(
       catchError(() => of(postListMock))
     );
+  }
+  getPostById(id: number): Observable<PostDetailResponse> {
+    if (this.useMockPosts) {
+      return of(postDetailMock);
+    }
+    return this.http.get<PostDetailResponse>(`${this.apiUrl}/${id}`);
   }
 }
