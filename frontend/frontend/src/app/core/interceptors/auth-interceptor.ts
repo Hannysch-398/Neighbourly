@@ -1,8 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpErrorResponse, HttpStatusCode, HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import {Injectable} from '@angular/core';
+import {
+  HttpErrorResponse,
+  HttpStatusCode,
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent
+} from '@angular/common/http';
+import {Observable, catchError, throwError} from 'rxjs';
+import {Router} from '@angular/router';
+import {AuthService} from '../../service/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -11,7 +18,8 @@ export class AuthInterceptor implements HttpInterceptor {
   private authRedirectInProgress = false;
   private forbiddenRedirectInProgress = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const isAuthRequest = req.url.includes(this.authApiPath);
@@ -58,7 +66,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handleForbidden(): void {
-    if(this.isOnAccessDeniedPage() || this.forbiddenRedirectInProgress) {
+    if (this.isOnAccessDeniedPage() || this.forbiddenRedirectInProgress) {
       return;
     }
 
