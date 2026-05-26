@@ -2,6 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { form, FormField, maxLength, required } from '@angular/forms/signals';
 import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
 import { MapComponent } from '../map-component/map-component';
+import { PostsService } from '../Service/posts.service';
 
 type PostTypeOption = {
   value: PostType;
@@ -73,6 +74,8 @@ export class CreatePost {
   readonly savedPayload = signal<CreatePostRequest | null>(null);
   readonly postModel = signal<PostBasicFormModel>({ ...initialData });
 
+  constructor(private postsService: PostsService) {}
+
   readonly postTypeOptions: PostTypeOption[] = [
     { value: 'EVENT', label: 'Veranstaltung' },
     { value: 'SKILL', label: 'Hilfe / Skill' },
@@ -115,17 +118,42 @@ export class CreatePost {
   submitForm() {
     this.submitted.set(true);
     this.savedPayload.set(null);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (!this.isFormValid()) {
       return;
     }
 
-    this.savedPayload.set(this.createPayload());
+    const payload = this.createPayload();
+    this.isLoading.set(true);
+
+    this.postsService.createPost(payload).subscribe({
+      next: () => {
+        this.savedPayload.set(payload);
+        this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+
+        const backendMessage = err?.error?.errors?.request;
+
+        this.errorMessage.set(
+          backendMessage ||
+          'Beitrag konnte nicht gespeichert werden. Bitte versuche es erneut.'
+        );
+
+        this.isLoading.set(false);
+      },
+    });
   }
 
   resetForm() {
     this.submitted.set(false);
     this.savedPayload.set(null);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
     this.postModel.set({ ...initialData });
   }
 

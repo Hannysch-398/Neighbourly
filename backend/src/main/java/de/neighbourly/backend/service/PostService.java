@@ -10,6 +10,7 @@ import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
@@ -52,7 +53,7 @@ public class PostService {
 
 
     }
-
+    @Transactional
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -201,6 +202,7 @@ public class PostService {
             skillDetailRepository.save(skillDetail);
         }
         if (request.getType() == PostType.PRODUCT) {
+
             ProductDetailsDto details = getProductDetails(request);
 
             ProductDetail productDetail = new ProductDetail();
