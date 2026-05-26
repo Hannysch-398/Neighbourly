@@ -1,7 +1,7 @@
-import { Component, computed, signal } from '@angular/core';
-import { form, FormField, maxLength, required } from '@angular/forms/signals';
-import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
-import { MapComponent } from '../map-component/map-component';
+import {Component, computed, signal} from '@angular/core';
+import {form, FormField, maxLength, required} from '@angular/forms/signals';
+import {CreatePostRequest, PostMode, PostType} from '../models/post.model';
+import {PostsService} from '../service/posts.service';
 
 type PostTypeOption = {
   value: PostType;
@@ -27,13 +27,18 @@ type PostBasicFormModel = {
   eventStartDate: string;
   eventEndDate: string;
   eventVenue: string;
-  skillName: string;
   experienceLevel: string;
   productName: string;
   price: string;
   housingType: string;
   rent: string;
   showLargeMap: boolean;
+  skillTags: string;
+  availabilityNote: string;
+  currency: string;
+  condition: string;
+  rooms: string;
+  availableFrom: string;
 };
 
 const initialData: PostBasicFormModel = {
@@ -50,13 +55,18 @@ const initialData: PostBasicFormModel = {
   eventStartDate: '',
   eventEndDate: '',
   eventVenue: '',
-  skillName: '',
   experienceLevel: '',
   productName: '',
   price: '',
   housingType: '',
   rent: '',
   showLargeMap: false,
+  skillTags: '',
+  availabilityNote: '',
+  currency: 'EUR',
+  condition: '',
+  rooms: '',
+  availableFrom: '',
 };
 
 @Component({
@@ -71,33 +81,35 @@ export class CreatePost {
   readonly successMessage = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
-  readonly postModel = signal<PostBasicFormModel>({ ...initialData });
+  readonly postModel = signal<PostBasicFormModel>({...initialData});
+
+  constructor(private postsService: PostsService) {}
 
   readonly postTypeOptions: PostTypeOption[] = [
-    { value: 'EVENT', label: 'Veranstaltung' },
-    { value: 'SKILL', label: 'Hilfe / Skill' },
-    { value: 'PRODUCT', label: 'Produkt' },
-    { value: 'HOUSING', label: 'Wohnen' },
+    {value: 'EVENT', label: 'Veranstaltung'},
+    {value: 'SKILL', label: 'Hilfe / Skill'},
+    {value: 'PRODUCT', label: 'Produkt'},
+    {value: 'HOUSING', label: 'Wohnen'},
   ];
 
   readonly postModeOptions: PostModeOption[] = [
-    { value: 'OFFER', label: 'Angebot' },
-    { value: 'REQUEST', label: 'Gesuch' },
+    {value: 'OFFER', label: 'Angebot'},
+    {value: 'REQUEST', label: 'Gesuch'},
   ];
 
   readonly postForm = form(this.postModel, (schemaPath) => {
-    required(schemaPath.title, { message: 'Bitte gib einen Titel ein.' });
+    required(schemaPath.title, {message: 'Bitte gib einen Titel ein.'});
     maxLength(schemaPath.title, 120, {
       message: 'Der Titel darf maximal 120 Zeichen lang sein.',
     });
 
-    required(schemaPath.description, { message: 'Bitte gib eine Beschreibung ein.' });
+    required(schemaPath.description, {message: 'Bitte gib eine Beschreibung ein.'});
     maxLength(schemaPath.description, 2000, {
       message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
     });
 
-    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
-    required(schemaPath.postMode, { message: 'Bitte wähle Angebot oder Gesuch aus.' });
+    required(schemaPath.type, {message: 'Bitte wähle einen Typ aus.'});
+    required(schemaPath.postMode, {message: 'Bitte wähle Angebot oder Gesuch aus.'});
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
@@ -115,18 +127,41 @@ export class CreatePost {
   submitForm() {
     this.submitted.set(true);
     this.savedPayload.set(null);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (!this.isFormValid()) {
       return;
     }
 
-    this.savedPayload.set(this.createPayload());
+    const payload = this.createPayload();
+
+    this.isLoading.set(true);
+
+    this.postsService.createPost(payload).subscribe({
+      next: () => {
+        this.savedPayload.set(payload);
+        this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.errorMessage.set(
+          err?.error?.errors?.request ||
+          err?.error?.message ||
+          'Beitrag konnte nicht erstellt werden.'
+        );
+
+        this.isLoading.set(false);
+      },
+    });
   }
 
   resetForm() {
     this.submitted.set(false);
     this.savedPayload.set(null);
-    this.postModel.set({ ...initialData });
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+    this.postModel.set({...initialData});
   }
 
   shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode') {
@@ -157,12 +192,12 @@ export class CreatePost {
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
       location: value.hasLocation
         ? {
-            city: value.city.trim(),
-            district: value.district.trim() || null,
-            address: value.address.trim() || null,
-            latitude: null,
-            longitude: null,
-          }
+          city: value.city.trim(),
+          district: value.district.trim() || null,
+          address: value.address.trim() || null,
+          latitude: null,
+          longitude: null,
+        }
         : null,
       details: this.createDetails(),
     };
@@ -174,12 +209,29 @@ export class CreatePost {
     switch (value.type) {
       case 'EVENT':
         return !!value.eventStartDate && !!value.eventEndDate && !!value.eventVenue.trim();
+
       case 'SKILL':
-        return !!value.skillName.trim() && !!value.experienceLevel.trim();
+        return (
+          !!value.skillTags.trim() &&
+          !!value.availabilityNote.trim() &&
+          !!value.experienceLevel.trim()
+        );
+
       case 'PRODUCT':
-        return !!value.productName.trim() && !!value.price;
+        return (
+          !!value.productName.trim() &&
+          !!value.price &&
+          !!value.currency.trim() &&
+          !!value.condition.trim()
+        );
+
       case 'HOUSING':
-        return !!value.housingType.trim() && !!value.rent;
+        return (
+          !!value.housingType.trim() &&
+          !!value.rent &&
+          !!value.rooms &&
+          !!value.availableFrom
+        );
     }
   }
 
@@ -193,20 +245,31 @@ export class CreatePost {
           endDate: value.eventEndDate,
           venue: value.eventVenue.trim(),
         };
+
       case 'SKILL':
         return {
-          skillName: value.skillName.trim(),
+          skillTags: value.skillTags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+          availabilityNote: value.availabilityNote.trim(),
           experienceLevel: value.experienceLevel.trim(),
         };
+
       case 'PRODUCT':
         return {
           productName: value.productName.trim(),
           price: this.toOptionalNumber(value.price),
+          currency: value.currency.trim(),
+          condition: value.condition.trim(),
         };
+
       case 'HOUSING':
         return {
           housingType: value.housingType.trim(),
           rent: this.toOptionalNumber(value.rent),
+          rooms: this.toOptionalNumber(value.rooms),
+          availableFrom: value.availableFrom,
         };
     }
   }

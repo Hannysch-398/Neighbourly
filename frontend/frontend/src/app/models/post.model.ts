@@ -17,18 +17,23 @@ export interface EventDetails {
 }
 
 export interface SkillDetails {
-  skillName: string;
+  skillTags: string[];
+  availabilityNote: string;
   experienceLevel: string;
 }
 
 export interface ProductDetails {
   productName: string;
   price: number | null;
+  currency: string;
+  condition: string;
 }
 
 export interface HousingDetails {
   housingType: string;
   rent: number | null;
+  rooms: number | null;
+  availableFrom: string;
 }
 
 export type PostDetails = EventDetails | SkillDetails | ProductDetails | HousingDetails;
