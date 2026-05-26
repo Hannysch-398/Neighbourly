@@ -8,8 +8,8 @@ import {
 
 import * as L from 'leaflet';
 
-import {PostsService as PostService} from '../Service/posts.service';
-import {createMapMarkerIcon} from '../map-marker/map-marker';
+import { PostsService as PostService } from '../service/posts.service';
+import { createMapMarkerIcon } from '../map-marker/map-marker';
 
 @Component({
   selector: 'app-modern-map',
