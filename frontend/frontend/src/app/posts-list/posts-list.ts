@@ -33,7 +33,7 @@ export class PostsListComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Die Beitrage konnten nicht geladen werden.');
+        this.errorMessage.set('Die Beiträge konnten nicht geladen werden.');
         this.isLoading.set(false);
       },
     });
