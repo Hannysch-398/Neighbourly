@@ -48,8 +48,8 @@ public class PostService {
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
-        this.housingDetailRepository = housingDetailRepository;
         this.objectMapper = objectMapper;
+        this.housingDetailRepository = housingDetailRepository;
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
@@ -93,7 +93,9 @@ public class PostService {
 
     private void validateTypeSpecificDetails(CreatePostRequest request) {
         if (request.getType() == PostType.EVENT) {
-            if (!(request.getDetails() instanceof EventDetailsDto details)) {
+            EventDetailsDto details = getEventDetails(request);
+
+            if (details == null) {
                 throw new IllegalArgumentException("Event details are required");
             }
 
@@ -165,8 +167,8 @@ public class PostService {
                 throw new IllegalArgumentException("rent is required");
             }
 
-            if (details.getRooms() == null) {
-                throw new IllegalArgumentException("rooms are required");
+            if (details.getRooms() == null || details.getRooms() <= 0) {
+                throw new IllegalArgumentException("rooms must be greater than 0");
             }
 
             if (details.getAvailableFrom() == null) {
@@ -218,7 +220,6 @@ public class PostService {
 
             HousingDetail housingDetail = new HousingDetail();
             housingDetail.setPost(savedPost);
-            housingDetail.setHousingType(details.getHousingType());
             housingDetail.setRent(details.getRent());
             housingDetail.setRooms(details.getRooms());
             housingDetail.setAvailableFrom(details.getAvailableFrom());
@@ -229,20 +230,28 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto("EVENT", null, null, null);
-            case SKILL -> new SkillDetailsDto("SKILL", null, null, null, null);
-            case PRODUCT -> new ProductDetailsDto("PRODUCT", null, null, null, null);
-            case HOUSING -> new HousingDetailsDto("HOUSING", null, null, null, null);
+            case EVENT -> new EventDetailsDto(null, null, null, null);
+            case SKILL -> new SkillDetailsDto(null, null, null, null, null);
+            case PRODUCT -> new ProductDetailsDto(null, null, null, null, null);
+            case HOUSING -> new HousingDetailsDto(null, null, null, null);
         };
     }
 
     private LocationDto mapLocation(PostLocation location) {
-        return new LocationDto(location.getCity(), location.getDistrict(), location.getLatitude(),
-                location.getLongitude());
+        return new LocationDto(
+                location.getCity(),
+                location.getDistrict(),
+                location.getLatitude(),
+                location.getLongitude()
+        );
     }
 
     private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
+        return new PostImageDto(
+                image.getId(),
+                image.getUrl(),
+                image.getAltText()
+        );
     }
 
     private static final double MAX_RADIUS = 200_000;
@@ -324,6 +333,7 @@ public class PostService {
                 })
                 .toList();
     }
+
     private String shortenDescription(String description) {
         if (description == null || description.isBlank()) {
             return "";
