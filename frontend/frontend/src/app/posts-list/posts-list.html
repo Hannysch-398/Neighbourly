@@ -1,9 +1,18 @@
 <section class="posts-list-page">
   <main class="posts-list-shell" aria-live="polite">
     @if (isLoading()) {
-      <div class="list-state">
-        <h2>Beiträge werden geladen</h2>
-        <p>Die Liste wird vorbereitet.</p>
+      <div class="posts-list" aria-label="Beiträge werden geladen">
+        @for (item of [1, 2, 3]; track item) {
+          <article class="post-list-skeleton">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-description"></div>
+            <div class="skeleton-meta">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </article>
+        }
       </div>
     } @else if (errorMessage()) {
       <div class="list-state error-state">
