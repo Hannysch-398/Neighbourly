@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 
 import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
