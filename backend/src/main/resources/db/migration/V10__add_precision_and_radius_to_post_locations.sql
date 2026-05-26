@@ -1,0 +1,1 @@
+ALTER TABLE post_locations ADD COLUMN precision VARCHAR(50), ADD COLUMN radius_m INTEGER;

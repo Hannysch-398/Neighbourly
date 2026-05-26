@@ -1,4 +1,5 @@
 <section class="posts-list-page">
+
   <main class="posts-list-shell" aria-live="polite">
     @if (isLoading()) {
       <div class="list-state">
@@ -13,13 +14,34 @@
       </div>
     } @else if (!hasPosts()) {
       <div class="list-state">
-        <h2>Keine Beiträge vorhanden</h2>
-        <p>Aktuell gibt es keine Beiträge.</p>
+        <h2>Noch keine Beiträge</h2>
+        <p>Sobald Beiträge vorhanden sind, erscheinen sie hier.</p>
       </div>
     } @else {
       <div class="posts-list" role="list">
-        @for (post of posts(); track post.id) {
-          <app-post-card [post]="post"></app-post-card>
+        @for (post of posts(); track trackPostById($index, post)) {
+          <article class="post-list-item" role="listitem">
+            <div class="post-main">
+              <div class="post-title-row">
+                <h3>{{ post.title }}</h3>
+                @if (post.isUrgent) {
+                  <span class="urgent-badge">Dringend</span>
+                }
+              </div>
+
+              <p class="post-description">{{ post.description }}</p>
+
+              <div class="post-meta" aria-label="Beitragsdetails">
+                <span>{{ getPostTypeLabel(post.type) }}</span>
+                <span>{{ getPostModeLabel(post.postMode) }}</span>
+                <span>{{ post.createdAt | date: 'dd.MM.yyyy' }}</span>
+              </div>
+            </div>
+
+            <div class="post-status">
+              <span>{{ post.status }}</span>
+            </div>
+          </article>
         }
       </div>
     }

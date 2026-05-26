@@ -14,7 +14,6 @@ public class MapPostMarkerDto {
     private double lat;
     private double lng;
     private boolean isUrgent;
-    private String postMode;
-//    private boolean isSponsored;
-//    private Instant createdAt;
+    private boolean isSponsored;
+    private Instant createdAt;
 }

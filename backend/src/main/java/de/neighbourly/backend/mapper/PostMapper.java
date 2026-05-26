@@ -30,7 +30,6 @@ public class PostMapper {
 
     public static PostResponseDto toDto(Post post) {
         return new PostResponseDto(
-
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
@@ -40,8 +39,8 @@ public class PostMapper {
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
-
+                post.getUpdatedAt(),
+                null
         );
     }
 

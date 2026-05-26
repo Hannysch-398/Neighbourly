@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -48,11 +48,5 @@ export class UserService {
         responseType: 'text'
       }
     );
-  }
-  deleteAccount() {
-    return this.http.delete(`${this.baseUrl}/me`, {
-      headers: this.getHeaders(),
-      responseType: 'text'
-    });
   }
 }

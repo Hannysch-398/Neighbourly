@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDetailsDto {
+public class ProductDetailsDto implements PostDetailsDto {
+
+    private String detailType;
 
     private String productName;
     private BigDecimal price;
-    private String currency;
-    private String condition;
 }

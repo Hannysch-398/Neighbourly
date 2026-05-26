@@ -8,7 +8,7 @@ import {
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../service/posts.service';
+import { PostService } from '../Service/post-service';
 import { createMapMarkerIcon } from '../map-marker/map-marker';
 
 @Component({
@@ -21,10 +21,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
-  private postMarkersLayer = L.layerGroup();
-  private markerLoadTimeout?: ReturnType<typeof setTimeout>;
 
-  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.79568];
+  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.79568]; // Bremen
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
 
@@ -94,14 +92,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       })
       .addTo(this.map);
 
-    this.postMarkersLayer.addTo(this.map);
-
     this.addStartMarker(position);
-    this.loadMarkersForCurrentView();
-
-    this.map.on('moveend', () => {
-      this.debouncedLoadMarkers();
-    });
+    this.addPostMarkers();
 
     setTimeout(() => {
       this.map?.invalidateSize();
@@ -136,73 +128,26 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       `);
   }
 
-  private debouncedLoadMarkers(): void {
-    if (this.markerLoadTimeout) {
-      clearTimeout(this.markerLoadTimeout);
-    }
-
-    this.markerLoadTimeout = setTimeout(() => {
-      this.loadMarkersForCurrentView();
-    }, 250);
-  }
-
-  private loadMarkersForCurrentView(): void {
+  private addPostMarkers(): void {
     if (!this.map) {
       return;
     }
 
-    const center = this.map.getCenter();
-    const radius = this.getRadiusByZoom(this.map.getZoom());
-
-    this.postService
-      .getMapPostMarker(center.lat, center.lng, radius)
-      .subscribe((posts) => {
-        this.postMarkersLayer.clearLayers();
-
-        posts.forEach((post) => {
-          const marker = L.marker([post.lat, post.lng], {
-            icon: createMapMarkerIcon(post.type),
-          }).bindPopup(`
-            <div class="custom-popup">
-              <strong>${post.title}</strong><br />
-              <span>${post.type}</span>
-            </div>
-          `);
-
-          this.postMarkersLayer.addLayer(marker);
-        });
-      });
-  }
-
-  private getRadiusByZoom(zoom: number): number {
-    if (zoom >= 16) {
-      return 2;
-    }
-
-    if (zoom >= 15) {
-      return 5;
-    }
-
-    if (zoom >= 13) {
-      return 15;
-    }
-
-    if (zoom >= 11) {
-      return 35;
-    }
-
-    if (zoom >= 9) {
-      return 80;
-    }
-
-    return 250;
+    this.postService.getMapPosts().forEach((post) => {
+      L.marker([post.lat, post.lng], {
+        icon: createMapMarkerIcon(post.type),
+      })
+        .addTo(this.map!)
+        .bindPopup(`
+          <div class="custom-popup">
+            <strong>${post.title}</strong><br />
+            <span>${post.type}</span>
+          </div>
+        `);
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.markerLoadTimeout) {
-      clearTimeout(this.markerLoadTimeout);
-    }
-
     this.map?.remove();
   }
 }

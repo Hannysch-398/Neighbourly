@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { AverageRatingResponse } from '../interface/AverageRatingResponse';
 import { RatingResponse } from '../interface/RatingResponse';
-import { RatingService } from '../service/rating-service';
+import { RatingService } from '../Service/rating-service';
 import { ShowRatingComments } from '../show-rating-comments/show-rating-comments';
 
 @Component({

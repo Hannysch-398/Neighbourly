@@ -23,8 +23,12 @@ public class PostLocation {
 
         private Double longitude;
 
+        private String precision;
+
+        @Column(name = "radius_m")
+        private Integer radiusM;
+
         @OneToOne
         @JoinColumn(name = "post_id", nullable = false)
         private Post post;
-
 }
