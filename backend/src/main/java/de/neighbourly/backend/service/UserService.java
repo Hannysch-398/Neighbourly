@@ -82,7 +82,7 @@ public class UserService {
         User user = verificationToken.getUser();
         if ("DELETED".equals(user.getStatus())) {
             throw new AccountException(
-                    HttpStatus.FORBIDDEN,
+                    HttpStatus.UNAUTHORIZED,
                     "ACCOUNT_DELETED",
                     "auth",
                     "Account wurde gelöscht"
@@ -162,14 +162,14 @@ public class UserService {
 
         if ("DELETED".equals(user.getStatus())) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
+                    HttpStatus.UNAUTHORIZED,
                     "Account wurde gelöscht"
             );
         }
 
         if ("DISABLED".equals(user.getStatus())) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
+                    HttpStatus.UNAUTHORIZED,
                     "Account ist deaktiviert"
             );
         }

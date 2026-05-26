@@ -69,6 +69,10 @@ export class SignInFormComponent {
     const backendMessage = this.extractBackendMessage(error.error);
     const normalizedMessage = backendMessage.toLowerCase();
 
+    if (error.status === 401 && normalizedMessage.includes('gelöscht') || normalizedMessage.includes('deleted')) {
+      return 'Dieser Account wurde gelöscht und kann nicht mehr verwendet werden.';
+    }
+
     if (error.status === 401 || normalizedMessage.includes('invalid credentials')) {
       return 'E-Mail oder Passwort ist falsch.';
     }
