@@ -23,6 +23,8 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
     private final ObjectMapper objectMapper;
+    private final ProductDetailRepository productDetailRepository;
+    private final HousingDetailRepository housingDetailRepository;
 
     public PostService(
             PostRepository postRepository,
@@ -32,7 +34,9 @@ public class PostService {
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            ProductDetailRepository productDetailRepository,
+            HousingDetailRepository housingDetailRepository
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -42,6 +46,8 @@ public class PostService {
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
         this.objectMapper = objectMapper;
+        this.productDetailRepository = productDetailRepository;
+        this.housingDetailRepository = housingDetailRepository;
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
@@ -151,6 +157,42 @@ public class PostService {
                 throw new IllegalArgumentException("experienceLevel is required");
             }
         }
+
+        if (request.getType() == PostType.PRODUCT) {
+            ProductDetailsDto details = getProductDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Product details are required");
+            }
+
+            if (details.getPrice() == null) {
+                throw new IllegalArgumentException("price is required");
+            }
+
+            if (details.getCurrency() == null || details.getCurrency().isBlank()) {
+                throw new IllegalArgumentException("currency is required");
+            }
+        }
+
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            if (details == null) {
+                throw new IllegalArgumentException("Housing details are required");
+            }
+
+            if (details.getRent() == null) {
+                throw new IllegalArgumentException("rent is required");
+            }
+
+            if (details.getRooms() == null || details.getRooms() <= 0) {
+                throw new IllegalArgumentException("rooms must be greater than 0");
+            }
+
+            if (details.getAvailableFrom() == null) {
+                throw new IllegalArgumentException("availableFrom is required");
+            }
+        }
     }
 
     private void saveTypeSpecificDetails(CreatePostRequest request, Post savedPost) {
@@ -177,6 +219,29 @@ public class PostService {
 
             skillDetailRepository.save(skillDetail);
         }
+
+        if (request.getType() == PostType.PRODUCT) {
+            ProductDetailsDto details = getProductDetails(request);
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setPost(savedPost);
+            productDetail.setPrice(details.getPrice());
+            productDetail.setCurrency(details.getCurrency());
+
+            productDetailRepository.save(productDetail);
+        }
+
+        if (request.getType() == PostType.HOUSING) {
+            HousingDetailsDto details = getHousingDetails(request);
+
+            HousingDetail housingDetail = new HousingDetail();
+            housingDetail.setPost(savedPost);
+            housingDetail.setRent(details.getRent());
+            housingDetail.setRooms(details.getRooms());
+            housingDetail.setAvailableFrom(details.getAvailableFrom());
+
+            housingDetailRepository.save(housingDetail);
+        }
     }
 
     private Object buildDetailsBlock(Post post) {
@@ -184,7 +249,7 @@ public class PostService {
             case EVENT -> new EventDetailsDto(null, null, null, null);
             case SKILL -> new SkillDetailsDto(null, null, null, null);
             case PRODUCT -> new ProductDetailsDto(null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null, null);
+            case HOUSING -> new HousingDetailsDto(null, null, null, null);
         };
     }
 
@@ -211,6 +276,14 @@ public class PostService {
 
     private SkillDetailsDto getSkillDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
+    }
+
+    private ProductDetailsDto getProductDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
+    }
+
+    private HousingDetailsDto getHousingDetails(CreatePostRequest request) {
+        return objectMapper.convertValue(request.getDetails(), HousingDetailsDto.class);
     }
 
     public List<MapPostMarkerDto> getMapPostMarker(double lat, double lng, double radius) {
