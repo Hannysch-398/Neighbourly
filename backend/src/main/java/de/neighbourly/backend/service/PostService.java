@@ -56,6 +56,7 @@ public class PostService {
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
+        validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
@@ -323,6 +324,50 @@ public class PostService {
         location.setLongitude(dto.getLongitude());
 
         postLocationRepository.save(location);
+    }
+
+    private void validateDetailsMatchPostType(CreatePostRequest request) {
+        if (request.getDetails() == null) {
+            throw new IllegalArgumentException("details are required");
+        }
+
+        boolean hasEventFields =
+                request.getDetails().has("startDate") ||
+                        request.getDetails().has("endDate") ||
+                        request.getDetails().has("venue");
+
+        boolean hasSkillFields =
+                request.getDetails().has("skillTags") ||
+                        request.getDetails().has("availabilityNote") ||
+                        request.getDetails().has("experienceLevel");
+
+        boolean hasProductFields =
+                request.getDetails().has("productName") ||
+                        request.getDetails().has("price") ||
+                        request.getDetails().has("currency") ||
+                        request.getDetails().has("condition");
+
+        boolean hasHousingFields =
+                request.getDetails().has("housingType") ||
+                        request.getDetails().has("rent") ||
+                        request.getDetails().has("rooms") ||
+                        request.getDetails().has("availableFrom");
+
+        if (request.getType() == PostType.EVENT && (hasSkillFields || hasProductFields || hasHousingFields)) {
+            throw new IllegalArgumentException("details do not match post type EVENT");
+        }
+
+        if (request.getType() == PostType.SKILL && (hasEventFields || hasProductFields || hasHousingFields)) {
+            throw new IllegalArgumentException("details do not match post type SKILL");
+        }
+
+        if (request.getType() == PostType.PRODUCT && (hasEventFields || hasSkillFields || hasHousingFields)) {
+            throw new IllegalArgumentException("details do not match post type PRODUCT");
+        }
+
+        if (request.getType() == PostType.HOUSING && (hasEventFields || hasSkillFields || hasProductFields)) {
+            throw new IllegalArgumentException("details do not match post type HOUSING");
+        }
     }
 
 
