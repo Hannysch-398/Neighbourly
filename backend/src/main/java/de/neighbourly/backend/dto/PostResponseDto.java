@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostResponseDto {
 
-    private Long Id;
+    private Long id;
     private String title;
     private String description;
     private String type;

@@ -9,6 +9,6 @@ import java.util.List;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> findByRatedUserId(Long ratedUserId);
 
-    Rating findByRatedUserIdAndId(Long ratedUserId, Long Id);
+    Rating findByRatedUserIdAndId(Long ratedUserId, Long id);
 
 }
