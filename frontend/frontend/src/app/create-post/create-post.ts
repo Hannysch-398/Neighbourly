@@ -1,7 +1,7 @@
-import {Component, computed, signal} from '@angular/core';
-import {form, FormField, maxLength, required} from '@angular/forms/signals';
-import {CreatePostRequest, PostMode, PostType} from '../models/post.model';
-import {PostsService} from '../service/posts.service';
+import { Component, computed, signal } from '@angular/core';
+import { form, FormField, maxLength, required } from '@angular/forms/signals';
+import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
+import { PostsService } from '../service/posts.service';
 
 type PostTypeOption = {
   value: PostType;
@@ -81,38 +81,39 @@ export class CreatePost {
   readonly successMessage = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
-  readonly postModel = signal<PostBasicFormModel>({...initialData});
+  readonly postModel = signal<PostBasicFormModel>({ ...initialData });
 
   constructor(private postsService: PostsService) {}
 
   readonly postTypeOptions: PostTypeOption[] = [
-    {value: 'EVENT', label: 'Veranstaltung'},
-    {value: 'SKILL', label: 'Hilfe / Skill'},
-    {value: 'PRODUCT', label: 'Produkt'},
-    {value: 'HOUSING', label: 'Wohnen'},
+    { value: 'EVENT', label: 'Veranstaltung' },
+    { value: 'SKILL', label: 'Hilfe / Skill' },
+    { value: 'PRODUCT', label: 'Produkt' },
+    { value: 'HOUSING', label: 'Wohnen' },
   ];
 
   readonly postModeOptions: PostModeOption[] = [
-    {value: 'OFFER', label: 'Angebot'},
-    {value: 'REQUEST', label: 'Gesuch'},
+    { value: 'OFFER', label: 'Angebot' },
+    { value: 'REQUEST', label: 'Gesuch' },
   ];
 
   readonly postForm = form(this.postModel, (schemaPath) => {
-    required(schemaPath.title, {message: 'Bitte gib einen Titel ein.'});
+    required(schemaPath.title, { message: 'Bitte gib einen Titel ein.' });
     maxLength(schemaPath.title, 120, {
       message: 'Der Titel darf maximal 120 Zeichen lang sein.',
     });
 
-    required(schemaPath.description, {message: 'Bitte gib eine Beschreibung ein.'});
+    required(schemaPath.description, { message: 'Bitte gib eine Beschreibung ein.' });
     maxLength(schemaPath.description, 2000, {
       message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
     });
 
-    required(schemaPath.type, {message: 'Bitte wähle einen Typ aus.'});
-    required(schemaPath.postMode, {message: 'Bitte wähle Angebot oder Gesuch aus.'});
+    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
+    required(schemaPath.postMode, { message: 'Bitte wähle Angebot oder Gesuch aus.' });
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
+
   readonly isFormValid = computed(
     () =>
       !this.postForm.title().invalid() &&
@@ -145,10 +146,12 @@ export class CreatePost {
         this.isLoading.set(false);
       },
       error: (err) => {
+        console.error(err);
+
+        const backendMessage = err?.error?.errors?.request || err?.error?.message;
+
         this.errorMessage.set(
-          err?.error?.errors?.request ||
-          err?.error?.message ||
-          'Beitrag konnte nicht erstellt werden.'
+          backendMessage || 'Beitrag konnte nicht gespeichert werden. Bitte versuche es erneut.',
         );
 
         this.isLoading.set(false);
@@ -161,7 +164,7 @@ export class CreatePost {
     this.savedPayload.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    this.postModel.set({...initialData});
+    this.postModel.set({ ...initialData });
   }
 
   shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode') {

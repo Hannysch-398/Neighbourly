@@ -10,6 +10,7 @@ import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
@@ -52,12 +53,13 @@ public class PostService {
 
 
     }
-
+    @Transactional
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
+        validateLocation(request);
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
@@ -201,6 +203,7 @@ public class PostService {
             skillDetailRepository.save(skillDetail);
         }
         if (request.getType() == PostType.PRODUCT) {
+
             ProductDetailsDto details = getProductDetails(request);
 
             ProductDetail productDetail = new ProductDetail();
@@ -370,6 +373,32 @@ public class PostService {
         }
     }
 
+    private void validateLocation(CreatePostRequest request) {
+        LocationDto location = request.getLocation();
 
+        if (location == null) {
+            return;
+        }
+
+        if (location.getCity() == null || location.getCity().isBlank()) {
+            throw new IllegalArgumentException("city is required");
+        }
+
+        if (location.getLatitude() == null) {
+            throw new IllegalArgumentException("latitude is required");
+        }
+
+        if (location.getLongitude() == null) {
+            throw new IllegalArgumentException("longitude is required");
+        }
+
+        if (location.getLatitude() < -90 || location.getLatitude() > 90) {
+            throw new IllegalArgumentException("latitude must be between -90 and 90");
+        }
+
+        if (location.getLongitude() < -180 || location.getLongitude() > 180) {
+            throw new IllegalArgumentException("longitude must be between -180 and 180");
+        }
+    }
 }
 
