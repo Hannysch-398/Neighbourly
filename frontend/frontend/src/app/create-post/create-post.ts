@@ -2,7 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { form, FormField, maxLength, required } from '@angular/forms/signals';
 import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
 import { MapComponent } from '../map-component/map-component';
-import { PostsService } from '../Service/posts.service';
+import { PostsService } from '../service/posts.service';
 
 type PostTypeOption = {
   value: PostType;
