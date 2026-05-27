@@ -1,6 +1,6 @@
 import { Component, signal} from '@angular/core';
-import { RegisterForm } from '../RegisterForm/RegisterForm';
-import {SignInFormComponent} from '../SignInForm/SignInForm';
+import { RegisterForm } from '../registerForm/RegisterForm';
+import {SignInFormComponent} from '../signInForm/SignInForm';
 
 
 @Component({
