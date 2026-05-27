@@ -190,15 +190,7 @@ export class CreatePost {
       postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-      location: value.hasLocation
-        ? {
-          city: value.city.trim(),
-          district: value.district.trim() || null,
-          address: value.address.trim() || null,
-          latitude: null,
-          longitude: null,
-        }
-        : null,
+      location: null,
       details: this.createDetails(),
     };
   }
