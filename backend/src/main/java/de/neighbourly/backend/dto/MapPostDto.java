@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Getter
 @AllArgsConstructor
-public class MapPostMarkerDto {
+public class MapPostDto {
     private Long id;
     private String type;
     private String title;
@@ -19,6 +19,5 @@ public class MapPostMarkerDto {
 
     private boolean urgent;
     private String postMode;
-//    private boolean isSponsored;
-//    private Instant createdAt;
+    private String shortDescription;
 }

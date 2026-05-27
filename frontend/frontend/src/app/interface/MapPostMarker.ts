@@ -6,6 +6,7 @@ export interface MapPostMarker {
   title: string;
   lat: number;
   lng: number;
+  shortDescription?: string;
   isUrgent: boolean;
   isSponsored: boolean;
   createdAt: string;

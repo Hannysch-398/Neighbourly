@@ -2,7 +2,7 @@ package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
-import de.neighbourly.backend.dto.MapPostMarkerDto;
+import de.neighbourly.backend.dto.MapPostDto;
 import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -47,8 +47,8 @@ public class PostController {
     }
 
     @GetMapping("/marker")
-    public ResponseEntity<List<MapPostMarkerDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
-                                                              @RequestParam double radius) {
+    public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
+                                                        @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 

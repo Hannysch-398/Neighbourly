@@ -7,6 +7,7 @@ import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -296,9 +297,40 @@ public class PostService {
         return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
     }
 
-    public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
+    public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
-        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
+
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
+                .stream()
+                .map(location -> {
+                    Post post = postRepository.findById(location.getPost().getId())
+                            .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+                    return new MapPostDto(
+                            post.getId(),
+                            post.getType().name(),
+                            post.getTitle(),
+                            location.getLatitude(),
+                            location.getLongitude(),
+                            post.isUrgent(),
+                            post.getPostMode().name(),
+                            shortenDescription(post.getDescription())
+                    );
+                })
+                .toList();
+    }
+    private String shortenDescription(String description) {
+        if (description == null || description.isBlank()) {
+            return "";
+        }
+
+        int maxLength = 120;
+
+        if (description.length() <= maxLength) {
+            return description;
+        }
+
+        return description.substring(0, maxLength).trim() + "...";
     }
 
     private void saveLocation(CreatePostRequest request, Post savedPost) {
