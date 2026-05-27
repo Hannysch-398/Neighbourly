@@ -5,6 +5,7 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import * as L from 'leaflet';
 
@@ -28,7 +29,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
 
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {}
 
   ngAfterViewInit(): void {
     this.resolveInitialPosition().then(({ position, zoom }) => {
@@ -40,6 +45,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     position: L.LatLngExpression;
     zoom: number;
   }> {
+    const queryView = this.getInitialMapViewFromQuery();
+
+    if (queryView) {
+      return Promise.resolve(queryView);
+    }
+
     if (!navigator.geolocation) {
       return Promise.resolve({
         position: this.defaultPosition,
@@ -73,6 +84,32 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private getInitialMapViewFromQuery(): {position: L.LatLngExpression; zoom: number} | null {
+    const params = this.route.snapshot.queryParamMap;
+    const lat = Number(params.get('lat'));
+    const lng = Number(params.get('lng'));
+    const zoom = Number(params.get('zoom'));
+
+    if (
+      Number.isFinite(lat) &&
+      Number.isFinite(lng) &&
+      Number.isFinite(zoom) &&
+      lat >= -90 &&
+      lat <= 90 &&
+      lng >= -180 &&
+      lng <= 180 &&
+      zoom >= 1 &&
+      zoom <= 20
+    ) {
+      return {
+        position: [lat, lng],
+        zoom,
+      };
+    }
+
+    return null;
+  }
+
   private initMap(position: L.LatLngExpression, zoom: number): void {
     this.map = L.map(this.mapElement.nativeElement, {
       zoomControl: false,
@@ -100,8 +137,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.loadMarkersForCurrentView();
 
     this.map.on('moveend', () => {
+      this.updateMapViewQueryParams();
       this.debouncedLoadMarkers();
     });
+
+    this.updateMapViewQueryParams();
 
     setTimeout(() => {
       this.map?.invalidateSize();
@@ -172,6 +212,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           this.postMarkersLayer.addLayer(marker);
         });
       });
+  }
+
+  private updateMapViewQueryParams(): void {
+    if (!this.map) {
+      return;
+    }
+
+    const center = this.map.getCenter();
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        lat: center.lat.toFixed(6),
+        lng: center.lng.toFixed(6),
+        zoom: this.map.getZoom(),
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   private getRadiusByZoom(zoom: number): number {
