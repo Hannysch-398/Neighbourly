@@ -3,11 +3,13 @@ package de.neighbourly.backend.exception;
 import de.neighbourly.backend.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import de.neighbourly.backend.exception.AccountException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,6 +95,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, ex.getStatusCode());
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("auth", "E-Mail oder Passwort ist falsch.");
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Invalid credentials",
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex) {
         Map<String, String> errors = new HashMap<>();
@@ -106,4 +122,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(AccountException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccountException(AccountException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getField(), ex.getMessage());
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                ex.getStatus().value(),
+                ex.getCode(),
+                errors
+        );
+
+        return ResponseEntity.status(ex.getStatus()).body(response);
+    }
+
+
 }

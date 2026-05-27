@@ -11,6 +11,10 @@ export interface ProfileData {
   createdAt?: string;
 }
 
+export interface SuccessResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,19 +44,17 @@ export class UserService {
     data: { oldPassword: string; newPassword: string },
     userId: number
   ) {
-    return this.http.put(
+    return this.http.put<SuccessResponse>(
       `${this.baseUrl}/me/change-password`,
       data,
       {
-        headers: this.getHeaders(),
-        responseType: 'text'
+        headers: this.getHeaders()
       }
     );
   }
   deleteAccount() {
-    return this.http.delete(`${this.baseUrl}/me`, {
-      headers: this.getHeaders(),
-      responseType: 'text'
+    return this.http.delete<SuccessResponse>(`${this.baseUrl}/me`, {
+      headers: this.getHeaders()
     });
   }
 }
