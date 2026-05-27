@@ -64,6 +64,8 @@ export const housingCreatePostMock: CreatePostRequest = {
   details: {
     detailType: 'HOUSING',
     housingType: 'APARTMENT',
-    rent: 900
+    rent: 900,
+    rooms: 2,
+    availableFrom: '2026-06-01'
   }
 };

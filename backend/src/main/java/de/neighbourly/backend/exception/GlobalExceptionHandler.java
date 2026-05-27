@@ -3,12 +3,13 @@ package de.neighbourly.backend.exception;
 import de.neighbourly.backend.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import de.neighbourly.backend.exception.AccountException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +41,13 @@ public class GlobalExceptionHandler {
         String message = ex.getMessage() != null ? ex.getMessage() : "Invalid request";
         String field = "request";
 
-        if (message.contains("urgentUntil")) {
+        if (message.contains("lat")) {
+            field = "lat";
+        } else if (message.contains("lng")) {
+            field = "lng";
+        } else if (message.contains("radius")) {
+            field = "radius";
+        } else if (message.contains("urgentUntil")) {
             field = "urgentUntil";
         } else if (message.contains("venue")) {
             field = "venue";
@@ -50,8 +57,17 @@ public class GlobalExceptionHandler {
             field = "endDate";
         } else if (message.contains("Event details")) {
             field = "details";
+        } else if (message.contains("productName")) {
+            field = "productName";
+        } else if (message.contains("price")) {
+            field = "price";
+        } else if (message.contains("currency")) {
+            field = "currency";
+        } else if (message.contains("condition")) {
+            field = "condition";
+        } else if (message.contains("Product details")) {
+            field = "details";
         }
-
         errors.put(field, message);
 
         ErrorResponseDto response = new ErrorResponseDto(
@@ -64,12 +80,63 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", ex.getStatusCode().value());
-        body.put("error", ex.getReason());
+    public ResponseEntity<ErrorResponseDto> handleResponseStatusException(ResponseStatusException ex) {
+        Map<String, String> errors = new HashMap<>();
+        String message = ex.getReason() != null ? ex.getReason() : "Request failed";
 
-        return new ResponseEntity<>(body, ex.getStatusCode());
+        errors.put("request", message);
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                ex.getStatusCode().value(),
+                message,
+                errors
+        );
+
+        return new ResponseEntity<>(response, ex.getStatusCode());
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("auth", "E-Mail oder Passwort ist falsch.");
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Invalid credentials",
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("server", "Unexpected server error");
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal server error",
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(AccountException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccountException(AccountException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getField(), ex.getMessage());
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                ex.getStatus().value(),
+                ex.getCode(),
+                errors
+        );
+
+        return ResponseEntity.status(ex.getStatus()).body(response);
+    }
+
+
 }

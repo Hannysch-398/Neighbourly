@@ -7,7 +7,9 @@ import {
 } from '@angular/core';
 
 import * as L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+
+import { PostsService as PostService } from '../service/posts.service';
+import { createMapMarkerIcon } from '../map-marker/map-marker';
 
 @Component({
   selector: 'app-modern-map',
@@ -16,20 +18,22 @@ import 'leaflet/dist/leaflet.css';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
+  private postMarkersLayer = L.layerGroup();
+  private markerLoadTimeout?: ReturnType<typeof setTimeout>;
 
-  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.795680
-  ]; // Bremen
+  private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.79568];
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
 
+  constructor(private readonly postService: PostService) {}
+
   ngAfterViewInit(): void {
-    this.resolveInitialPosition()
-      .then(({position, zoom}) => {
-        this.initMap(position, zoom);
-      });
+    this.resolveInitialPosition().then(({ position, zoom }) => {
+      this.initMap(position, zoom);
+    });
   }
 
   private resolveInitialPosition(): Promise<{
@@ -84,12 +88,33 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
     ).addTo(this.map);
 
-    L.control.zoom({
-      position: 'bottomright',
-    }).addTo(this.map);
+    L.control
+      .zoom({
+        position: 'bottomright',
+      })
+      .addTo(this.map);
 
-    const modernIcon = L.divIcon({
-      className: 'modern-marker',
+    this.postMarkersLayer.addTo(this.map);
+
+    this.addStartMarker(position);
+    this.loadMarkersForCurrentView();
+
+    this.map.on('moveend', () => {
+      this.debouncedLoadMarkers();
+    });
+
+    setTimeout(() => {
+      this.map?.invalidateSize();
+    }, 0);
+  }
+
+  private addStartMarker(position: L.LatLngExpression): void {
+    if (!this.map) {
+      return;
+    }
+
+    const startIcon = L.divIcon({
+      className: 'modern-marker marker-default',
       html: `
         <div class="marker-pin">
           <div class="marker-dot"></div>
@@ -101,7 +126,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     L.marker(position, {
-      icon: modernIcon,
+      icon: startIcon,
     })
       .addTo(this.map)
       .bindPopup(`
@@ -109,13 +134,75 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           <strong>Startposition</strong>
         </div>
       `);
+  }
 
-    setTimeout(() => {
-      this.map?.invalidateSize();
-    }, 0);
+  private debouncedLoadMarkers(): void {
+    if (this.markerLoadTimeout) {
+      clearTimeout(this.markerLoadTimeout);
+    }
+
+    this.markerLoadTimeout = setTimeout(() => {
+      this.loadMarkersForCurrentView();
+    }, 250);
+  }
+
+  private loadMarkersForCurrentView(): void {
+    if (!this.map) {
+      return;
+    }
+
+    const center = this.map.getCenter();
+    const radius = this.getRadiusByZoom(this.map.getZoom());
+
+    this.postService
+      .getMapPostMarker(center.lat, center.lng, radius)
+      .subscribe((posts) => {
+        this.postMarkersLayer.clearLayers();
+
+        posts.forEach((post) => {
+          const marker = L.marker([post.lat, post.lng], {
+            icon: createMapMarkerIcon(post.type),
+          }).bindPopup(`
+            <div class="custom-popup">
+              <strong>${post.title}</strong><br />
+              <span>${post.type}</span>
+            </div>
+          `);
+
+          this.postMarkersLayer.addLayer(marker);
+        });
+      });
+  }
+
+  private getRadiusByZoom(zoom: number): number {
+    if (zoom >= 16) {
+      return 2;
+    }
+
+    if (zoom >= 15) {
+      return 5;
+    }
+
+    if (zoom >= 13) {
+      return 15;
+    }
+
+    if (zoom >= 11) {
+      return 35;
+    }
+
+    if (zoom >= 9) {
+      return 80;
+    }
+
+    return 250;
   }
 
   ngOnDestroy(): void {
+    if (this.markerLoadTimeout) {
+      clearTimeout(this.markerLoadTimeout);
+    }
+
     this.map?.remove();
   }
 }

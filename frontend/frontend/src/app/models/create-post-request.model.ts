@@ -32,6 +32,8 @@ export interface HousingDetails {
   detailType: 'HOUSING';
   housingType: string;
   rent: number;
+  rooms: number;
+  availableFrom: string;
 }
 
 export type PostDetails =

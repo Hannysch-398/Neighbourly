@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,5 +16,7 @@ public class SkillDetailsDto implements PostDetailsDto {
     private String detailType;
 
     private String skillName;
+    private List<String> skillTags;
+    private String availabilityNote;
     private String experienceLevel;
 }

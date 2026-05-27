@@ -1,6 +1,7 @@
 package de.neighbourly.backend.dto;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.neighbourly.backend.model.PostMode;
 import de.neighbourly.backend.model.PostType;
 import jakarta.validation.Valid;

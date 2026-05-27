@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -9,6 +9,10 @@ export interface ProfileData {
   email: string;
   role?: string;
   createdAt?: string;
+}
+
+export interface SuccessResponse {
+  message: string;
 }
 
 @Injectable({
@@ -40,13 +44,17 @@ export class UserService {
     data: { oldPassword: string; newPassword: string },
     userId: number
   ) {
-    return this.http.put(
+    return this.http.put<SuccessResponse>(
       `${this.baseUrl}/me/change-password`,
       data,
       {
-        headers: this.getHeaders(),
-        responseType: 'text'
+        headers: this.getHeaders()
       }
     );
+  }
+  deleteAccount() {
+    return this.http.delete<SuccessResponse>(`${this.baseUrl}/me`, {
+      headers: this.getHeaders()
+    });
   }
 }
