@@ -10,8 +10,8 @@ import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
+@SuppressWarnings("ALL")
 @Service
 public class PostService {
 
@@ -37,8 +37,6 @@ public class PostService {
             PostImageRepository postImageRepository,
             ObjectMapper objectMapper,
             HousingDetailRepository housingDetailRepository
-
-
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -50,16 +48,13 @@ public class PostService {
         this.postImageRepository = postImageRepository;
         this.housingDetailRepository = housingDetailRepository;
         this.objectMapper = objectMapper;
-
-
     }
-    @Transactional
+
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
-        validateLocation(request);
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
@@ -96,9 +91,7 @@ public class PostService {
 
     private void validateTypeSpecificDetails(CreatePostRequest request) {
         if (request.getType() == PostType.EVENT) {
-            EventDetailsDto details = getEventDetails(request);
-
-            if (details == null) {
+            if (!(request.getDetails() instanceof EventDetailsDto details)) {
                 throw new IllegalArgumentException("Event details are required");
             }
 
@@ -134,6 +127,7 @@ public class PostService {
                 throw new IllegalArgumentException("experienceLevel is required");
             }
         }
+
         if (request.getType() == PostType.PRODUCT) {
             ProductDetailsDto details = getProductDetails(request);
 
@@ -157,6 +151,7 @@ public class PostService {
                 throw new IllegalArgumentException("condition is required");
             }
         }
+
         if (request.getType() == PostType.HOUSING) {
             HousingDetailsDto details = getHousingDetails(request);
 
@@ -202,8 +197,8 @@ public class PostService {
 
             skillDetailRepository.save(skillDetail);
         }
-        if (request.getType() == PostType.PRODUCT) {
 
+        if (request.getType() == PostType.PRODUCT) {
             ProductDetailsDto details = getProductDetails(request);
 
             ProductDetail productDetail = new ProductDetail();
@@ -215,6 +210,7 @@ public class PostService {
 
             productDetailRepository.save(productDetail);
         }
+
         if (request.getType() == PostType.HOUSING) {
             HousingDetailsDto details = getHousingDetails(request);
 
@@ -231,10 +227,10 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null, null, null);
+            case EVENT -> new EventDetailsDto("EVENT", null, null, null);
+            case SKILL -> new SkillDetailsDto("SKILL", null, null, null, null);
+            case PRODUCT -> new ProductDetailsDto("PRODUCT", null, null, null, null);
+            case HOUSING -> new HousingDetailsDto("HOUSING", null, null, null, null);
         };
     }
 
@@ -249,7 +245,6 @@ public class PostService {
 
     private static final double MAX_RADIUS = 20_000;
 
-
     private EventDetailsDto getEventDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), EventDetailsDto.class);
     }
@@ -258,19 +253,15 @@ public class PostService {
         return objectMapper.convertValue(request.getDetails(), SkillDetailsDto.class);
     }
 
-
     private ProductDetailsDto getProductDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), ProductDetailsDto.class);
     }
-
 
     private HousingDetailsDto getHousingDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), HousingDetailsDto.class);
     }
 
-
     private void validateGeoParameters(Double lat, Double lng, Double radius) {
-
         if (lat == null) {
             throw new IllegalArgumentException("lat is required");
         }
@@ -296,19 +287,16 @@ public class PostService {
         }
 
         if (radius > MAX_RADIUS) {
-            throw new IllegalArgumentException(
-                    "radius must be less than or equal to " + MAX_RADIUS
-            );
+            throw new IllegalArgumentException("radius must be less than or equal to " + MAX_RADIUS);
         }
     }
-
 
     public List<PostListItemResponseDto> getPostList() {
         return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
     }
 
     public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
-        validateGeoParameters(lat,lng,radius);
+        validateGeoParameters(lat, lng, radius);
         return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
     }
 
@@ -317,14 +305,14 @@ public class PostService {
             return;
         }
 
-        LocationDto dto = request.getLocation();
+        CreatePostLocationDto dto = request.getLocation();
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
-        location.setCity(dto.getCity());
-        location.setDistrict(dto.getDistrict());
-        location.setLatitude(dto.getLatitude());
-        location.setLongitude(dto.getLongitude());
+        location.setLatitude(dto.getLat());
+        location.setLongitude(dto.getLng());
+        location.setPrecision(dto.getPrecision());
+        location.setRadiusM(dto.getRadiusM());
 
         postLocationRepository.save(location);
     }
@@ -334,71 +322,22 @@ public class PostService {
             throw new IllegalArgumentException("details are required");
         }
 
-        boolean hasEventFields =
-                request.getDetails().has("startDate") ||
-                        request.getDetails().has("endDate") ||
-                        request.getDetails().has("venue");
+        PostDetailsDto details = request.getDetails();
 
-        boolean hasSkillFields =
-                request.getDetails().has("skillTags") ||
-                        request.getDetails().has("availabilityNote") ||
-                        request.getDetails().has("experienceLevel");
-
-        boolean hasProductFields =
-                request.getDetails().has("productName") ||
-                        request.getDetails().has("price") ||
-                        request.getDetails().has("currency") ||
-                        request.getDetails().has("condition");
-
-        boolean hasHousingFields =
-                request.getDetails().has("housingType") ||
-                        request.getDetails().has("rent") ||
-                        request.getDetails().has("rooms") ||
-                        request.getDetails().has("availableFrom");
-
-        if (request.getType() == PostType.EVENT && (hasSkillFields || hasProductFields || hasHousingFields)) {
+        if (request.getType() == PostType.EVENT && !(details instanceof EventDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type EVENT");
         }
 
-        if (request.getType() == PostType.SKILL && (hasEventFields || hasProductFields || hasHousingFields)) {
+        if (request.getType() == PostType.SKILL && !(details instanceof SkillDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type SKILL");
         }
 
-        if (request.getType() == PostType.PRODUCT && (hasEventFields || hasSkillFields || hasHousingFields)) {
+        if (request.getType() == PostType.PRODUCT && !(details instanceof ProductDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type PRODUCT");
         }
 
-        if (request.getType() == PostType.HOUSING && (hasEventFields || hasSkillFields || hasProductFields)) {
+        if (request.getType() == PostType.HOUSING && !(details instanceof HousingDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type HOUSING");
         }
     }
-
-    private void validateLocation(CreatePostRequest request) {
-        LocationDto location = request.getLocation();
-
-        if (location == null) {
-            return;
-        }
-
-        if (location.getCity() == null || location.getCity().isBlank()) {
-            throw new IllegalArgumentException("city is required");
-        }
-
-        if (location.getLatitude() == null) {
-            throw new IllegalArgumentException("latitude is required");
-        }
-
-        if (location.getLongitude() == null) {
-            throw new IllegalArgumentException("longitude is required");
-        }
-
-        if (location.getLatitude() < -90 || location.getLatitude() > 90) {
-            throw new IllegalArgumentException("latitude must be between -90 and 90");
-        }
-
-        if (location.getLongitude() < -180 || location.getLongitude() > 180) {
-            throw new IllegalArgumentException("longitude must be between -180 and 180");
-        }
-    }
 }
-

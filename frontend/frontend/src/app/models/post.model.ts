@@ -10,33 +10,45 @@ export interface LocationDto {
   longitude?: number | null;
 }
 
-export interface EventDetails {
+export interface CreatePostLocationDto {
+  lat: number;
+  lng: number;
+  precision: string;
+  radiusM: number;
+}
+
+export interface EventDetailsDto {
+  detailType: 'EVENT';
   startDate: string;
   endDate: string;
   venue: string;
 }
 
-export interface SkillDetails {
+export interface SkillDetailsDto {
+  detailType: 'SKILL';
+  skillName: string;
   skillTags: string[];
   availabilityNote: string;
   experienceLevel: string;
 }
 
-export interface ProductDetails {
+export interface ProductDetailsDto {
+  detailType: 'PRODUCT';
   productName: string;
   price: number | null;
   currency: string;
   condition: string;
 }
 
-export interface HousingDetails {
+export interface HousingDetailsDto {
+  detailType: 'HOUSING';
   housingType: string;
   rent: number | null;
   rooms: number | null;
   availableFrom: string;
 }
 
-export type PostDetails = EventDetails | SkillDetails | ProductDetails | HousingDetails;
+export type PostDetailsDto = EventDetailsDto | SkillDetailsDto | ProductDetailsDto | HousingDetailsDto;
 
 export interface CreatePostRequest {
   title: string;
@@ -45,8 +57,8 @@ export interface CreatePostRequest {
   postMode: PostMode;
   isUrgent: boolean;
   urgentUntil?: string | null;
-  location?: LocationDto | null;
-  details?: PostDetails | null;
+  location: CreatePostLocationDto;
+  details: PostDetailsDto;
 }
 
 export interface PostResponse {
