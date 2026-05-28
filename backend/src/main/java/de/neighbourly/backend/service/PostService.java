@@ -8,6 +8,7 @@ import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class PostDetailResponseDto {
 
-    private Long Id;
+    private Long id;
 
     private String title;
 
