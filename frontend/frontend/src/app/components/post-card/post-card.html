@@ -1,4 +1,5 @@
-<article class="post-list-item" role="listitem">
+<article class="post-list-item" [class.post-list-item--urgent]="post.isUrgent" role="listitem">
+
     <div class="post-main">
         <div class="post-title-row">
             <h2>{{ post.title }}</h2>
