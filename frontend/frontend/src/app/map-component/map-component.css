@@ -1,16 +1,16 @@
 /* Layout */
 
 .map-shell {
-  width: 90%;
-  height: 80vh;
-  min-height: 80vh;
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  margin: 0;
   max-width: 2000px;
   border-radius: 32px;
   overflow: hidden;
   position: relative;
   background: var(--text-dark);
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
-  margin: 1rem auto;
 }
 
 .map {
