@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostImageDto {
-    private Long id;
+    private Long Id;
     private String url;
     private String altText;
 }

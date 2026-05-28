@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import {MapPostMarkerType} from '../interface/MapPostMarker';
+import { MapPostMarkerType } from '../interface/MapPostMarker';
 
 function getMarkerIcon(type?: MapPostMarkerType): string {
   switch (type) {
@@ -16,11 +16,11 @@ function getMarkerIcon(type?: MapPostMarkerType): string {
   }
 }
 
-export function createMapMarkerIcon(type?: MapPostMarkerType, isUrgent = false): L.DivIcon {
+export function createMapMarkerIcon(type?: MapPostMarkerType): L.DivIcon {
   const icon = getMarkerIcon(type);
 
   return L.divIcon({
-    className: `modern-marker ${type ? `marker-${type.toLowerCase()}` : 'marker-default'} ${isUrgent ? 'marker-urgent' : ''}`,
+    className: `modern-marker ${type ? `marker-${type.toLowerCase()}` : 'marker-default'}`,
     html: `
       <div class="marker-pin">
         <div class="marker-dot">

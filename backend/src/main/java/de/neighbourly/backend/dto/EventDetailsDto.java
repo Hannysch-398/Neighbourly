@@ -13,10 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventDetailsDto implements PostDetailsDto {
-
-    private String detailType;
-
+public class EventDetailsDto {
     @NotNull(message = "startDate is required")
     private LocalDateTime startDate;
 

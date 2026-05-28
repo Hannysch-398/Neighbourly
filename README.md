@@ -115,7 +115,7 @@ If you just pulled the project or the database setup has changed, follow these s
     - Look at the CLI where `bootRun` is running
     - There should be a clear log indicating that the validation was successful
 
-### 🚨 If something is wrong :
+### 🚨 If something is wrong:
 
 - **DO NOT start working**
 - **DO NOT ignore errors**

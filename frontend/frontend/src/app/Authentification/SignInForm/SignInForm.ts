@@ -1,18 +1,10 @@
-import {Component, inject, signal} from '@angular/core';
-import {form, FormField, pattern, required} from '@angular/forms/signals';
-import {HttpErrorResponse} from '@angular/common/http';
+import { Component, inject, signal } from '@angular/core';
+import { form, FormField, required,pattern } from '@angular/forms/signals';
+import { AuthService, LoginRequest } from '../../services/auth.service';
 import {Router} from '@angular/router';
-import {AuthService, LoginRequest} from '../../service/auth.service';
-
 interface LoginModel {
   email: string;
   password: string;
-}
-
-interface ApiErrorResponse {
-  status?: number;
-  message?: string;
-  errors?: Record<string, string>;
 }
 
 const initial: LoginModel = {
@@ -27,20 +19,22 @@ const initial: LoginModel = {
   templateUrl: './SignInForm.html',
   styleUrls: ['./SignInForm.css']
 })
+
 export class SignInFormComponent {
+
   readonly submitted = signal(false);
   private router = inject(Router);
   private authService = inject(AuthService);
   backendError = signal('');
   showPassword = signal(false);
-  model = signal<LoginModel>({...initial});
+  model = signal<LoginModel>({ ...initial });
 
   form = form(this.model, (path) => {
-    required(path.email, {message: 'E-Mail ist erforderlich'});
+    required(path.email, { message: 'E-Mail ist erforderlich' });
     pattern(path.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
       message: 'Ungültige E-Mail-Adresse'
     });
-    required(path.password, {message: 'Passwort ist erforderlich'});
+    required(path.password, { message: 'Passwort ist erforderlich' });
   });
 
   isValid = () =>
@@ -56,50 +50,20 @@ export class SignInFormComponent {
     const payload: LoginRequest = this.model();
 
     this.authService.login(payload).subscribe({
-      next: () => this.router.navigate(['/profile']),
-      error: err => this.backendError.set(this.getLoginErrorMessage(err))
+      next: () => this.router.navigate(['/profile']), //'/profile' muss in späteren Sprints zum Pfad zur Hauptseite ausgetauscht werden
+      error: err => {
+        if (err.status === 401) {
+          this.backendError.set('E-Mail oder Passwort ist falsch.');
+        } else if (err.status === 403) {
+          this.backendError.set('Bitte verifiziere zuerst deine E-Mail-Adresse.');
+        } else if (err.status === 0 || err.status === 500) {
+          this.backendError.set('Server momentan nicht erreichbar. Bitte versuche es später erneut.');
+        } else {
+          this.backendError.set('Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.');
+        }
+      }
     });
   }
 
-  private getLoginErrorMessage(error: unknown): string {
-    if (!(error instanceof HttpErrorResponse)) {
-      return 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
-    }
 
-    const backendMessage = this.extractBackendMessage(error.error);
-    const normalizedMessage = backendMessage.toLowerCase();
-
-    if (error.status === 401 && normalizedMessage.includes('gelöscht') || normalizedMessage.includes('deleted')) {
-      return 'Dieser Account wurde gelöscht und kann nicht mehr verwendet werden.';
-    }
-
-    if (error.status === 401 || normalizedMessage.includes('invalid credentials')) {
-      return 'E-Mail oder Passwort ist falsch.';
-    }
-
-    if (error.status === 403) {
-      return backendMessage || 'Bitte verifiziere zuerst deine E-Mail-Adresse.';
-    }
-
-    if (error.status === 0 || error.status >= 500) {
-      return 'Server momentan nicht erreichbar. Bitte versuche es später erneut.';
-    }
-
-    return backendMessage || 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
-  }
-
-  private extractBackendMessage(errorBody: unknown): string {
-    if (typeof errorBody === 'string') {
-      return errorBody;
-    }
-
-    if (!errorBody || typeof errorBody !== 'object') {
-      return '';
-    }
-
-    const apiError = errorBody as ApiErrorResponse;
-    const fieldError = apiError.errors ? Object.values(apiError.errors)[0] : '';
-
-    return fieldError || apiError.message || '';
-  }
 }

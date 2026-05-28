@@ -1,15 +1,15 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import { DatePipe } from '@angular/common';
+import {Component, OnInit, inject, signal, computed} from '@angular/core';
 
-import {PostResponse} from '../models/post.model';
-import {PostsService} from '../service/posts.service';
-import {PostCard} from '../components/post-card/post-card';
+import { PostResponse } from '../models/post.model';
+import { PostsService } from '../Service/posts.service';
 
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [PostCard],
+  imports: [DatePipe],
   templateUrl: './posts-list.html',
-  styleUrls: ['./posts-list.css'],
+  styleUrl: './posts-list.css',
 })
 export class PostsListComponent implements OnInit {
   private readonly postsService = inject(PostsService);
@@ -24,16 +24,16 @@ export class PostsListComponent implements OnInit {
   }
 
   loadPosts(): void {
-
     this.isLoading.set(true);
     this.errorMessage.set('');
+
     this.postsService.getPosts().subscribe({
       next: (posts) => {
         this.posts.set(posts);
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Die Beiträge konnten nicht geladen werden.');
+        this.errorMessage.set('Die Beitrage konnten nicht geladen werden.');
         this.isLoading.set(false);
       },
     });

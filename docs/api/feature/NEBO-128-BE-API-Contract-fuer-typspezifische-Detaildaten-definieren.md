@@ -24,19 +24,11 @@ No separate `/details` endpoint is used.
   "postMode": "OFFER | REQUEST",
   "isUrgent": false,
   "urgentUntil": null,
-  "location": {
-    "lat": 53.0793,
-    "lng": 8.8017,
-    "precision": "APPROXIMATE",
-    "radius_m": 500
-  },
   "details": {}
 }
 ```
 
 The `details` object depends on the selected post type.
-
-The `detailType` field is required for polymorphic backend deserialization.
 
 ---
 
@@ -50,17 +42,9 @@ The `detailType` field is required for polymorphic backend deserialization.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
-  "location": {
-    "lat": 53.0793,
-    "lng": 8.8017,
-    "precision": "APPROXIMATE",
-    "radius_m": 500
-  },
   "details": {
-    "detailType": "EVENT",
-    "startDate": "2026-06-01T18:00:00",
-    "endDate": "2026-06-01T20:00:00",
-    "venue": "Community Center"
+    "eventDate": "2026-06-01T18:00:00",
+    "locationName": "Community Center"
   }
 }
 ```
@@ -77,14 +61,7 @@ The `detailType` field is required for polymorphic backend deserialization.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
-  "location": {
-    "lat": 53.0793,
-    "lng": 8.8017,
-    "precision": "APPROXIMATE",
-    "radius_m": 500
-  },
   "details": {
-    "detailType": "SKILL",
     "skillName": "German",
     "experienceLevel": "ADVANCED"
   }
@@ -103,14 +80,7 @@ The `detailType` field is required for polymorphic backend deserialization.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
-  "location": {
-    "lat": 53.0793,
-    "lng": 8.8017,
-    "precision": "APPROXIMATE",
-    "radius_m": 500
-  },
   "details": {
-    "detailType": "PRODUCT",
     "productName": "City Bike",
     "price": 150
   }
@@ -129,14 +99,7 @@ The `detailType` field is required for polymorphic backend deserialization.
   "postMode": "REQUEST",
   "isUrgent": false,
   "urgentUntil": null,
-  "location": {
-    "lat": 53.0793,
-    "lng": 8.8017,
-    "precision": "APPROXIMATE",
-    "radius_m": 500
-  },
   "details": {
-    "detailType": "HOUSING",
     "housingType": "APARTMENT",
     "rent": 900
   }
@@ -150,5 +113,3 @@ The `detailType` field is required for polymorphic backend deserialization.
 Frontend should dynamically render form fields based on the selected `type`.
 
 The `details` payload must match the selected post type.
-
-The `type` field and `details.detailType` must contain the same value.

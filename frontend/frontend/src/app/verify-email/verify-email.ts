@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {HttpErrorResponse} from '@angular/common/http';
-import {VerifyEmailService} from "../service/verify-email-service"
+import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute, RouterLink, RouterModule} from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { VerifyEmailService } from "../services/verify-email-service"
 
 
 @Component({
   selector: 'app-verify-email',
   templateUrl: './verify-email.html',
   imports: [
-    RouterModule
+    RouterLink, RouterModule
   ],
   styleUrls: ['./verify-email.css']
 })
@@ -19,8 +19,7 @@ export class VerifyEmail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private verifyEmailService: VerifyEmailService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');

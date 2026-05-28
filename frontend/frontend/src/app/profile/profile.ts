@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Rating } from '../rating/rating';
-import { ProfileService, ProfileData } from '../service/profile.service';
+import { ProfileService, ProfileData } from '../services/profile.service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './profile.css',
 })
 export class Profile {
+
   private profileService = inject(ProfileService);
   private router = inject(Router);
 

@@ -1,7 +1,6 @@
 package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.PasswordChangeRequest;
-import de.neighbourly.backend.dto.SuccessResponseDto;
 import de.neighbourly.backend.dto.UserProfileDto;
 import de.neighbourly.backend.service.UserService;
 import jakarta.validation.Valid;
@@ -26,19 +25,19 @@ public class UserController {
     }
 
     @PutMapping("/me/change-password")
-    public ResponseEntity<SuccessResponseDto> changeMyPassword(
+    public ResponseEntity<String> changeMyPassword(
             Authentication authentication,
             @Valid @RequestBody PasswordChangeRequest request
     ) {
         String email = authentication.getName();
         userService.changePasswordByEmail(email, request);
-        return ResponseEntity.ok(new SuccessResponseDto("Passwort erfolgreich geändert!"));
+        return ResponseEntity.ok("Passwort erfolgreich geändert!");
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<SuccessResponseDto> deleteMyAccount(Authentication authentication) {
+    public ResponseEntity<String> deleteMyAccount(Authentication authentication) {
         String email = authentication.getName();
         userService.deleteUserByEmail(email);
-        return ResponseEntity.ok(new SuccessResponseDto("Account erfolgreich gelöscht!"));
+        return ResponseEntity.ok("Account erfolgreich gelöscht!");
     }
 }

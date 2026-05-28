@@ -7,12 +7,13 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @AllArgsConstructor
 @Getter
 @Setter
 public class PostDetailResponseDto {
 
-    private Long id;
+    private Long Id;
 
     private String title;
 

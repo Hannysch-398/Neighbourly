@@ -1,8 +1,8 @@
-import {TestBed} from '@angular/core/testing';
-import {Router} from '@angular/router';
+import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
-import {AuthInterceptor} from './auth-interceptor';
-import {AuthService} from '../../service/auth.service';
+import { AuthInterceptor } from './auth-interceptor';
+import { AuthService } from '../../services/auth.service';
 
 describe('AuthInterceptor', () => {
   beforeEach(() => {

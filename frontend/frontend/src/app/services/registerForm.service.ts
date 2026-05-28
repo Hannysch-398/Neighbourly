@@ -8,12 +8,6 @@ export interface RegisterUser {
   password: string;
 }
 
-interface ApiErrorResponse {
-  status?: number;
-  message?: string;
-  errors?: Record<string, string>;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -46,7 +40,13 @@ export class RegisterFormService {
   }
 
   private getRegisterErrorMessage(error: HttpErrorResponse): string {
-    const backendMessage = this.extractBackendMessage(error.error);
+    const backendMessage =
+      typeof error.error === 'string'
+        ? error.error
+        : error.error?.message ||
+          error.error?.error ||
+          Object.values(error.error ?? {})[0] ||
+          '';
 
     const normalizedMessage = String(backendMessage).toLowerCase();
 
@@ -59,20 +59,5 @@ export class RegisterFormService {
     }
 
     return 'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
-  }
-
-  private extractBackendMessage(errorBody: unknown): string {
-    if (typeof errorBody === 'string') {
-      return errorBody;
-    }
-
-    if (!errorBody || typeof errorBody !== 'object') {
-      return '';
-    }
-
-    const apiError = errorBody as ApiErrorResponse;
-    const fieldError = apiError.errors ? Object.values(apiError.errors)[0] : '';
-
-    return fieldError || apiError.message || '';
   }
 }

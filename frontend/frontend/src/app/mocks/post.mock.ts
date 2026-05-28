@@ -1,24 +1,11 @@
-import { CreatePostRequest } from '../models/create-post-request.model';
-import { PostResponse } from '../models/post.model';
+import { CreatePostRequest, PostResponse } from '../models/post.model';
 
 export const createPostMock: CreatePostRequest = {
   title: 'Hilfe beim Umzug',
   description: 'Ich brauche Hilfe beim Tragen von Möbeln.',
   type: 'SKILL',
-  postMode: 'REQUEST',
   isUrgent: true,
   urgentUntil: '2026-05-10T18:00:00',
-  location: {
-    lat: 53.0793,
-    lng: 8.8017,
-    precision: 'APPROXIMATE',
-    radius_m: 500
-  },
-  details: {
-    detailType: 'SKILL',
-    skillName: 'Umzugshilfe',
-    experienceLevel: 'BEGINNER'
-  }
 };
 
 export const postResponseMock: PostResponse = {
