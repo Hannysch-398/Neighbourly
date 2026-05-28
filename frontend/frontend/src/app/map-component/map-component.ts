@@ -9,8 +9,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../service/posts.service';
-import { createMapMarkerIcon } from '../map-marker/map-marker';
+import {PostsService as PostService} from '../service/posts.service';
+import {createMapMarkerIcon} from '../map-marker/map-marker';
 
 @Component({
   selector: 'app-modern-map',
@@ -19,7 +19,7 @@ import { createMapMarkerIcon } from '../map-marker/map-marker';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
   private postMarkersLayer = L.layerGroup();
@@ -36,7 +36,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   ngAfterViewInit(): void {
-    this.resolveInitialPosition().then(({ position, zoom }) => {
+    this.resolveInitialPosition().then(({position, zoom}) => {
       this.initMap(position, zoom);
     });
   }
@@ -197,11 +197,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.postService
       .getMapPostMarker(center.lat, center.lng, radius)
       .subscribe((posts) => {
+
         this.postMarkersLayer.clearLayers();
 
         posts.forEach((post) => {
           const marker = L.marker([post.lat, post.lng], {
-            icon: createMapMarkerIcon(post.type),
+            icon: createMapMarkerIcon(post.type, post.isUrgent),
           }).bindPopup(`
             <div class="custom-popup">
               <strong>${post.title}</strong><br />

@@ -24,11 +24,19 @@ No separate `/details` endpoint is used.
   "postMode": "OFFER | REQUEST",
   "isUrgent": false,
   "urgentUntil": null,
+  "location": {
+    "lat": 53.0793,
+    "lng": 8.8017,
+    "precision": "APPROXIMATE",
+    "radius_m": 500
+  },
   "details": {}
 }
 ```
 
 The `details` object depends on the selected post type.
+
+The `detailType` field is required for polymorphic backend deserialization.
 
 ---
 
@@ -42,9 +50,17 @@ The `details` object depends on the selected post type.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
+  "location": {
+    "lat": 53.0793,
+    "lng": 8.8017,
+    "precision": "APPROXIMATE",
+    "radius_m": 500
+  },
   "details": {
-    "eventDate": "2026-06-01T18:00:00",
-    "locationName": "Community Center"
+    "detailType": "EVENT",
+    "startDate": "2026-06-01T18:00:00",
+    "endDate": "2026-06-01T20:00:00",
+    "venue": "Community Center"
   }
 }
 ```
@@ -61,7 +77,14 @@ The `details` object depends on the selected post type.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
+  "location": {
+    "lat": 53.0793,
+    "lng": 8.8017,
+    "precision": "APPROXIMATE",
+    "radius_m": 500
+  },
   "details": {
+    "detailType": "SKILL",
     "skillName": "German",
     "experienceLevel": "ADVANCED"
   }
@@ -80,7 +103,14 @@ The `details` object depends on the selected post type.
   "postMode": "OFFER",
   "isUrgent": false,
   "urgentUntil": null,
+  "location": {
+    "lat": 53.0793,
+    "lng": 8.8017,
+    "precision": "APPROXIMATE",
+    "radius_m": 500
+  },
   "details": {
+    "detailType": "PRODUCT",
     "productName": "City Bike",
     "price": 150
   }
@@ -99,7 +129,14 @@ The `details` object depends on the selected post type.
   "postMode": "REQUEST",
   "isUrgent": false,
   "urgentUntil": null,
+  "location": {
+    "lat": 53.0793,
+    "lng": 8.8017,
+    "precision": "APPROXIMATE",
+    "radius_m": 500
+  },
   "details": {
+    "detailType": "HOUSING",
     "housingType": "APARTMENT",
     "rent": 900
   }
@@ -113,3 +150,5 @@ The `details` object depends on the selected post type.
 Frontend should dynamically render form fields based on the selected `type`.
 
 The `details` payload must match the selected post type.
+
+The `type` field and `details.detailType` must contain the same value.
