@@ -57,7 +57,7 @@ export interface CreatePostRequest {
   postMode: PostMode;
   isUrgent: boolean;
   urgentUntil?: string | null;
-  location: CreatePostLocationDto;
+  location?: CreatePostLocationDto | null;
   details: PostDetailsDto;
 }
 

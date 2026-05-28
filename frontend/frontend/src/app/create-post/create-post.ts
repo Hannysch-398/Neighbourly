@@ -236,6 +236,7 @@ export class CreatePost {
     switch (value.type) {
       case 'EVENT':
         return {
+          detailType: 'EVENT',
           startDate: value.eventStartDate,
           endDate: value.eventEndDate,
           venue: value.eventVenue.trim(),
@@ -243,6 +244,8 @@ export class CreatePost {
 
       case 'SKILL':
         return {
+          detailType: 'SKILL',
+          skillName: '',
           skillTags: value.skillTags
             .split(',')
             .map((tag) => tag.trim())
@@ -253,6 +256,7 @@ export class CreatePost {
 
       case 'PRODUCT':
         return {
+          detailType: 'PRODUCT',
           productName: value.productName.trim(),
           price: this.toOptionalNumber(value.price),
           currency: value.currency.trim(),
@@ -261,6 +265,7 @@ export class CreatePost {
 
       case 'HOUSING':
         return {
+          detailType: 'HOUSING',
           housingType: value.housingType.trim(),
           rent: this.toOptionalNumber(value.rent),
           rooms: this.toOptionalNumber(value.rooms),
