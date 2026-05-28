@@ -1,7 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { form, FormField, maxLength, required } from '@angular/forms/signals';
 import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
-import { MapComponent } from '../map-component/map-component';
 import { PostsService } from '../service/posts.service';
 
 type PostTypeOption = {
@@ -28,13 +27,18 @@ type PostBasicFormModel = {
   eventStartDate: string;
   eventEndDate: string;
   eventVenue: string;
-  skillName: string;
   experienceLevel: string;
   productName: string;
   price: string;
   housingType: string;
   rent: string;
   showLargeMap: boolean;
+  skillTags: string;
+  availabilityNote: string;
+  currency: string;
+  condition: string;
+  rooms: string;
+  availableFrom: string;
 };
 
 const initialData: PostBasicFormModel = {
@@ -51,13 +55,18 @@ const initialData: PostBasicFormModel = {
   eventStartDate: '',
   eventEndDate: '',
   eventVenue: '',
-  skillName: '',
   experienceLevel: '',
   productName: '',
   price: '',
   housingType: '',
   rent: '',
   showLargeMap: false,
+  skillTags: '',
+  availabilityNote: '',
+  currency: 'EUR',
+  condition: '',
+  rooms: '',
+  availableFrom: '',
 };
 
 @Component({
@@ -104,6 +113,7 @@ export class CreatePost {
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
+
   readonly isFormValid = computed(
     () =>
       !this.postForm.title().invalid() &&
@@ -126,6 +136,7 @@ export class CreatePost {
     }
 
     const payload = this.createPayload();
+
     this.isLoading.set(true);
 
     this.postsService.createPost(payload).subscribe({
@@ -137,11 +148,10 @@ export class CreatePost {
       error: (err) => {
         console.error(err);
 
-        const backendMessage = err?.error?.errors?.request;
+        const backendMessage = err?.error?.errors?.request || err?.error?.message;
 
         this.errorMessage.set(
-          backendMessage ||
-          'Beitrag konnte nicht gespeichert werden. Bitte versuche es erneut.'
+          backendMessage || 'Beitrag konnte nicht gespeichert werden. Bitte versuche es erneut.',
         );
 
         this.isLoading.set(false);
@@ -183,15 +193,7 @@ export class CreatePost {
       postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-      location: value.hasLocation
-        ? {
-            city: value.city.trim(),
-            district: value.district.trim() || null,
-            address: value.address.trim() || null,
-            latitude: null,
-            longitude: null,
-          }
-        : null,
+      location: null,
       details: this.createDetails(),
     };
   }
@@ -202,12 +204,29 @@ export class CreatePost {
     switch (value.type) {
       case 'EVENT':
         return !!value.eventStartDate && !!value.eventEndDate && !!value.eventVenue.trim();
+
       case 'SKILL':
-        return !!value.skillName.trim() && !!value.experienceLevel.trim();
+        return (
+          !!value.skillTags.trim() &&
+          !!value.availabilityNote.trim() &&
+          !!value.experienceLevel.trim()
+        );
+
       case 'PRODUCT':
-        return !!value.productName.trim() && !!value.price;
+        return (
+          !!value.productName.trim() &&
+          !!value.price &&
+          !!value.currency.trim() &&
+          !!value.condition.trim()
+        );
+
       case 'HOUSING':
-        return !!value.housingType.trim() && !!value.rent;
+        return (
+          !!value.housingType.trim() &&
+          !!value.rent &&
+          !!value.rooms &&
+          !!value.availableFrom
+        );
     }
   }
 
@@ -221,20 +240,31 @@ export class CreatePost {
           endDate: value.eventEndDate,
           venue: value.eventVenue.trim(),
         };
+
       case 'SKILL':
         return {
-          skillName: value.skillName.trim(),
+          skillTags: value.skillTags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+          availabilityNote: value.availabilityNote.trim(),
           experienceLevel: value.experienceLevel.trim(),
         };
+
       case 'PRODUCT':
         return {
           productName: value.productName.trim(),
           price: this.toOptionalNumber(value.price),
+          currency: value.currency.trim(),
+          condition: value.condition.trim(),
         };
+
       case 'HOUSING':
         return {
           housingType: value.housingType.trim(),
           rent: this.toOptionalNumber(value.rent),
+          rooms: this.toOptionalNumber(value.rooms),
+          availableFrom: value.availableFrom,
         };
     }
   }
