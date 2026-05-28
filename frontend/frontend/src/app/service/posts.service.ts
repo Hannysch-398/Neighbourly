@@ -1,11 +1,11 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
-
-import { PostResponse } from '../models/post.model';
-import { postListMock } from '../mocks/post.mock';
+import {inject, Injectable} from '@angular/core';
+import {catchError, Observable, of} from 'rxjs';
+import {postListMock} from '../mocks/post.mock';
 import {MapPostMarker} from '../interface/MapPostMarker';
 import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
+import { CreatePostRequest, PostResponse } from '../models/post.model';
+
 
 @Injectable({
   providedIn: 'root',
@@ -39,8 +39,11 @@ export class PostsService {
         .set('radius', radius.toString());
     }
 
-    return this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params });
+    return this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, {params});
   }
 
+  createPost(payload: CreatePostRequest): Observable<PostResponse> {
+    return this.http.post<PostResponse>(this.apiUrl, payload);
+  }
 
 }

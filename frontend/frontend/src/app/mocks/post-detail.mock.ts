@@ -4,7 +4,7 @@ export const postDetailMock: PostDetailResponse = {
     id: 1,
     title: 'Need help repairing my bike',
     description: 'My bike chain is broken and I need help fixing it.',
-    type: 'HELP_REQUEST',
+    type: 'SKILL',
     isUrgent: true,
     urgentUntil: '2026-05-10T18:00:00',
     createdAt: '2026-05-07T10:30:00',

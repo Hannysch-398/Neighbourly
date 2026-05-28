@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 public class PostLocation {
+
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -23,8 +24,12 @@ public class PostLocation {
 
         private Double longitude;
 
+        private String precision;
+
+        @Column(name = "radius_m")
+        private Integer radiusM;
+
         @OneToOne
         @JoinColumn(name = "post_id", nullable = false)
         private Post post;
-
 }
