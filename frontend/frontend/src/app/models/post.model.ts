@@ -35,7 +35,7 @@ export interface SkillDetailsDto {
 export interface ProductDetailsDto {
   detailType: 'PRODUCT';
   productName: string;
-  price: number;
+  price: number | null;
   currency: string;
   condition: string;
 }
@@ -43,8 +43,8 @@ export interface ProductDetailsDto {
 export interface HousingDetailsDto {
   detailType: 'HOUSING';
   housingType: string;
-  rent: number;
-  rooms: number;
+  rent: number | null;
+  rooms: number | null;
   availableFrom: string;
 }
 
