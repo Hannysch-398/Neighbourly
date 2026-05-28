@@ -8,8 +8,8 @@ import {
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../service/posts.service';
-import { createMapMarkerIcon } from '../map-marker/map-marker';
+import {PostsService as PostService} from '../service/posts.service';
+import {createMapMarkerIcon} from '../map-marker/map-marker';
 
 @Component({
   selector: 'app-modern-map',
@@ -153,12 +153,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     const center = this.map.getCenter();
-    const radius = 1000;
+    const radius = this.getRadiusByZoom(this.map.getZoom());
 
     this.postService
       .getMapPostMarker(center.lat, center.lng, radius)
       .subscribe((posts) => {
-        console.log('map posts:', posts);
+
         this.postMarkersLayer.clearLayers();
 
         posts.forEach((post) => {
