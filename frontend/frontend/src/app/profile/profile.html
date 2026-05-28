@@ -3,16 +3,22 @@
 
 
   @if (isLoading()) {
-    <div class="profile-state">
+    <div class="profile-state state-loading">
       <div class="spinner"></div>
       <p>Profil wird geladen...</p>
     </div>
   } @else if (errorMessage()) {
-    <div class="profile-error">
+    <div class="profile-state state-error">
       <h3>Fehler</h3>
       <p>{{ errorMessage() }}</p>
       <a routerLink="/auth" class="login-link">Zum Login</a>
     </div>
+  } @else if (!profile()) {
+    <div class="profile-state state-empty">
+      <h3>Kein Profil gefunden</h3>
+      <p>Zurzeit sind keine Profildaten verfügbar.</p>
+    </div>
+  } @else if (profile()) {
   } @else if (profile()) {
     <div class="profile-card">
       <div class="avatar-column">
