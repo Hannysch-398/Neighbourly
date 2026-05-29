@@ -15,7 +15,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
+      import('./authentification/auth-page/auth-page').then((m) => m.AuthPageComponent),
   },
   {
     path: 'profile/settings',
