@@ -3,8 +3,7 @@ package de.neighbourly.backend.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -20,4 +19,5 @@ public class MapPostDto {
     private boolean urgent;
     private String postMode;
     private String shortDescription;
+    private LocalDateTime createdAt;
 }

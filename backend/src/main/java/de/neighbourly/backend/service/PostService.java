@@ -314,7 +314,8 @@ public class PostService {
                             location.getLongitude(),
                             post.isUrgent(),
                             post.getPostMode().name(),
-                            shortenDescription(post.getDescription())
+                            shortenDescription(post.getDescription()),
+                            post.getCreatedAt()
                     );
                 })
                 .toList();

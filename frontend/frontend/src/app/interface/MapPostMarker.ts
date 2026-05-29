@@ -8,6 +8,6 @@ export interface MapPostMarker {
   lng: number;
   shortDescription?: string;
   isUrgent: boolean;
-  isSponsored: boolean;
+  // isSponsored: boolean;
   createdAt: string;
 }
