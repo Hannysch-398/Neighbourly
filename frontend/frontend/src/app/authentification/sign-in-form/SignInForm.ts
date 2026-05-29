@@ -2,7 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import {form, FormField, pattern, required} from '@angular/forms/signals';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {AuthService, LoginRequest} from '../../service/auth.service';
+import {AuthService, LoginRequest} from '../../services/auth.service';
 
 interface LoginModel {
   email: string;

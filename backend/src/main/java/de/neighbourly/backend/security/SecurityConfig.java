@@ -53,7 +53,7 @@ public class SecurityConfig {
                                     "status", HttpServletResponse.SC_UNAUTHORIZED,
                                     "message", "Unauthorized",
                                     "errors", Map.of("auth", "Unauthorized")
-                           ));
+                            ));
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
