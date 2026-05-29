@@ -1,0 +1,8 @@
+<div class="map-and-overlay-container">
+  <app-modern-map class="map-wrapper"></app-modern-map>
+
+  <app-map-overlay
+    [isOpen]="isOverlayOpen"
+    (toggleOverlay)="toggleOverlay()">
+  </app-map-overlay>
+</div>
