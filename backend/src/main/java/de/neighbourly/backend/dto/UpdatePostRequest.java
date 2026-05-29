@@ -1,5 +1,7 @@
 package de.neighbourly.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class UpdatePostRequest {
 
     @NotBlank(message = "Title must not be empty")
@@ -21,5 +24,9 @@ public class UpdatePostRequest {
 
     public boolean getIsUrgent() {
         return isUrgent;
+    }
+    @JsonAnySetter
+    public void handleUnknownProperty(String name, Object value) {
+        throw new IllegalArgumentException("Field '" + name + "' is not allowed in this request");
     }
 }
