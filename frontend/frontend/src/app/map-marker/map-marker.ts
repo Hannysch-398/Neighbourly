@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import {PostMode, PostType} from '../models/post.model';
+import { PostMode, PostType } from '../models/post.model';
 
 function getMarkerIcon(type?: PostType): string {
   switch (type) {
@@ -24,11 +24,7 @@ export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIco
     html: `
       <div class="marker-pin">
         <div class="marker-dot">
-          ${
-      icon
-        ? `<span class="marker-icon">${icon}</span>`
-        : ''
-    }
+          ${icon ? `<span class="marker-icon">${icon}</span>` : ''}
         </div>
       </div>
     `,
