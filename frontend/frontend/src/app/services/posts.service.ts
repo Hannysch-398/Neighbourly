@@ -15,6 +15,7 @@ import get = DomUtil.get;
 export class PostsService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/posts';
+  //toggle to see mock or real posts
   private readonly useMockPosts = true;
 
   getPosts(): Observable<PostResponse[]> {
@@ -33,6 +34,7 @@ export class PostsService {
 
   getMapPostMarker(lat: number, lng: number, radius: number): Observable<MapPostMarker[]> {
     let params = new HttpParams();
+
 
     if(this.useMockPosts) {
 
