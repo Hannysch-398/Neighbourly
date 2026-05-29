@@ -1,7 +1,7 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 
 import {PostResponse} from '../models/post.model';
-import {PostsService} from '../service/posts.service';
+import {PostsService} from '../services/posts.service';
 import {PostCard} from '../components/post-card/post-card';
 
 @Component({

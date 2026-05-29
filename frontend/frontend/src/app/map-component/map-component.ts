@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../service/posts.service';
+import { PostsService as PostService } from '../services/posts.service';
 import { createMapMarkerIcon } from '../map-marker/map-marker';
 import { MapPostMarker } from '../interface/MapPostMarker';
 
