@@ -8,10 +8,10 @@ export interface PostDetailResponse {
   isUrgent: boolean;
   urgentUntil?: string | null;
   createdAt: string;
-  location: LocationDto;
+  location?: LocationDto;
   tags: string[];
   images: PostImageDto[];
-  details: unknown;
+  details?: unknown;
   reportSummary?: ReportSummaryDto | null;
   averageRating?: AverageRatingResponse | null;
 }

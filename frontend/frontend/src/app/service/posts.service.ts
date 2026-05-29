@@ -1,7 +1,11 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {catchError, Observable, of} from 'rxjs';
-import {postListMock} from '../mocks/post.mock';
+import { Injectable, inject } from '@angular/core';
+import { catchError, Observable, of } from 'rxjs';
+
+import { postDetailMock } from  '../mocks/post-detail.mock'
+import { PostDetailResponse } from '../models/post-detail.model';
+import { PostResponse } from '../models/post.model';
+import { postListMock } from '../mocks/post.mock';
 import {MapPostMarker} from '../interface/MapPostMarker';
 import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
@@ -23,6 +27,12 @@ export class PostsService {
     return this.http.get<PostResponse[]>(this.apiUrl).pipe(
       catchError(() => of(postListMock))
     );
+  }
+  getPostById(id: number): Observable<PostDetailResponse> {
+    if (this.useMockPosts) {
+      return of(postDetailMock);
+    }
+    return this.http.get<PostDetailResponse>(`${this.apiUrl}/${id}`);
   }
 
   getMockMapPosts(): MapPostMarker[] {
