@@ -51,5 +51,15 @@ public class PostController {
                                                               @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdatePostRequest request,
+                                                      Authentication authentication) {
+        String email = authentication.getName();
+
+        PostResponseDto response = postService.updatePost(id, request, email);
+
+        return ResponseEntity.ok(response);
+    }
 
 }

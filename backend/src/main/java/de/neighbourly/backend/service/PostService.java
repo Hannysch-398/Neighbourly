@@ -7,6 +7,7 @@ import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -340,5 +341,8 @@ public class PostService {
         if (request.getType() == PostType.HOUSING && !(details instanceof HousingDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type HOUSING");
         }
+
     }
+
+
 }
