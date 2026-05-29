@@ -5,6 +5,8 @@ import {postListMock} from '../mocks/post.mock';
 import {MapPostMarker} from '../interface/MapPostMarker';
 import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
+import {DomUtil} from 'leaflet';
+import get = DomUtil.get;
 
 
 @Injectable({
@@ -31,6 +33,11 @@ export class PostsService {
 
   getMapPostMarker(lat: number, lng: number, radius: number): Observable<MapPostMarker[]> {
     let params = new HttpParams();
+
+    if(this.useMockPosts) {
+
+      return of(MOCK_MAP_POST_MARKERS) ;
+    }
 
     if (lat !== undefined && lng !== undefined && radius !== undefined) {
       params = params

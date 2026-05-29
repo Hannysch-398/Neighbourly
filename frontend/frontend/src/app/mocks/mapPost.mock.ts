@@ -21,7 +21,7 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Biete Fahrradreparatur',
     lat: 53.0878,
     lng: 8.7972,
-    postMode: "REQUEST",
+    postMode: "OFFER",
     isUrgent: false,
     createdAt: '2026-05-07T10:15:00Z',
     shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +

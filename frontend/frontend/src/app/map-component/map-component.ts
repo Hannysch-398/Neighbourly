@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as L from 'leaflet';
 
 import { PostsService as PostService } from '../services/posts.service';
-import { createMapMarkerIcon } from '../map-marker/map-marker';
+import { createPostMarker } from '../map-marker/map-marker';
 import { MapPostMarker } from '../interface/MapPostMarker';
 
 @Component({
@@ -187,14 +187,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.postMarkersLayer.clearLayers();
 
       posts.forEach((post) => {
-        const marker = L.marker([post.lat, post.lng], {
-          icon: createMapMarkerIcon(post.type, post.isUrgent),
-        }).bindPopup(`
-            <div class="custom-popup">
-              <strong>${post.title}</strong><br />
-              <span>${post.type}</span>
-            </div>
-          `);
+        const marker = createPostMarker(post);
 
         marker.on('click', () => {
           this.selectedPostId = post.id;
