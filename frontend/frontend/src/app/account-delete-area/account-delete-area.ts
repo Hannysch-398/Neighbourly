@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {UserService} from '../service/user-service';
+import {UserService} from '../services/user-service';
 import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 

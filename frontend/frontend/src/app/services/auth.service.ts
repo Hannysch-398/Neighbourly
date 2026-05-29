@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs';
 
 export interface LoginRequest {
   email: string;
@@ -15,18 +15,22 @@ export interface RegisterRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+
   private readonly apiUrl = '/api/auth';
-  private readonly TOKEN_KEY = 'auth_token';
+  private readonly tokenKey = 'auth_token';
+  private readonly loggedIn = signal(this.hasStoredToken());
+
+  readonly loggedInState = this.loggedIn.asReadonly();
 
   login(data: LoginRequest) {
-    return this.http.post(`${this.apiUrl}/login`, data, { responseType: 'text' }).pipe(
-      tap((token) => this.saveToken(token))
-    );
+    return this.http
+      .post(`${this.apiUrl}/login`, data, { responseType: 'text' })
+      .pipe(tap((token) => this.saveToken(token)));
   }
 
   register(data: RegisterRequest) {
@@ -34,11 +38,21 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    try {
+      localStorage.setItem(this.tokenKey, token);
+    } catch {
+      // localStorage can be unavailable in some render/test environments.
+    }
+
+    this.loggedIn.set(!!token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    try {
+      return localStorage.getItem(this.tokenKey);
+    } catch {
+      return null;
+    }
   }
 
   isLoggedIn(): boolean {
@@ -46,10 +60,26 @@ export class AuthService {
   }
 
   logout(returnUrl?: string): Promise<boolean> {
-    localStorage.removeItem(this.TOKEN_KEY);
+    try {
+      localStorage.removeItem(this.tokenKey);
+    } catch {
+      // localStorage can be unavailable in some render/test environments.
+    }
 
-    return this.router.navigate(['/auth'], {
-      queryParams: returnUrl ? { returnUrl } : undefined,
-    });
+    this.loggedIn.set(false);
+
+    if (returnUrl) {
+      return this.router.navigate(['/auth'], {
+        queryParams: {
+          returnUrl,
+        },
+      });
+    }
+
+    return this.router.navigate(['/auth']);
+  }
+
+  private hasStoredToken(): boolean {
+    return this.getToken() !== null;
   }
 }
