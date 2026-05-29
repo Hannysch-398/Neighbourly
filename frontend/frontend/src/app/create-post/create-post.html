@@ -234,9 +234,18 @@
   </form>
 
   @if (errorMessage()) {
-    <p class="error-message">{{ errorMessage() }}</p>
-  }
+    <div class="error-message">
+      <p>{{ errorMessage() }}</p>
 
+      @if (backendErrors().length) {
+        <ul>
+          @for (backendError of backendErrors(); track backendError) {
+            <li>{{ backendError }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
   @if (successMessage()) {
     <p class="success-message">{{ successMessage() }}</p>
   }
