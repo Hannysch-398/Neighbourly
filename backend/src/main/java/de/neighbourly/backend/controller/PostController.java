@@ -1,16 +1,12 @@
 package de.neighbourly.backend.controller;
 
-import de.neighbourly.backend.dto.CreatePostRequest;
-import de.neighbourly.backend.dto.PostListItemResponseDto;
-import de.neighbourly.backend.dto.MapPostMarkerDto;
-import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import de.neighbourly.backend.dto.PostDetailResponseDto;
 
 import java.util.List;
 
