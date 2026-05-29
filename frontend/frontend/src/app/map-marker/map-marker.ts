@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
-import {MapPostMarkerType} from '../interface/MapPostMarker';
+import {PostMode, PostType} from '../models/post.model';
 
-function getMarkerIcon(type?: MapPostMarkerType): string {
+function getMarkerIcon(type?: PostType): string {
   switch (type) {
     case 'EVENT':
       return '📅';
@@ -16,7 +16,7 @@ function getMarkerIcon(type?: MapPostMarkerType): string {
   }
 }
 
-export function createMapMarkerIcon(type?: MapPostMarkerType, isUrgent = false): L.DivIcon {
+export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIcon {
   const icon = getMarkerIcon(type);
 
   return L.divIcon({
