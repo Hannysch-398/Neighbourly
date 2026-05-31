@@ -1,11 +1,11 @@
+import { PostDetailComponent } from './post-detail/post-detail';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
 import { PostsListComponent } from './posts-list/posts-list';
-import {PostDetailComponent} from './post-detail/post-detail';
-import {MapAndOverlayComponent} from './map-and-overlay-component/map-and-overlay-component';
+import { MapAndOverlayComponent } from './map-and-overlay-component/map-and-overlay-component';
+import { NotFound } from './not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -52,5 +52,9 @@ export const routes: Routes = [
   {
     path: 'posts/:id',
     component: PostDetailComponent,
+  },
+  {
+    path: '404',
+    component: NotFound,
   },
 ];
