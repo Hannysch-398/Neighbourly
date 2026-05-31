@@ -99,6 +99,3 @@
   box-shadow: 0 8px 20px var(--urgent-marker-shadow);
 }
 
-.sidebar-entry--urgent .sidebar-entry__title {
-  color: var(--red-color);
-}
