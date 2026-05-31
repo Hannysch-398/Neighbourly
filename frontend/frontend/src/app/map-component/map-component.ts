@@ -6,12 +6,17 @@ import * as L from 'leaflet';
 import { PostsService as PostService } from '../services/posts.service';
 import { createPostMarker } from '../map-marker/map-marker';
 import { MapPostMarker } from '../interface/MapPostMarker';
+import {MapLegendComponent} from '../map-legend/map-legend';
+
 
 @Component({
   selector: 'app-modern-map',
   standalone: true,
   templateUrl: './map-component.html',
   styleUrls: ['./map-component.css'],
+  imports: [
+    MapLegendComponent
+  ]
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
@@ -31,6 +36,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
   ) {}
+
 
   ngAfterViewInit(): void {
     this.resolveInitialPosition().then(({ position, zoom }) => {

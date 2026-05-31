@@ -24,3 +24,8 @@
         flex: 1;
     }
 }
+
+@media (max-width: 600px){
+  .map-and-overlay-container {
+  height: calc(100vh - 250px);}
+}
