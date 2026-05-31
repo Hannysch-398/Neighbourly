@@ -28,14 +28,8 @@ export class MapOverlayComponent implements OnInit {
   constructor(private readonly postService: PostService) {}
 
   ngOnInit(): void {
-    this.loadSidebarEntries();
-  }
-
-  private loadSidebarEntries(): void {
-    this.postService
-      .getMapPostMarker(0, 0, 0)
-      .subscribe((posts) => {
-        this.posts.set(posts);
-      });
+    this.postService.mapPosts$.subscribe((posts) => {
+      this.posts.set(posts);
+    });
   }
 }
