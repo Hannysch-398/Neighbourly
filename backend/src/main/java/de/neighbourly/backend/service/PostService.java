@@ -10,7 +10,7 @@ import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -296,11 +296,54 @@ public class PostService {
 
     public List<PostListItemResponseDto> getPostList() {
         return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
+        return postRepository.findByStatus(PostStatus.ACTIVE)
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
+                .map(PostMapper::toListDto)
+                .toList();
     }
 
     public List<MapPostMarkerDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
         return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius);
+
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
+                .stream()
+                .map(location -> {
+                    Post post = postRepository.findById(location.getPost().getId())
+                            .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+                    return new MapPostDto(
+                            post.getId(),
+                            post.getType().name(),
+                            post.getTitle(),
+                            location.getLatitude(),
+                            location.getLongitude(),
+                            PostMapper.isEffectivelyUrgent(post),
+                            post.getPostMode().name(),
+                            shortenDescription(post.getDescription()),
+                            post.getCreatedAt()
+                    );
+                })
+                .toList();
+    }
+    private String shortenDescription(String description) {
+        if (description == null || description.isBlank()) {
+            return "";
+        }
+
+        int maxLength = 120;
+
+        if (description.length() <= maxLength) {
+            return description;
+        }
+
+        return description.substring(0, maxLength).trim() + "...";
     }
 
     private void saveLocation(CreatePostRequest request, Post savedPost) {

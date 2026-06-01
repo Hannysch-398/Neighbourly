@@ -1,18 +1,8 @@
 import * as L from 'leaflet';
 import { PostMode, PostType } from '../models/post.model';
 import { MapPostMarker } from '../interface/MapPostMarker';
+import {MARKER_ICONS, MODE_ICONS} from "../models/post.model"
 
-const MARKER_ICONS: Record<PostType, string> = {
-  EVENT: '📅',
-  SKILL: '🛠️',
-  PRODUCT: '📦',
-  HOUSING: '🏠',
-};
-
-const MODE_ICONS: Record<PostMode, string> = {
-  REQUEST: '❓',
-  OFFER: '❗',
-};
 
 export function createPostMarker(post: MapPostMarker): L.Marker {
   return L.marker([post.lat, post.lng], {

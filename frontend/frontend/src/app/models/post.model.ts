@@ -74,3 +74,14 @@ export interface PostResponse {
   updatedAt: string;
 }
 
+export const MARKER_ICONS: Record<PostType, string> = {
+  EVENT: '📅',
+  SKILL: '🛠️',
+  PRODUCT: '📦',
+  HOUSING: '🏠',
+};
+
+export const MODE_ICONS: Record<PostMode, string> = {
+  REQUEST: '❓',
+  OFFER: '❗',
+};

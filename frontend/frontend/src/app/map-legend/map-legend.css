@@ -1,0 +1,204 @@
+:host {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  z-index: 1000;
+}
+
+.legend-button {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  color: var(--text-dark);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+
+  transition: transform 0.2s ease,
+  box-shadow 0.2s ease;
+}
+
+.legend-button.open {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.legend-button:hover {
+  transform: scale(1.04);
+}
+
+.legend-panel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+
+  width: 52px;
+  height: 52px;
+
+  overflow: hidden;
+  border-radius: 50%;
+
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+
+  animation: legend-expand 0.35s ease forwards;
+}
+
+@keyframes legend-expand {
+  from {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+  }
+
+  to {
+    width: 320px;
+    height: 275px;
+    border-radius: var(--border-radius);
+  }
+}
+
+.legend-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 0 1rem 1rem 1rem ;
+
+}
+
+.legend-panel h5 {
+padding: 1rem;
+
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.legend-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+
+/* Mini Marker */
+
+.legend-mini-marker {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  position: relative;
+  display: inline-block;
+}
+
+.legend-mini-marker-pin {
+  width: 28px;
+  height: 28px;
+  display: block;
+  border-radius: 50% 50% 50% 10%;
+  background: linear-gradient(135deg, #1f88d2 0%, #57c77a 70%);
+  transform: rotate(-45deg);
+  box-shadow: 0 8px 16px rgba(29, 125, 223, 0.25),
+  0 0 0 4px rgba(123, 203, 98, 0.16);
+}
+
+.legend-mini-marker-dot {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #ffffff;
+  position: absolute;
+  top: 5.5px;
+  left: 5.5px;
+  box-shadow: inset 0 0 0 2px rgba(29, 125, 223, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend-mini-marker-icon {
+  font-size: 10px;
+  line-height: 1;
+  transform: rotate(45deg);
+}
+
+.legend-mini-marker.marker-urgent .legend-mini-marker-pin {
+  background: var(--urgent-marker-gradient);
+  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.35));
+  box-shadow: 0 8px 16px var(--urgent-marker-shadow),
+  0 0 0 4px var(--urgent-marker-pulse);
+}
+
+.legend-mini-marker.marker-urgent .legend-mini-marker-dot {
+  border: 2px solid #ffffff;
+  box-shadow: inset 0 0 0 2px rgba(239, 68, 68, 0.25);
+}
+
+.legend-mode-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
+
+.legend-badge {
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+
+@media (max-width: 768px) {
+  :host {
+    left: 16px;
+    bottom: 16px;
+  }
+
+  @keyframes legend-expand {
+    from {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    to {
+      width: min(320px, calc(100vw - 32px));
+      height: 300px;
+      border-radius: var(--border-radius);
+    }
+  }
+}
