@@ -41,7 +41,6 @@
 
 .map-card h5 {
   margin: 0;
-  /*font-size: 1.35rem;*/
   font-weight: 600;
   color: var(--text-dark);
 }
@@ -112,5 +111,4 @@
 :host ::ng-deep .leaflet-control-zoom a:active {
   transform: scale(0.94);
 }
-
 
