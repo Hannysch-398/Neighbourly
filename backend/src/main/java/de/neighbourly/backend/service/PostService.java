@@ -294,7 +294,11 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-        return postRepository.findByStatus(PostStatus.ACTIVE).stream().map(PostMapper::toListDto).toList();
+        return postRepository
+                .findByStatusOrderByIsUrgentDescCreatedAtDesc(PostStatus.ACTIVE)
+                .stream()
+                .map(PostMapper::toListDto)
+                .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
