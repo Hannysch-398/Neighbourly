@@ -123,6 +123,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .addTo(this.map);
 
     this.postMarkersLayer.addTo(this.map);
+    this.postService.mapPosts$.subscribe((posts) => {
+      this.postMarkersLayer.clearLayers();
+
+      posts.forEach((post) => {
+        const marker = createPostMarker(post);
+
+        marker.on('click', () => {
+          this.selectedPostId = post.id;
+          this.selectedPost = post;
+        });
+
+        this.postMarkersLayer.addLayer(marker);
+      });
+    });
 
     this.addStartMarker(position);
     this.loadMarkersForCurrentView();
@@ -181,24 +195,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     const center = this.map.getCenter();
-    const radius = this.getRadiusByZoom(this.map.getZoom());
+    const bounds = this.map.getBounds();
+    const radius = center.distanceTo(bounds.getNorthEast());
 
-    this.postService.getMapPostMarker(center.lat, center.lng, radius).subscribe((posts) => {
-      this.postMarkersLayer.clearLayers();
-
-      posts.forEach((post) => {
-        const marker = createPostMarker(post);
-
-        marker.on('click', () => {
-          this.selectedPostId = post.id;
-          this.selectedPost = post;
-        });
-
-        this.postMarkersLayer.addLayer(marker);
-      });
-    });
+    this.postService.loadMapPostMarkers(center.lat, center.lng, radius);
   }
-
   private updateMapViewQueryParams(): void {
     if (!this.map) {
       return;
@@ -218,29 +219,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  private getRadiusByZoom(zoom: number): number {
-    if (zoom >= 16) {
-      return 2;
-    }
 
-    if (zoom >= 15) {
-      return 5;
-    }
-
-    if (zoom >= 13) {
-      return 15;
-    }
-
-    if (zoom >= 11) {
-      return 35;
-    }
-
-    if (zoom >= 9) {
-      return 80;
-    }
-
-    return 250;
-  }
 
   ngOnDestroy(): void {
     if (this.markerLoadTimeout) {

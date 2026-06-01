@@ -1,0 +1,39 @@
+<article class="sidebar-entry" [class.sidebar-entry--urgent]="post.isUrgent">
+  @if (post.isUrgent) {
+    <div class="sidebar-entry__urgent">
+      Dringend
+    </div>
+  }
+
+  <div class="sidebar-entry__title-container">
+    <span class="sidebar-entry__mode">
+      {{ modeIcon }}
+    </span>
+
+    <strong class="sidebar-entry__title">
+      {{ post.title }}
+    </strong>
+
+    <span class="sidebar-entry__type-icon">
+      {{ typeIcon }}
+    </span>
+  </div>
+
+  @if (post.createdAt) {
+    <span class="sidebar-entry__date">
+      Erstellt am: {{ formatDate(post.createdAt) }}
+    </span>
+  }
+
+  @if (post.shortDescription) {
+    <p class="sidebar-entry__text">
+      {{ post.shortDescription }}
+    </p>
+  }
+
+  <a [routerLink]="['/posts', post.id]" class="sidebar-entry__link">
+    <button class="sidebar-entry__button" type="button">
+      Post ansehen
+    </button>
+  </a>
+</article>
