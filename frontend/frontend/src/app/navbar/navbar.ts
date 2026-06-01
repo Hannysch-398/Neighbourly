@@ -12,21 +12,21 @@ import {AuthService} from '../services/auth.service';
 export class Navbar {
   private readonly authService = inject(AuthService);
 
+  accountRoute() {
+    return this.authService.isLoggedIn() ? '/profile' : '/auth';
+  }
+
   createPostRoute() {
     return this.authService.isLoggedIn() ? '/posts/create' : '/auth';
   }
 
-  accountRoute() {
-    return this.authService.isLoggedIn() ? '/profile' : '/auth';
+  accountAriaLabel() {
+    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
   }
 
   createPostAriaLabel() {
     return this.authService.isLoggedIn()
       ? 'Beitrag erstellen'
       : 'Zur Anmeldung gehen und Beitrag erstellen';
-  }
-
-  accountAriaLabel() {
-    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
   }
 }

@@ -220,8 +220,17 @@
                             [class.invalid]="shouldShowLocationError()"
                     />
                     @if (shouldShowLocationError()) {
-                        <small>Bitte gib eine Stadt für die Location ein.</small>
+                        <small>Bitte gib Stadt und Postleitzahl ein und ermittle die Koordinaten.</small>
                     }
+                </label>
+                <label class="field">
+                    <span>Postleitzahl</span>
+                    <input
+                            type="text"
+                            [formField]="postForm.postalCode"
+                            placeholder="z. B. 10115"
+                            [class.invalid]="shouldShowLocationError()"
+                    />
                 </label>
 
                 <label class="field">
@@ -237,6 +246,16 @@
                             placeholder="z. B. Musterstrasse 12"
                     />
                 </label>
+                <div class="field span-two">
+                    <button
+                            type="button"
+                            class="secondary-button"
+                            (click)="resolveCoordinates()"
+                    >
+                        Koordinaten ermitteln
+                    </button>
+
+                </div>
             </div>
         }
 
