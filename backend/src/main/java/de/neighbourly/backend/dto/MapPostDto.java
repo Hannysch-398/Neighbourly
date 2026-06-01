@@ -3,12 +3,11 @@ package de.neighbourly.backend.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class MapPostMarkerDto {
+public class MapPostDto {
     private Long id;
     private String type;
     private String title;
@@ -19,6 +18,6 @@ public class MapPostMarkerDto {
 
     private boolean urgent;
     private String postMode;
-//    private boolean isSponsored;
-//    private Instant createdAt;
+    private String shortDescription;
+    private LocalDateTime createdAt;
 }

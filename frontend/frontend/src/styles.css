@@ -1,7 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'leaflet/dist/leaflet.css';
-
+@import './app/map-marker/map-marker.css';
 :root {
   --primary-color: #459cb8;
   --primary-color-hover: #367f97;
@@ -72,8 +72,9 @@
   a,
   label {
     color: #4e5d69;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-decoration: none;
+    margin: 0;
   }
 
 }

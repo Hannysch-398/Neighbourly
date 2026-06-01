@@ -7,6 +7,7 @@ import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -341,29 +342,5 @@ public class PostService {
         if (request.getType() == PostType.HOUSING && !(details instanceof HousingDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type HOUSING");
         }
-
-    }
-    @Transactional
-    public PostResponseDto updatePost(Long id, UpdatePostRequest request, String email) {
-
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
-
-        if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
-            throw new RuntimeException("You are not authorized to update this post");
-        }
-
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
-        post.setTitle(request.getTitle());
-        post.setDescription(request.getDescription());
-        post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
-        post.setUpdatedAt(LocalDateTime.now());
-
-        Post updatedPost = postRepository.save(post);
-        return PostMapper.toDto(updatedPost);
     }
 }

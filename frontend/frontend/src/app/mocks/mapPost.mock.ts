@@ -1,4 +1,5 @@
-import { MapPostMarker } from '../interface/MapPostMarker';
+import {MapPostMarker} from '../interface/MapPostMarker';
+
 export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
   {
     id: 1,
@@ -6,9 +7,10 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Nachbarschaftstreffen',
     lat: 53.0889,
     lng: 8.7961,
+    postMode: 'REQUEST',
     isUrgent: true,
-    isSponsored: false,
     createdAt: '2026-05-07T10:00:00Z',
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...'
   },
   {
     id: 2,
@@ -16,9 +18,10 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Biete Fahrradreparatur',
     lat: 53.0878,
     lng: 8.7972,
+    postMode: "OFFER",
     isUrgent: false,
-    isSponsored: true,
     createdAt: '2026-05-07T10:15:00Z',
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...'
   },
   {
     id: 3,
@@ -26,9 +29,10 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Werkzeug zu verschenken',
     lat: 53.0894,
     lng: 8.7939,
+    postMode: "REQUEST",
     isUrgent: false,
-    isSponsored: false,
     createdAt: '2026-05-07T10:30:00Z',
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   },
   {
     id: 4,
@@ -36,18 +40,20 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Zimmer kurzfristig gesucht',
     lat: 53.0869,
     lng: 8.7984,
+    postMode: "REQUEST",
     isUrgent: true,
-    isSponsored: false,
     createdAt: '2026-05-07T10:45:00Z',
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   },
   {
     id: 5,
-    type: '',
+    type: 'HOUSING',
     title: 'Zimmer kurzfristig gesucht',
     lat: 53.0869,
     lng: 8.7984,
+    postMode: "REQUEST",
     isUrgent: true,
-    isSponsored: false,
     createdAt: '2026-05-07T10:45:00Z',
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   }
 ];

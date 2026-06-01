@@ -1,16 +1,11 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import * as L from 'leaflet';
 
-import {PostsService as PostService} from '../service/posts.service';
-import {createMapMarkerIcon} from '../map-marker/map-marker';
+import { PostsService as PostService } from '../services/posts.service';
+import { createPostMarker } from '../map-marker/map-marker';
+import { MapPostMarker } from '../interface/MapPostMarker';
 
 @Component({
   selector: 'app-modern-map',
@@ -19,7 +14,7 @@ import {createMapMarkerIcon} from '../map-marker/map-marker';
   styleUrls: ['./map-component.css'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('map', {static: true}) mapElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
   private postMarkersLayer = L.layerGroup();
@@ -28,15 +23,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private readonly defaultPosition: L.LatLngExpression = [53.088559, 8.79568];
   private readonly defaultZoom = 13;
   private readonly userZoom = 15;
+  selectedPostId: number | null = null;
+  selectedPost: MapPostMarker | null = null;
 
   constructor(
     private readonly postService: PostService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   ngAfterViewInit(): void {
-    this.resolveInitialPosition().then(({position, zoom}) => {
+    this.resolveInitialPosition().then(({ position, zoom }) => {
       this.initMap(position, zoom);
     });
   }
@@ -62,10 +59,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           resolve({
-            position: [
-              position.coords.latitude,
-              position.coords.longitude,
-            ],
+            position: [position.coords.latitude, position.coords.longitude],
             zoom: this.userZoom,
           });
         },
@@ -79,12 +73,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           enableHighAccuracy: false,
           timeout: 5000,
           maximumAge: 60_000,
-        }
+        },
       );
     });
   }
 
-  private getInitialMapViewFromQuery(): {position: L.LatLngExpression; zoom: number} | null {
+  private getInitialMapViewFromQuery(): { position: L.LatLngExpression; zoom: number } | null {
     const params = this.route.snapshot.queryParamMap;
     const lat = Number(params.get('lat'));
     const lng = Number(params.get('lng'));
@@ -116,14 +110,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       attributionControl: true,
     }).setView(position, zoom);
 
-    L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-      {
-        maxZoom: 20,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      }
-    ).addTo(this.map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 20,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    }).addTo(this.map);
 
     L.control
       .zoom({
@@ -132,6 +123,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .addTo(this.map);
 
     this.postMarkersLayer.addTo(this.map);
+    this.postService.mapPosts$.subscribe((posts) => {
+      this.postMarkersLayer.clearLayers();
+
+      posts.forEach((post) => {
+        const marker = createPostMarker(post);
+
+        marker.on('click', () => {
+          this.selectedPostId = post.id;
+          this.selectedPost = post;
+        });
+
+        this.postMarkersLayer.addLayer(marker);
+      });
+    });
 
     this.addStartMarker(position);
     this.loadMarkersForCurrentView();
@@ -167,9 +172,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     L.marker(position, {
       icon: startIcon,
-    })
-      .addTo(this.map)
-      .bindPopup(`
+    }).addTo(this.map).bindPopup(`
         <div class="custom-popup">
           <strong>Startposition</strong>
         </div>
@@ -192,29 +195,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     const center = this.map.getCenter();
-    const radius = this.getRadiusByZoom(this.map.getZoom());
+    const bounds = this.map.getBounds();
+    const radius = center.distanceTo(bounds.getNorthEast());
 
-    this.postService
-      .getMapPostMarker(center.lat, center.lng, radius)
-      .subscribe((posts) => {
-
-        this.postMarkersLayer.clearLayers();
-
-        posts.forEach((post) => {
-          const marker = L.marker([post.lat, post.lng], {
-            icon: createMapMarkerIcon(post.type, post.isUrgent),
-          }).bindPopup(`
-            <div class="custom-popup">
-              <strong>${post.title}</strong><br />
-              <span>${post.type}</span>
-            </div>
-          `);
-
-          this.postMarkersLayer.addLayer(marker);
-        });
-      });
+    this.postService.loadMapPostMarkers(center.lat, center.lng, radius);
   }
-
   private updateMapViewQueryParams(): void {
     if (!this.map) {
       return;
@@ -234,29 +219,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  private getRadiusByZoom(zoom: number): number {
-    if (zoom >= 16) {
-      return 2;
-    }
 
-    if (zoom >= 15) {
-      return 5;
-    }
-
-    if (zoom >= 13) {
-      return 15;
-    }
-
-    if (zoom >= 11) {
-      return 35;
-    }
-
-    if (zoom >= 9) {
-      return 80;
-    }
-
-    return 250;
-  }
 
   ngOnDestroy(): void {
     if (this.markerLoadTimeout) {

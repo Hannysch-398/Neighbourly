@@ -5,7 +5,6 @@ import {postListMock} from '../mocks/post.mock';
 import {MapPostMarker} from '../interface/MapPostMarker';
 import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
-import {UpdatePostRequest} from '../interface/UpdatePostRequest';
 
 
 @Injectable({
@@ -45,10 +44,6 @@ export class PostsService {
 
   createPost(payload: CreatePostRequest): Observable<PostResponse> {
     return this.http.post<PostResponse>(this.apiUrl, payload);
-  }
-
-  updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
-    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);
   }
 
 }

@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-
-import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
 import { PostsListComponent } from './posts-list/posts-list';
+import { MapAndOverlayComponent } from './map-and-overlay-component/map-and-overlay-component';
 
 export const routes: Routes = [
   {
@@ -34,7 +33,7 @@ export const routes: Routes = [
   },
   {
     path: 'map',
-    component: MapComponent,
+    component: MapAndOverlayComponent,
   },
   {
     path: 'posts',
@@ -48,4 +47,5 @@ export const routes: Routes = [
     path: 'posts/create',
     component: CreatePost,
   },
+  { path: 'posts/:postId', component: PostsListComponent },
 ];

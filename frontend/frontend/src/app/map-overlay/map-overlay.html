@@ -1,0 +1,17 @@
+<aside class="map-overlay" [class.open]="isOpen">
+  <button type="button" class="burger-button" (click)="toggleOverlay.emit()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (isOpen) {
+    <div class="overlay-content">
+      <!-- später Inhalt -->
+
+      @for(post of posts(); track post.id){
+        <app-sidebar-entry [post]="post"></app-sidebar-entry>
+      }
+    </div>
+  }
+</aside>

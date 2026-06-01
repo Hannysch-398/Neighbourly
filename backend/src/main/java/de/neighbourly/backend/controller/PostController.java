@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import de.neighbourly.backend.dto.PostDetailResponseDto;
 
 import java.util.List;
 
@@ -46,16 +47,6 @@ public class PostController {
     public ResponseEntity<List<MapPostMarkerDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
                                                               @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
-                                                      @Valid @RequestBody UpdatePostRequest request,
-                                                      Authentication authentication) {
-        String email = authentication.getName();
-
-        PostResponseDto response = postService.updatePost(id, request, email);
-
-        return ResponseEntity.ok(response);
     }
 
 }

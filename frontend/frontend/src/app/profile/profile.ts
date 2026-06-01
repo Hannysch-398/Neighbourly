@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Rating } from '../rating/rating';
-import { ProfileService, ProfileData } from '../service/profile.service';
+import { ProfileService, ProfileData } from '../services/profile.service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -22,12 +22,20 @@ export class Profile {
   archivedPosts = false;
 
   constructor() {
+    this.loadProfile();
+  }
+
+  loadProfile(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
     this.profileService.getProfile().subscribe({
       next: (data) => {
         this.profile.set(data);
         this.isLoading.set(false);
       },
       error: (err) => {
+        this.profile.set(null);
         this.isLoading.set(false);
 
         if (err.status === 401) {
