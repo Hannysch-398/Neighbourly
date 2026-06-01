@@ -1,12 +1,14 @@
-export type MapPostMarkerType = 'EVENT' | 'SKILL' | 'PRODUCT' | 'HOUSING'| '';
+import {PostMode, PostType} from '../models/post.model';
 
 export interface MapPostMarker {
   id: number;
-  type: MapPostMarkerType;
+  type: PostType;
   title: string;
   lat: number;
   lng: number;
+  postMode: PostMode
   isUrgent: boolean;
-  isSponsored: boolean;
   createdAt: string;
+  shortDescription?: string;
+  // isSponsored: boolean;
 }

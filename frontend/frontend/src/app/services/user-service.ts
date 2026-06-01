@@ -44,14 +44,16 @@ export class UserService {
     data: { oldPassword: string; newPassword: string },
     userId: number
   ) {
-    return this.http.put<SuccessResponse>(
+    return this.http.put(
       `${this.baseUrl}/me/change-password`,
       data,
       {
-        headers: this.getHeaders()
+        headers: this.getHeaders(),
+        responseType: 'text'
       }
     );
   }
+
   deleteAccount() {
     return this.http.delete<SuccessResponse>(`${this.baseUrl}/me`, {
       headers: this.getHeaders()

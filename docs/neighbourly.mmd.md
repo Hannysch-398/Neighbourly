@@ -15,6 +15,7 @@ classDiagram
         +string avatar
         +datetime creation_date
         +datetime updated_date
+        +string status
     }
 
     class Post {

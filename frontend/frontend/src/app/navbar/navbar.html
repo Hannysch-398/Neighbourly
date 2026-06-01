@@ -1,6 +1,6 @@
 <nav class="custom-navbar" aria-label="Hauptnavigation">
   <div class="navbar-shell">
-    <a routerLink="/map" class="brand-card" aria-label="Neighbourly Startseite">
+    <a routerLink="/map" queryParamsHandling="merge" class="brand-card" aria-label="Neighbourly Startseite">
       <img src="assets/logo.png" alt="Neighbourly" class="brand-logo">
     </a>
 
@@ -13,8 +13,8 @@
       </div>
 
       <div class="nav-links">
-        <a routerLink="/map" routerLinkActive="active" class="nav-item-link">Karte</a>
-        <a routerLink="/uebersicht" routerLinkActive="active" class="nav-item-link">Übersicht</a>
+        <a routerLink="/map" queryParamsHandling="merge" routerLinkActive="active" class="nav-item-link">Karte</a>
+        <a routerLink="/posts" queryParamsHandling="merge" routerLinkActive="active" class="nav-item-link">Übersicht</a>
       </div>
     </div>
 

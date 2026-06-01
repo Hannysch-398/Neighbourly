@@ -1,7 +1,7 @@
-import {Component, inject, signal} from '@angular/core';
-import {Rating} from '../rating/rating';
-import {ProfileService, ProfileData} from '../service/profile.service';
-import {Router, RouterLink} from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Rating } from '../rating/rating';
+import { ProfileService, ProfileData } from '../services/profile.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile',

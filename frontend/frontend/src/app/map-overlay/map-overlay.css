@@ -1,0 +1,127 @@
+.map-overlay {
+  position: relative;
+
+  width: 64px;
+  flex: 0 0 64px;
+
+  height: 100%;
+
+  overflow: visible;
+
+  transition:
+    flex-basis 0.25s ease,
+    width 0.25s ease;
+}
+
+.map-overlay.open {
+  width: 320px;
+  flex-basis: 320px;
+
+  background: #ffffff;
+
+  border-radius: 32px;
+
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+
+  overflow: hidden;
+}
+
+/* Burger Button */
+
+.burger-button {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  z-index: 10;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.24);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.burger-button:hover {
+  transform: scale(1.05);
+}
+
+.burger-button:active {
+  transform: scale(0.96);
+}
+
+/* Burger Lines */
+
+.burger-button span {
+  position: absolute;
+
+  width: 15px;
+  height: 2px;
+
+  background: #ffffff;
+
+  border-radius: 999px;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    top 0.25s ease;
+}
+
+/* Burger State */
+
+.burger-button span:nth-child(1) {
+  top: 13px;
+}
+
+.burger-button span:nth-child(2) {
+  top: 19px;
+}
+
+.burger-button span:nth-child(3) {
+  top: 25px;
+}
+
+/* X State */
+
+.map-overlay.open .burger-button span:nth-child(1) {
+  top: 19px;
+  transform: rotate(45deg);
+}
+
+.map-overlay.open .burger-button span:nth-child(2) {
+  opacity: 0;
+}
+
+.map-overlay.open .burger-button span:nth-child(3) {
+  top: 19px;
+  transform: rotate(-45deg);
+}
+
+/* Content */
+
+.overlay-content {
+  padding: 5rem 1.5rem 1.5rem;
+
+  height: 100%;
+  overflow-y: auto;
+}

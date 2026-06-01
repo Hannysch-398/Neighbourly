@@ -1,20 +1,23 @@
 package de.neighbourly.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class MapPostMarkerDto {
+public class MapPostDto {
     private Long id;
     private String type;
     private String title;
     private double lat;
     private double lng;
-    private boolean isUrgent;
+
+    @JsonProperty("isUrgent")
+
+    private boolean urgent;
     private String postMode;
-//    private boolean isSponsored;
-//    private Instant createdAt;
+    private String shortDescription;
+    private LocalDateTime createdAt;
 }
