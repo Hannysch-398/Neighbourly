@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MapOverlay } from './map-overlay';
+import { MapLegend } from './map-legend';
 
-describe('MapOverlay', () => {
-  let component: MapOverlay;
-  let fixture: ComponentFixture<MapOverlay>;
+describe('MapLegend', () => {
+  let component: MapLegend;
+  let fixture: ComponentFixture<MapLegend>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapOverlay]
+      imports: [MapLegend]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MapOverlay);
+    fixture = TestBed.createComponent(MapLegend);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

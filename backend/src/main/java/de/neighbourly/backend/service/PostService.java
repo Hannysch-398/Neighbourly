@@ -9,7 +9,7 @@ import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -245,7 +245,7 @@ public class PostService {
         return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
     }
 
-    private static final double MAX_RADIUS = 20_000;
+    private static final double MAX_RADIUS = 200_000;
 
     private EventDetailsDto getEventDetails(CreatePostRequest request) {
         return objectMapper.convertValue(request.getDetails(), EventDetailsDto.class);
@@ -294,9 +294,14 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-        return postRepository
-                .findByStatusOrderByIsUrgentDescCreatedAtDesc(PostStatus.ACTIVE)
+        return postRepository.findByStatus(PostStatus.ACTIVE)
                 .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
                 .map(PostMapper::toListDto)
                 .toList();
     }
@@ -316,7 +321,7 @@ public class PostService {
                             post.getTitle(),
                             location.getLatitude(),
                             location.getLongitude(),
-                            post.isUrgent(),
+                            PostMapper.isEffectivelyUrgent(post),
                             post.getPostMode().name(),
                             shortenDescription(post.getDescription()),
                             post.getCreatedAt()
