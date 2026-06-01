@@ -1,4 +1,5 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {RouterLink} from '@angular/router';
 
 import {PostResponse} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
@@ -7,7 +8,7 @@ import {PostCard} from '../components/post-card/post-card';
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [PostCard],
+  imports: [PostCard, RouterLink],
   templateUrl: './posts-list.html',
   styleUrls: ['./posts-list.css'],
 })

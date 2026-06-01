@@ -16,7 +16,7 @@ export class PostsService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/posts';
   //toggle to see mock or real posts
-  private readonly useMockPosts = true;
+  private readonly useMockPosts = false;
 
   getPosts(): Observable<PostResponse[]> {
     if (this.useMockPosts) {
