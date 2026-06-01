@@ -15,9 +15,9 @@ export class AccountDeleteArea {
   userId = this.userService.getUserIdSignal();
 
   isConfirming = false;
+  isDeleting = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
-
 
   triggerConfirmation() {
     this.isConfirming = true;
@@ -28,28 +28,38 @@ export class AccountDeleteArea {
   }
 
   async confirmDelete() {
-    console.log('Confirm delete');
-    try{
-      this.userId();
-    }catch(e){
+    if (this.isDeleting()) {
+      return;
+    }
+
+    this.successMessage.set('');
+    this.errorMessage.set('');
+
+    const userId = this.userId();
+
+    if (userId === null) {
       this.errorMessage.set('Dein Benutzerprofil konnte nicht geladen werden. Bitte versuche es später erneut.');
       this.isConfirming = false;
       return;
     }
-    try{
 
+    this.isDeleting.set(true);
+
+    try {
       await firstValueFrom(this.userService.deleteAccount());
       this.successMessage.set('Dein Account wurde erfolgreich gelöscht. Du wirst ausgeloggt...');
       this.isConfirming = false;
+
       setTimeout(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('auth_token');
         this.router.navigate(['/auth']);
       }, 2000);
-    } catch (e) {
+    } catch {
       this.successMessage.set('');
       this.errorMessage.set('Fehler beim Löschen des Accounts. Bitte versuche es später erneut.');
+    } finally {
+      this.isDeleting.set(false);
     }
-
   }
 }
