@@ -43,28 +43,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     return this.formatLabel(type);
   });
 
-  protected readonly detailEntries = computed<DetailEntry[]>(() => {
-    const details = this.post()?.details;
-
-    if (details === null || details === undefined || details === '') {
-      return [];
-    }
-
-    if (typeof details !== 'object' || Array.isArray(details)) {
-      return [{
-        label: 'Details',
-        value: this.formatDetailValue(details),
-      }];
-    }
-
-    return Object.entries(details as Record<string, unknown>)
-      .filter(([, value]) => value !== null && value !== undefined && value !== '')
-      .map(([key, value]) => ({
-        label: this.formatLabel(key),
-        value: this.formatDetailValue(value),
-      }));
-  });
-
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
@@ -119,19 +97,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     return parts.length > 0 ? parts.join(', ') : 'Standort ohne Ortsnamen';
   }
 
-  protected coordinatesText(location: LocationDto | null | undefined): string {
-    if (
-      location?.latitude === null ||
-      location?.latitude === undefined ||
-      location.longitude === null ||
-      location.longitude === undefined
-    ) {
-      return 'Keine Koordinaten verfügbar';
-    }
-
-    return `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`;
-  }
-
+  //Signals für User noch anpassen
   protected userEmail(): string {
     return this.readPostString(['author.email', 'user.email', 'owner.email', 'email', 'userEmail']) || 'Keine E-Mail hinterlegt';
   }
@@ -172,18 +138,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     return 'VB';
   }
 
-  protected ratingValue(): string {
-    const average = Number(this.post()?.averageRating?.average ?? 0);
-
-    return average.toFixed(1);
-  }
-
-  protected ratingStars(): boolean[] {
-    const filledStars = Math.floor(Number(this.post()?.averageRating?.average ?? 0));
-
-    return Array.from({ length: 5 }, (_, index) => index < filledStars);
-  }
-
   private parsePostId(value: string | null): number | null {
     const id = Number(value);
 
@@ -206,18 +160,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       .toLowerCase();
 
     return normalized.replace(/^\w|\s\w/g, letter => letter.toUpperCase());
-  }
-
-  private formatDetailValue(value: unknown): string {
-    if (Array.isArray(value)) {
-      return value.map(item => this.formatDetailValue(item)).join(', ');
-    }
-
-    if (typeof value === 'object' && value !== null) {
-      return JSON.stringify(value);
-    }
-
-    return String(value);
   }
 
   private readPostString(paths: string[]): string {
