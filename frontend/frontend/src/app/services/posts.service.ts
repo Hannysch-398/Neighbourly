@@ -62,4 +62,8 @@ export class PostsService {
 
     return Math.max(1, Math.min(Math.round(radius), this.maxRadius));
   }
+
+  updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
+    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);
+  }
 }
