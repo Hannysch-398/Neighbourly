@@ -1,28 +1,24 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
 import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
-
-export interface MapMarkerQuery {
-  lat: number;
-  lng: number;
-  radius: number;
-}
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService {
   private readonly http = inject(HttpClient);
+
   private readonly apiUrl = '/api/posts';
   private readonly useMockPosts = false;
   private readonly maxRadius = 150_000;
 
-  private readonly mapPostsSubject = new BehaviorSubject<MapPostMarker[]>([]);
-  readonly mapPosts$ = this.mapPostsSubject.asObservable();
+  readonly mapPosts = signal<MapPostMarker[]>([]);
+  readonly selectedMapPost = signal<MapPostMarker | null>(null);
 
   getPosts(): Observable<PostResponse[]> {
     if (this.useMockPosts) {
@@ -32,9 +28,13 @@ export class PostsService {
     return this.http.get<PostResponse[]>(this.apiUrl);
   }
 
+  selectMapPost(post: MapPostMarker | null): void {
+    this.selectedMapPost.set(post);
+  }
+
   loadMapPostMarkers(lat: number, lng: number, radius: number): void {
     if (this.useMockPosts) {
-      this.mapPostsSubject.next(MOCK_MAP_POST_MARKERS);
+      this.mapPosts.set(MOCK_MAP_POST_MARKERS);
       return;
     }
 
@@ -45,9 +45,10 @@ export class PostsService {
       .set('lng', lng.toString())
       .set('radius', safeRadius.toString());
 
-    this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params })
+    this.http
+      .get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params })
       .subscribe((posts) => {
-        this.mapPostsSubject.next(posts);
+        this.mapPosts.set(posts);
       });
   }
 
