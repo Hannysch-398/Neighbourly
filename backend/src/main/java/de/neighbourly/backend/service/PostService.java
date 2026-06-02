@@ -70,10 +70,11 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
-        saveLocation(request, savedPost);
+        LocationDto location = saveLocation(request, savedPost);
+
         saveTypeSpecificDetails(request, savedPost);
 
-        return PostMapper.toDto(savedPost);
+        return PostMapper.toDto(savedPost, location);
     }
 
     public PostDetailResponseDto getPostDetail(Long postId) {
@@ -348,9 +349,9 @@ public class PostService {
         return description.substring(0, maxLength).trim() + "...";
     }
 
-    private void saveLocation(CreatePostRequest request, Post savedPost) {
+    private LocationDto saveLocation(CreatePostRequest request, Post savedPost) {
         if (request.getLocation() == null) {
-            return;
+            return null;
         }
 
         CreatePostLocationDto dto = request.getLocation();
@@ -363,6 +364,8 @@ public class PostService {
         location.setRadiusM(dto.getRadiusM());
 
         postLocationRepository.save(location);
+
+        return mapLocation(location);
     }
 
     private void validateDetailsMatchPostType(CreatePostRequest request) {

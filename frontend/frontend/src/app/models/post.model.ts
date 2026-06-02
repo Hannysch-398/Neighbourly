@@ -72,5 +72,6 @@ export interface PostResponse {
   createdAt: string;
   status: PostStatus;
   updatedAt: string;
+  location?: LocationDto | null;
 }
 
