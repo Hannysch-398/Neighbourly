@@ -1,4 +1,5 @@
 <section class="posts-list-page">
+
   <main class="posts-list-shell" aria-live="polite">
     @if (isLoading()) {
       <div class="posts-list" aria-label="Beiträge werden geladen">
@@ -27,8 +28,22 @@
         <a class="empty-state-cta" routerLink="/posts/create">Post erstellen</a>
       </div>
     } @else {
+      @if (urgentPosts().length > 0) {
+        <section class="urgent-help-section" aria-label="Dringende Hilfe">
+          <div class="urgent-help-header">
+            <span aria-hidden="true">🚨</span>
+            <h2>Dringende Hilfe</h2>
+          </div>
+
+          <div class="urgent-help-list" role="list">
+            @for (post of urgentPosts(); track post.id) {
+              <app-post-card [post]="post"></app-post-card>
+            }
+          </div>
+        </section>
+      }
       <div class="posts-list" role="list">
-        @for (post of posts(); track post.id) {
+        @for (post of regularPosts(); track post.id) {
           <app-post-card [post]="post"></app-post-card>
         }
       </div>

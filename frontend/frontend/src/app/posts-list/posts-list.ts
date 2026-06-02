@@ -19,6 +19,18 @@ export class PostsListComponent implements OnInit {
   readonly isLoading = signal(true);
   readonly errorMessage = signal('');
   readonly hasPosts = computed(() => this.posts().length > 0);
+  readonly urgentPosts = computed(() =>
+    this.posts()
+      .filter((post) => post.isUrgent)
+      .slice(0, 3)
+  );
+
+  readonly regularPosts = computed(() => {
+    const pinnedIds = new Set(this.urgentPosts().map((post) => post.id));
+
+    return this.posts().filter((post) => !pinnedIds.has(post.id));
+  });
+
 
   ngOnInit(): void {
     this.loadPosts();
@@ -63,4 +75,6 @@ export class PostsListComponent implements OnInit {
   trackPostById(_: number, post: PostResponse): number {
     return post.id;
   }
+
+
 }
