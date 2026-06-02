@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
+import de.neighbourly.backend.dto.UpdatePostRequest;
 
 import java.util.List;
 
@@ -51,5 +52,11 @@ public class PostController {
                                                         @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
-
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdatePostRequest request,
+                                                      Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(postService.updatePost(id, request, email));
+    }
 }
