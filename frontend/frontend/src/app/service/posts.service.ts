@@ -8,8 +8,7 @@ import { PostResponse } from '../models/post.model';
 import { postListMock } from '../mocks/post.mock';
 import {MapPostMarker} from '../interface/MapPostMarker';
 import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
-import { CreatePostRequest, PostResponse } from '../models/post.model';
-
+import { CreatePostRequest} from '../models/post.model';
 
 @Injectable({
   providedIn: 'root',

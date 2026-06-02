@@ -34,20 +34,18 @@
       } @else {
         <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
       }
-    </section>
-
-    <section class="content-panel">
-      <h2>Tags</h2>
       @if (post()?.tags?.length) {
-        <div class="tag-list">
-          @for (tag of post()?.tags; track tag) {
-            <span class="tag">{{ tag }}</span>
-          }
-        </div>
+      <div class="tag-list">
+        @for (tag of post()?.tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+        }
+      </div>
       } @else {
-        <p class="fallback-text">Keine Tags hinterlegt.</p>
+      <p class="fallback-text">Keine Tags hinterlegt.</p>
       }
     </section>
+
+
 
     <section class="content-panel image-panel">
       <h2>Bilder</h2>
