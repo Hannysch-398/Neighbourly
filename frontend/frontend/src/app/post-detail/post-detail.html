@@ -27,38 +27,7 @@
   }
 
   <main class="detail-grid">
-    <section class="content-panel user-info-panel">
-      @if (post()) {
-        <div class="user-info-contact">
-          <div>
-            <h2>E-Mail:</h2>
-            <p class="user-email">{{ userEmail() }}</p>
-          </div>
 
-          <div>
-            <h2>Bezahlung:</h2>
-            <p class="payment-text">{{ paymentText() }}</p>
-          </div>
-        </div>
-
-        <div class="user-info-profile">
-          <div class="user-avatar">{{ userInitials() }}</div>
-          <p class="user-name">{{ userName() }}</p>
-        </div>
-
-        <div class="user-info-rating">
-          <h2>Rating (des Nutzers):</h2>
-          <div class="rating-stars">
-            @for (star of ratingStars(); track $index) {
-              <span class="rating-star" [class.empty]="!star">★</span>
-            }
-            <span class="rating-value">({{ ratingValue() }})</span>
-          </div>
-        </div>
-      } @else {
-        <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
-      }
-    </section>
 
     <section class="content-panel main-panel">
       <h2>Beschreibung</h2>
@@ -131,6 +100,31 @@
           </dl>
         } @else {
           <p class="fallback-text">Statusdaten werden nach dem Laden angezeigt.</p>
+        }
+      </section>
+
+      <section class="content-panel user-info-panel">
+        @if (post()) {
+          <div class="user-info-profile">
+            <h4 class="user-name">{{ userName() }}</h4>
+            <div class="user-avatar">{{ userInitials() }}</div>
+          </div>
+          <div class="user-info-contact">
+            <div>
+              <h2>E-Mail:</h2>
+              <p class="user-email">{{ userEmail() }}</p>
+            </div>
+
+            <div>
+              <h2>Bezahlung:</h2>
+              <p class="payment-text">{{ paymentText() }}</p>
+            </div>
+          </div>
+
+
+
+        } @else {
+          <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
         }
       </section>
     </aside>

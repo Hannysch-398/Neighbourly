@@ -95,7 +95,6 @@ h2 {
   grid-template-columns: 1fr auto 1fr;
   gap: 1.5rem;
   align-items: center;
-  box-shadow: 0 6px 16px #141f2b1f;
 }
 
 .user-info-panel h2,
@@ -111,8 +110,6 @@ h2 {
 }
 
 .user-email {
-  color: #2f3742;
-  font-size: 1.15rem;
   overflow-wrap: anywhere;
 }
 
@@ -141,36 +138,7 @@ h2 {
 }
 
 .user-name {
-  color: #1d2430;
-  font-size: 1.8rem;
-  font-weight: 800;
-}
-
-.user-info-rating {
-  justify-self: start;
-}
-
-.rating-stars {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  align-items: center;
-}
-
-.rating-star {
-  color: var(--secondary-color);
-  font-size: 2.5rem;
-  line-height: 1;
-}
-
-.rating-star.empty {
-  color: #edf0f4;
-}
-
-.rating-value {
-  margin-left: 0.5rem;
-  color: #1d2430;
-  font-size: 1.15rem;
+  word-break: break-word;
 }
 
 .main-panel,
@@ -181,7 +149,7 @@ h2 {
 .side-column {
   display: grid;
   grid-column: 2;
-  grid-row: 2 / span 3;
+  grid-row: 1 / span 3;
   gap: 1rem;
 }
 
@@ -338,13 +306,6 @@ dd {
     text-align: center;
   }
 
-  .user-info-rating {
-    justify-self: center;
-  }
-
-  .rating-stars {
-    justify-content: center;
-  }
 
   .content-panel,
   .side-column {
