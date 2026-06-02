@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 
@@ -27,7 +27,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly postService = inject(PostsService);
   private readonly destroy$ = new Subject<void>();
-
+  selectedImage = signal<any>(null);
   protected readonly post = signal<PostDetailResponse | null>(null);
   protected readonly postId = signal<number | null>(null);
   protected readonly isLoading = signal(true);
@@ -132,6 +132,58 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     return `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`;
   }
 
+  protected userEmail(): string {
+    return this.readPostString(['author.email', 'user.email', 'owner.email', 'email', 'userEmail']) || 'Keine E-Mail hinterlegt';
+  }
+
+  protected userName(): string {
+    return this.readPostString(['author.username', 'user.username', 'owner.username', 'username', 'name']) || 'Nutzer';
+  }
+
+  protected userInitials(): string {
+    const value = this.userName() !== 'Nutzer' ? this.userName() : this.userEmail();
+
+    return value
+      .split(/[.\s@_-]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part.charAt(0).toUpperCase())
+      .join('') || '?';
+  }
+
+  protected paymentText(): string {
+    const details = this.post()?.details;
+
+    if (typeof details === 'object' && details !== null && !Array.isArray(details)) {
+      const values = details as Record<string, unknown>;
+      const price = values['price'];
+      const currency = values['currency'];
+      const payment = values['payment'] ?? values['paymentType'] ?? values['compensation'];
+
+      if (price !== null && price !== undefined && price !== '') {
+        return `${price}${currency ? ` ${currency}` : ''}`;
+      }
+
+      if (payment !== null && payment !== undefined && payment !== '') {
+        return String(payment);
+      }
+    }
+
+    return 'VB';
+  }
+
+  protected ratingValue(): string {
+    const average = Number(this.post()?.averageRating?.average ?? 0);
+
+    return average.toFixed(1);
+  }
+
+  protected ratingStars(): boolean[] {
+    const filledStars = Math.floor(Number(this.post()?.averageRating?.average ?? 0));
+
+    return Array.from({ length: 5 }, (_, index) => index < filledStars);
+  }
+
   private parsePostId(value: string | null): number | null {
     const id = Number(value);
 
@@ -166,5 +218,46 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
 
     return String(value);
+  }
+
+  private readPostString(paths: string[]): string {
+    const post = this.post() as unknown as Record<string, unknown> | null;
+
+    if (!post) {
+      return '';
+    }
+
+    for (const path of paths) {
+      const value = this.readPath(post, path);
+
+      if (typeof value === 'string' && value.trim() !== '') {
+        return value;
+      }
+    }
+
+    return '';
+  }
+
+  private readPath(source: Record<string, unknown>, path: string): unknown {
+    return path.split('.').reduce<unknown>((current, key) => {
+      if (typeof current !== 'object' || current === null) {
+        return undefined;
+      }
+
+      return (current as Record<string, unknown>)[key];
+    }, source);
+  }
+
+  constructor() {
+    effect(() => {
+      const images = this.post()?.images;
+      if (images && images.length > 0 && !this.selectedImage()) {
+        this.selectedImage.set(images[0]);
+      }
+    });
+  }
+
+  selectImage(image: any): void {
+    this.selectedImage.set(image);
   }
 }

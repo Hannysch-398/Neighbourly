@@ -27,6 +27,39 @@
   }
 
   <main class="detail-grid">
+    <section class="content-panel user-info-panel">
+      @if (post()) {
+        <div class="user-info-contact">
+          <div>
+            <h2>E-Mail:</h2>
+            <p class="user-email">{{ userEmail() }}</p>
+          </div>
+
+          <div>
+            <h2>Bezahlung:</h2>
+            <p class="payment-text">{{ paymentText() }}</p>
+          </div>
+        </div>
+
+        <div class="user-info-profile">
+          <div class="user-avatar">{{ userInitials() }}</div>
+          <p class="user-name">{{ userName() }}</p>
+        </div>
+
+        <div class="user-info-rating">
+          <h2>Rating (des Nutzers):</h2>
+          <div class="rating-stars">
+            @for (star of ratingStars(); track $index) {
+              <span class="rating-star" [class.empty]="!star">★</span>
+            }
+            <span class="rating-value">({{ ratingValue() }})</span>
+          </div>
+        </div>
+      } @else {
+        <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
+      }
+    </section>
+
     <section class="content-panel main-panel">
       <h2>Beschreibung</h2>
       @if (post(); as post) {
@@ -45,61 +78,50 @@
       }
     </section>
 
-
-
     <section class="content-panel image-panel">
       <h2>Bilder</h2>
       @if (post()?.images?.length) {
-        <div class="image-grid">
-          @for (image of post()?.images; track image.id) {
-            <figure>
-              <img [src]="image.url" [alt]="image.altText || post()?.title || 'Beitragsbild'" />
-              @if (image.altText) {
-                <figcaption>{{ image.altText }}</figcaption>
-              }
-            </figure>
+      <div class="gallery-container">
+
+        @if (selectedImage(); as activeImage) {
+        <div class="main-image-wrapper">
+          <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'" class="gallery-main-image" />
+          @if (activeImage.altText) {
+          <p class="gallery-caption">{{ activeImage.altText }}</p>
           }
         </div>
+        }
+
+        <div class="thumbnail-row">
+          @for (image of post()?.images; track image.id) {
+          <div
+            class="thumbnail-wrapper"
+            [class.active]="image.id === selectedImage()?.id"
+            (click)="selectImage(image)">
+            <img [src]="image.url" [alt]="image.altText || 'Vorschau'" />
+          </div>
+          }
+        </div>
+
+      </div>
       } @else {
-        <div class="image-placeholder">Keine Bilder verfügbar</div>
+      <div class="image-placeholder">Keine Bilder verfügbar</div>
       }
     </section>
 
     <aside class="side-column">
       <section class="content-panel">
-        <h2>Location</h2>
+        <h2>Standort</h2>
         <p class="location-title">{{ locationText(post()?.location) }}</p>
-        <p class="location-subtitle">{{ coordinatesText(post()?.location) }}</p>
       </section>
 
-      <section class="content-panel">
-        <h2>Typspezifische Daten</h2>
-        @if (detailEntries().length) {
-          <dl class="detail-list">
-            @for (entry of detailEntries(); track entry.label) {
-              <div>
-                <dt>{{ entry.label }}</dt>
-                <dd>{{ entry.value }}</dd>
-              </div>
-            }
-          </dl>
-        } @else {
-          <p class="fallback-text">Keine typspezifischen Daten hinterlegt.</p>
-        }
-      </section>
+
 
       <section class="content-panel">
         <h2>Status</h2>
         @if (post(); as post) {
           <dl class="detail-list compact">
-            <div>
-              <dt>Typ</dt>
-              <dd>{{ typeLabel() }}</dd>
-            </div>
-            <div>
-              <dt>Meldungen</dt>
-              <dd>{{ post.reportSummary?.reportCount ?? 0 }}</dd>
-            </div>
+
             @if (post.urgentUntil) {
               <div>
                 <dt>Dringend bis</dt>
