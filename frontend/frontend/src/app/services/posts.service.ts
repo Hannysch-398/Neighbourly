@@ -62,4 +62,7 @@ export class PostsService {
 
     return Math.max(1, Math.min(Math.round(radius), this.maxRadius));
   }
+  deletePost(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }
