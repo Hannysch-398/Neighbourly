@@ -3,12 +3,20 @@ package de.neighbourly.backend.service;
 import de.neighbourly.backend.dto.ConversationParticipantResponse;
 import de.neighbourly.backend.dto.ConversationResponse;
 import de.neighbourly.backend.dto.CreateConversationRequest;
+import de.neighbourly.backend.dto.MessageResponse;
 import de.neighbourly.backend.entity.Conversation;
 import de.neighbourly.backend.entity.ConversationParticipant;
+import de.neighbourly.backend.entity.Message;
 import de.neighbourly.backend.entity.User;
+import de.neighbourly.backend.repository.ConversationParticipantRepository;
 import de.neighbourly.backend.repository.ConversationRepository;
+import de.neighbourly.backend.repository.MessageRepository;
 import de.neighbourly.backend.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+
 
 import java.util.List;
 
@@ -17,13 +25,19 @@ public class ConversationService {
 
     private final ConversationRepository conversationRepository;
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
+    private final ConversationParticipantRepository conversationParticipantRepository;
 
     public ConversationService(
             ConversationRepository conversationRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            MessageRepository messageRepository,
+            ConversationParticipantRepository conversationParticipantRepository
     ) {
         this.conversationRepository = conversationRepository;
         this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
+        this.conversationParticipantRepository = conversationParticipantRepository;
     }
 
     public List<ConversationResponse> getOwnConversations(String email) {
@@ -89,4 +103,42 @@ public class ConversationService {
                 participants
         );
     }
+
+    public Page<MessageResponse> getConversationMessages(
+            Long conversationId,
+            int page,
+            int size,
+            String email
+    ) {
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
+
+        boolean isParticipant =
+                conversationParticipantRepository.existsByConversationIdAndUserId(
+                        conversationId,
+                        currentUser.getId()
+                );
+
+        if (!isParticipant) {
+            throw new IllegalArgumentException("User is not a participant of this conversation");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return messageRepository
+                .findByConversationIdOrderByCreatedAtAsc(conversationId, pageable)
+                .map(this::mapMessageToResponse);
+    }
+
+    private MessageResponse mapMessageToResponse(Message message) {
+        return new MessageResponse(
+                message.getId(),
+                message.getConversation().getId(),
+                message.getSender().getId(),
+                message.getSender().getUsername(),
+                message.getContent(),
+                message.getCreatedAt()
+        );
+    }
+
 }

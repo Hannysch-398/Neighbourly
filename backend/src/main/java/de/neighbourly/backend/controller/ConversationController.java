@@ -2,8 +2,10 @@ package de.neighbourly.backend.controller;
 
 import de.neighbourly.backend.dto.ConversationResponse;
 import de.neighbourly.backend.dto.CreateConversationRequest;
+import de.neighbourly.backend.dto.MessageResponse;
 import de.neighbourly.backend.service.ConversationService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,6 +35,7 @@ public class ConversationController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping
     public ResponseEntity<List<ConversationResponse>> getOwnConversations(
             Authentication authentication
@@ -40,6 +43,25 @@ public class ConversationController {
         String email = authentication.getName();
 
         return ResponseEntity.ok(conversationService.getOwnConversations(email));
+    }
+
+    @GetMapping("/{conversationId}/messages")
+    public ResponseEntity<Page<MessageResponse>> getConversationMessages(
+            @PathVariable Long conversationId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        return ResponseEntity.ok(
+                conversationService.getConversationMessages(
+                        conversationId,
+                        page,
+                        size,
+                        email
+                )
+        );
     }
 
 }
