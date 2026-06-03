@@ -5,6 +5,8 @@ import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
+import {PostDetailResponse} from '../models/post-detail.model';
+import {postDetailMock} from '../mocks/post-detail.mock';
 
 export interface MapMarkerQuery {
   lat: number;
@@ -61,5 +63,12 @@ export class PostsService {
     }
 
     return Math.max(1, Math.min(Math.round(radius), this.maxRadius));
+  }
+
+  getPostById(id: number): Observable<PostDetailResponse> {
+    if (this.useMockPosts) {
+      return of(postDetailMock);
+    }
+    return this.http.get<PostDetailResponse>(`${this.apiUrl}/${id}`);
   }
 }

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 
 import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
-import { PostsService } from '../service/posts.service';
+import { PostsService } from '../services/posts.service';
 
 interface DetailEntry {
   label: string;

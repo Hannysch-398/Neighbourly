@@ -43,6 +43,10 @@ export const routes: Routes = [
     component: PostsListComponent,
   },
   {
+    path: 'posts/:id',
+    component: PostDetailComponent,
+  },
+  {
     path: 'verify-email',
     component: VerifyEmail,
   },

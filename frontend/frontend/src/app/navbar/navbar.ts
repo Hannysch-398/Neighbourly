@@ -33,4 +33,7 @@ export class Navbar {
   logout() {
     this.authService.logout();
   }
+  accountAriaLabel() {
+    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
+  }
 }
