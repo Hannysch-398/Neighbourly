@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { MapPostMarker } from '../interface/MapPostMarker';
@@ -7,11 +7,18 @@ import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
 import {PostDetailResponse} from '../models/post-detail.model';
 import {postDetailMock} from '../mocks/post-detail.mock';
+import { UpdatePostRequest } from '../models/update-post-request.model';
 
 export interface MapMarkerQuery {
   lat: number;
   lng: number;
   radius: number;
+}
+
+export interface ApiErrorResponse {
+  status: number;
+  message: string;
+  errors?: Record<string, string>;
 }
 
 @Injectable({
@@ -55,6 +62,33 @@ export class PostsService {
 
   createPost(payload: CreatePostRequest): Observable<PostResponse> {
     return this.http.post<PostResponse>(this.apiUrl, payload);
+  }
+
+  updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
+    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);
+  }
+
+  deletePost(id: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+  }
+
+  resolvePostMutationError(error: unknown): string {
+    if (!(error instanceof HttpErrorResponse)) {
+      return 'Die Anfrage konnte nicht verarbeitet werden.';
+    }
+
+    const apiError = error.error as Partial<ApiErrorResponse> | null;
+    const firstFieldError = apiError?.errors ? Object.values(apiError.errors)[0] : undefined;
+
+    if (error.status === 403) {
+      return firstFieldError || apiError?.message || 'Du darfst diesen Beitrag nicht bearbeiten oder löschen.';
+    }
+
+    if (error.status === 404) {
+      return firstFieldError || apiError?.message || 'Der Beitrag wurde nicht gefunden.';
+    }
+
+    return firstFieldError || apiError?.message || 'Die Änderung konnte nicht gespeichert werden.';
   }
 
   private normalizeRadius(radius: number): number {

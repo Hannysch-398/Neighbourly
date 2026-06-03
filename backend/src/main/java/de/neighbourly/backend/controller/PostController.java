@@ -4,6 +4,9 @@ import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.MapPostDto;
 import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.dto.SuccessResponseDto;
+import de.neighbourly.backend.dto.UpdatePostRequestDto;
+import de.neighbourly.backend.security.AuthenticatedUserPrincipal;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,6 @@ import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/posts")
@@ -46,10 +48,36 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdatePostRequestDto request,
+                                                      Authentication authentication) {
+        PostResponseDto response = postService.updatePost(id, request, getAuthenticatedUserId(authentication));
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponseDto> deletePost(@PathVariable Long id,
+                                                         Authentication authentication) {
+        postService.deletePost(id, getAuthenticatedUserId(authentication));
+        return ResponseEntity.ok(new SuccessResponseDto("Post deleted successfully"));
+    }
+
     @GetMapping("/marker")
     public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
                                                         @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 
+    private Long getAuthenticatedUserId(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUserPrincipal principal)) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
+        if (principal.getUserId() == null) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "JWT user_id is missing");
+        }
+
+        return principal.getUserId();
+    }
 }
