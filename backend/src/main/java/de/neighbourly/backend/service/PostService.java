@@ -307,7 +307,14 @@ public class PostService {
         return postRepository
                 .findByStatusOrderByIsUrgentDescCreatedAtDesc(PostStatus.ACTIVE)
                 .stream()
-                .map(PostMapper::toListDto)
+                .map(post -> {
+                    LocationDto location = postLocationRepository
+                            .findByPostId(post.getId())
+                            .map(this::mapLocation)
+                            .orElse(null);
+
+                    return PostMapper.toListDto(post, location);
+                })
                 .toList();
     }
 

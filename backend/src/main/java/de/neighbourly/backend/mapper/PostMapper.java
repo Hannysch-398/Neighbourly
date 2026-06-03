@@ -45,7 +45,7 @@ public class PostMapper {
         );
     }
 
-    public static PostListItemResponseDto toListDto(Post post) {
+    public static PostListItemResponseDto toListDto(Post post, LocationDto location) {
         return new PostListItemResponseDto(
                 post.getId(),
                 post.getTitle(),
@@ -56,7 +56,8 @@ public class PostMapper {
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
+                post.getUpdatedAt(),
+                location
         );
     }
 
