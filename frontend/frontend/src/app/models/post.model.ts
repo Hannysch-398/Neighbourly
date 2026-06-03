@@ -14,7 +14,12 @@ export interface CreatePostLocationDto {
   lat: number;
   lng: number;
   precision: string;
-  radiusM: number;
+  radius_m: number;
+}
+
+export interface GeoCoordinatesResponse {
+  latitude: number;
+  longitude: number;
 }
 
 export interface EventDetailsDto {
