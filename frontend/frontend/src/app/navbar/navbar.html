@@ -34,6 +34,17 @@
       >
         <span class="profile-icon" aria-hidden="true"></span>
       </a>
+      @if (isLoggedIn()) {
+        <button
+          type="button"
+          class="logout-btn"
+          (click)="logout()"
+          aria-label="Abmelden"
+        >
+          Logout
+        </button>
+      }
     </div>
   </div>
 </nav>
+
