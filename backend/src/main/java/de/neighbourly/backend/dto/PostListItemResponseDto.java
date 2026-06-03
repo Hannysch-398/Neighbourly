@@ -1,5 +1,6 @@
 package de.neighbourly.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,9 +17,12 @@ public class PostListItemResponseDto {
     private String description;
     private String type;
     private String postMode;
-    private boolean isUrgent;
+
+    @JsonProperty("isUrgent")
+    private boolean urgent;
     private LocalDateTime urgentUntil;
     private LocalDateTime createdAt;
     private String status;
     private LocalDateTime updatedAt;
+    private LocationDto location;
 }

@@ -24,10 +24,10 @@ public class HousingDetail {
     @Column(name = "housing_type")
     private String housingType;
 
-    @Column(nullable = false)
+    @Column(name = "rent", nullable = false)
     private BigDecimal rent;
 
-    @Column(nullable = false)
+    @Column(name = "rooms", nullable = false)
     private Integer rooms;
 
     @Column(name = "available_from", nullable = false)

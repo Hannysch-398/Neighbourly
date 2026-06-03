@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterModule} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {VerifyEmailService} from "../service/verify-email-service"
+import {VerifyEmailService} from "../services/verify-email-service"
 
 
 @Component({

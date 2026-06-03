@@ -1,6 +1,6 @@
 import {Component, computed, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
-import {AuthService} from '../service/auth.service';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,21 +12,33 @@ import {AuthService} from '../service/auth.service';
 export class Navbar {
   private readonly authService = inject(AuthService);
 
-  readonly accountRoute = computed(() =>
-    this.authService.isLoggedIn() ? '/profile' : '/auth'
-  );
+  accountRoute() {
+    return this.authService.isLoggedIn() ? '/profile' : '/auth';
+  }
 
-  readonly createPostRoute = computed(() =>
-    this.authService.isLoggedIn() ? '/posts/create' : '/auth'
-  );
+  createPostRoute() {
+    return this.authService.isLoggedIn() ? '/posts/create' : '/auth';
+  }
 
-  readonly accountAriaLabel = computed(() =>
-    this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen'
-  );
+  accountAriaLabel() {
+    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
+  }
 
-  readonly createPostAriaLabel = computed(() =>
-    this.authService.isLoggedIn()
+  createPostAriaLabel() {
+    return this.authService.isLoggedIn()
       ? 'Beitrag erstellen'
-      : 'Zur Anmeldung gehen und Beitrag erstellen'
-  );
+      : 'Zur Anmeldung gehen und Beitrag erstellen';
+  }
+
+  accountAriaLabel() {
+    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
+  }
+
+  isLoggedIn() {
+    return this.authService.isLoggedIn();
+  }
+
+  logout() {
+    this.authService.logout();
+  }
 }

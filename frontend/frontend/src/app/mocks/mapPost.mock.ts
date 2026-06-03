@@ -10,10 +10,7 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     postMode: 'REQUEST',
     isUrgent: true,
     createdAt: '2026-05-07T10:00:00Z',
-    shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +
-      ' ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea ' +
-      'rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ' +
-      'amet, consetetur sadipscing elitr, sed diam.'
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...'
   },
   {
     id: 2,
@@ -21,13 +18,10 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     title: 'Biete Fahrradreparatur',
     lat: 53.0878,
     lng: 8.7972,
-    postMode: "REQUEST",
+    postMode: "OFFER",
     isUrgent: false,
     createdAt: '2026-05-07T10:15:00Z',
-    shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +
-      ' ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea ' +
-      'rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ' +
-      'amet, consetetur sadipscing elitr, sed diam.'
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...'
   },
   {
     id: 3,
@@ -38,10 +32,7 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     postMode: "REQUEST",
     isUrgent: false,
     createdAt: '2026-05-07T10:30:00Z',
-    shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +
-      ' ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea ' +
-      'rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ' +
-      'amet, consetetur sadipscing elitr, sed diam.'
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   },
   {
     id: 4,
@@ -52,10 +43,7 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     postMode: "REQUEST",
     isUrgent: true,
     createdAt: '2026-05-07T10:45:00Z',
-    shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +
-      ' ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea ' +
-      'rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ' +
-      'amet, consetetur sadipscing elitr, sed diam.'
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   },
   {
     id: 5,
@@ -66,9 +54,6 @@ export const MOCK_MAP_POST_MARKERS: MapPostMarker[] = [
     postMode: "REQUEST",
     isUrgent: true,
     createdAt: '2026-05-07T10:45:00Z',
-    shortDescription: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt' +
-      ' ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea ' +
-      'rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ' +
-      'amet, consetetur sadipscing elitr, sed diam.'
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
   }
 ];

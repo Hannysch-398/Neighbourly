@@ -4,7 +4,11 @@
     <p>Erstelle einen neuen Beitrag für deine Nachbarschaft.</p>
   </header>
 
-  <form class="post-form" (submit)="$event.preventDefault(); submitForm()">
+  <form
+    class="post-form"
+    novalidate
+    (submit)="$event.preventDefault(); submitForm()"
+  >
     <label class="field">
       <span>Titel</span>
       <input
@@ -159,7 +163,20 @@
     }
 
     @if (shouldShowDetailsError()) {
-      <small class="form-error">Bitte fuelle die Detailfelder fuer diesen Beitragstyp aus.</small>
+      @switch (postModel().type) {
+        @case ('EVENT') {
+          <small class="form-error">Bitte gib Start, Ende und Veranstaltungsort ein.</small>
+        }
+        @case ('SKILL') {
+          <small class="form-error">Bitte gib Skill-Tags, Verfügbarkeit und Erfahrungslevel ein.</small>
+        }
+        @case ('PRODUCT') {
+          <small class="form-error">Bitte gib Produktname, Preis, Währung und Zustand ein.</small>
+        }
+        @case ('HOUSING') {
+          <small class="form-error">Bitte gib Wohnart, Miete, Zimmer und Verfügbar-ab-Datum ein.</small>
+        }
+      }
     }
 
     <label class="urgent-toggle">
@@ -200,17 +217,25 @@
             type="text"
             [formField]="postForm.city"
             placeholder="z. B. Berlin"
-            [class.invalid]="shouldShowLocationError()"
+            [class.invalid]="getLocationErrorMessage()"
           />
-          @if (shouldShowLocationError()) {
-            <small>Bitte gib eine Stadt für die Location ein.</small>
-          }
         </label>
 
         <label class="field">
-          <span>Stadtteil</span>
-          <input type="text" [formField]="postForm.district" placeholder="z. B. Kreuzberg"/>
+          <span>Postleitzahl</span>
+          <input
+            type="text"
+            [formField]="postForm.postalCode"
+            placeholder="z. B. 10115"
+            [class.invalid]="getLocationErrorMessage()"
+          />
         </label>
+
+        @if (getLocationErrorMessage()) {
+          <small class="form-error span-two">
+            {{ getLocationErrorMessage() }}
+          </small>
+        }
 
         <label class="field span-two">
           <span>Adresse</span>
@@ -225,7 +250,13 @@
 
     <div class="form-actions">
       <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
-      <button type="submit" class="primary-button">Speichern</button>
+      <button
+        type="submit"
+        class="primary-button"
+        [disabled]="isLoading()"
+      >
+        Speichern
+      </button>
     </div>
 
     @if (savedPayload()) {

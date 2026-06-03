@@ -14,26 +14,21 @@ public interface PostLocationRepository extends JpaRepository<PostLocation, Long
     Optional<PostLocation> findByPostId(Long postId);
 
     @Query("""
-        SELECT pl
-        FROM PostLocation pl
-        JOIN pl.post p
-        WHERE p.status = de.neighbourly.backend.model.PostStatus.ACTIVE
-          AND (
-                :lat IS NULL OR
-                :lng IS NULL OR
-                :radius IS NULL OR
-                (
-                    6371 * acos(
-                        cos(radians(:lat)) *
-                        cos(radians(pl.latitude)) *
-                        cos(radians(pl.longitude) - radians(:lng)) +
-                        sin(radians(:lat)) *
-                        sin(radians(pl.latitude))
-                    )
-                ) <= :radius
+    SELECT pl
+    FROM PostLocation pl
+    JOIN pl.post p
+    WHERE p.status = de.neighbourly.backend.model.PostStatus.ACTIVE
+      AND (
+          6371000 * acos(
+              cos(radians(:lat)) *
+              cos(radians(pl.latitude)) *
+              cos(radians(pl.longitude) - radians(:lng)) +
+              sin(radians(:lat)) *
+              sin(radians(pl.latitude))
           )
-        ORDER BY p.createdAt DESC
-    """)
+      ) <= :radius
+    ORDER BY p.createdAt DESC
+""")
     List<PostLocation> findActiveMapMarkersWithinRadius(
             @Param("lat") Double lat,
             @Param("lng") Double lng,

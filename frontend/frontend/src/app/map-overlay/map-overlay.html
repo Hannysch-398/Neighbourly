@@ -8,6 +8,10 @@
   @if (isOpen) {
     <div class="overlay-content">
       <!-- später Inhalt -->
+
+      @for(post of posts(); track post.id){
+        <app-sidebar-entry [post]="post"></app-sidebar-entry>
+      }
     </div>
   }
 </aside>

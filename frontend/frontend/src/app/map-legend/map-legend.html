@@ -1,0 +1,57 @@
+<button
+  class="legend-button"
+  [class.open]="isOpen"
+  type="button"
+  (click)="toggleLegend()"
+  aria-label="Legende öffnen oder schließen">
+  @if (isOpen) {
+    ✕
+  } @else {
+    ?
+  }
+</button>
+
+@if (isOpen) {
+  <div class="legend-panel">
+    <h5>Legende</h5>
+    <div class="legend-content">
+
+      @for (item of markerLegend; track item.type) {
+        <div class="legend-item">
+            <span
+              class="legend-mini-marker"
+              [class.marker-urgent]="false"
+              [class]="'legend-mini-marker marker-' + item.type.toLowerCase()">
+              <span class="legend-mini-marker-pin">
+                <span class="legend-mini-marker-dot">
+                  <span class="legend-mini-marker-icon">{{ item.icon }}</span>
+                </span>
+              </span>
+            </span>
+
+          <span>{{ item.label }}</span>
+        </div>
+      }
+
+      @for (item of modeLegend; track item.mode) {
+        <div class="legend-item">
+          <span class="legend-mode-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </div>
+      }
+
+      <div class="legend-item">
+        <span class="legend-mini-marker marker-urgent">
+          <span class="legend-mini-marker-pin">
+<!--            <span class="legend-mini-marker-dot">-->
+            <!--           -->
+            <!--            </span>-->
+          </span>
+        </span>
+
+        <span>Dringender Beitrag</span>
+      </div>
+
+    </div>
+  </div>
+}

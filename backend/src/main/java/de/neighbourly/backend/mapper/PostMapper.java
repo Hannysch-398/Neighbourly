@@ -7,6 +7,7 @@ import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 import java.util.List;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
+import java.time.LocalDateTime;
 
 public class PostMapper {
 
@@ -28,7 +29,7 @@ public class PostMapper {
         return post;
     }
 
-    public static PostResponseDto toDto(Post post) {
+    public static PostResponseDto toDto(Post post, LocationDto location) {
         return new PostResponseDto(
 
                 post.getId(),
@@ -36,27 +37,28 @@ public class PostMapper {
                 post.getDescription(),
                 post.getType().name(),
                 post.getPostMode().name(),
-                post.isUrgent(),
+                isEffectivelyUrgent(post),
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
-
+                post.getUpdatedAt(),
+                location
         );
     }
 
-    public static PostListItemResponseDto toListDto(Post post) {
+    public static PostListItemResponseDto toListDto(Post post, LocationDto location) {
         return new PostListItemResponseDto(
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
                 post.getType().name(),
                 post.getPostMode().name(),
-                post.isUrgent(),
+                isEffectivelyUrgent(post),
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
+                post.getUpdatedAt(),
+                location
         );
     }
 
@@ -73,7 +75,7 @@ public class PostMapper {
                 post.getDescription(),
                 post.getType().name(),
                 post.getPostMode().name(),
-                post.isUrgent(),
+                isEffectivelyUrgent(post),
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 location,
@@ -84,4 +86,11 @@ public class PostMapper {
                 null
         );
     }
+
+
+    public static boolean isEffectivelyUrgent(Post post) {
+        return post.isUrgent()
+                && (post.getUrgentUntil() == null || post.getUrgentUntil().isAfter(LocalDateTime.now()));
+    }
+
 }

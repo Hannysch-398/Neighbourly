@@ -1,14 +1,31 @@
 .map-and-overlay-container {
-  display: flex;
-  gap: 1rem;
-  align-items: stretch;
-  width: 90%;
-  height: 80vh;
-  min-height: 560px;
-  margin: 1rem auto;
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    width: 90%;
+    height: 80vh;
+    min-height: 560px;
+    margin: 1rem auto;
 }
 
 .map-wrapper {
-  flex: 1;
-  min-width: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    app-map-overlay {
+        display: none;
+    }
+
+    .map-wrapper {
+        width: 100%;
+        flex: 1;
+    }
+}
+
+@media (max-width: 600px){
+  .map-and-overlay-container {
+  height: calc(100vh - 250px);}
 }
