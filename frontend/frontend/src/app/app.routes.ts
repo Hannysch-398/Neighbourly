@@ -43,15 +43,15 @@ export const routes: Routes = [
     component: PostsListComponent,
   },
   {
-    path: 'posts/:id',
-    component: PostDetailComponent,
-  },
-  {
     path: 'verify-email',
     component: VerifyEmail,
   },
   {
     path: 'posts/create',
     component: CreatePost,
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetailComponent,
   },
 ];
