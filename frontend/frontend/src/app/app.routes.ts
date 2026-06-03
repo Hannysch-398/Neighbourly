@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
-import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
 import { PostsListComponent } from './posts-list/posts-list';
@@ -43,15 +42,15 @@ export const routes: Routes = [
     component: PostsListComponent,
   },
   {
-    path: 'posts/:id',
-    component: PostDetailComponent,
-  },
-  {
     path: 'verify-email',
     component: VerifyEmail,
   },
   {
     path: 'posts/create',
     component: CreatePost,
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetailComponent,
   },
 ];
