@@ -20,7 +20,7 @@ export interface MapMarkerQuery {
 export class PostsService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/posts';
-  private readonly useMockPosts = true;
+  private readonly useMockPosts = false;
   private readonly maxRadius = 150_000;
 
   private readonly mapPostsSubject = new BehaviorSubject<MapPostMarker[]>([]);

@@ -43,7 +43,7 @@ export const routes: Routes = [
     component: PostsListComponent,
   },
   {
-    path: 'posts/{id}',
+    path: 'posts/:id',
     component: PostDetailComponent,
   },
   {
