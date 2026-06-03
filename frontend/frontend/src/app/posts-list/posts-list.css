@@ -238,3 +238,30 @@
     background-position: -200% 0;
   }
 }
+
+.urgent-help-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--border-radius);
+  background: #fff7f7;
+}
+
+.urgent-help-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.urgent-help-header h2 {
+  margin: 0;
+  color: var(--red-color);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.urgent-help-list {
+  display: grid;
+  gap: 0.85rem;
+}

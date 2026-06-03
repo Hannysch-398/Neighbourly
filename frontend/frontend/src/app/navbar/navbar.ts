@@ -26,10 +26,6 @@ export class Navbar {
       : 'Zur Anmeldung gehen und Beitrag erstellen';
   }
 
-  accountAriaLabel() {
-    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
-  }
-
   isLoggedIn() {
     return this.authService.isLoggedIn();
   }
