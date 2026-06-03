@@ -13,8 +13,8 @@
       </div>
 
       <div class="nav-links">
-        <a routerLink="/map" queryParamsHandling="merge" routerLinkActive="active" class="nav-item-link">Karte</a>
-        <a routerLink="/posts" queryParamsHandling="merge" routerLinkActive="active" class="nav-item-link">Übersicht</a>
+        <a routerLink="/map"   [queryParams]="{ view: 'map' }" routerLinkActive="active" class="nav-item-link">Karte</a>
+        <a routerLink="/posts" [queryParams]="{ view: 'list' }" routerLinkActive="active" class="nav-item-link">Übersicht</a>
       </div>
     </div>
 
