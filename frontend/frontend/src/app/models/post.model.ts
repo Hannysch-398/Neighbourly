@@ -75,3 +75,14 @@ export interface PostResponse {
   location?: LocationDto | null;
 }
 
+export const MARKER_ICONS: Record<PostType, string> = {
+  EVENT: '📅',
+  SKILL: '🛠️',
+  PRODUCT: '📦',
+  HOUSING: '🏠',
+};
+
+export const MODE_ICONS: Record<PostMode, string> = {
+  REQUEST: '❓',
+  OFFER: '❗',
+};

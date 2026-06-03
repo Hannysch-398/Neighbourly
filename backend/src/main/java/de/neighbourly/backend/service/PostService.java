@@ -9,7 +9,7 @@ import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -304,18 +304,23 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-        return postRepository
-                .findByStatusOrderByIsUrgentDescCreatedAtDesc(PostStatus.ACTIVE)
-                .stream()
-                .map(post -> {
-                    LocationDto location = postLocationRepository
-                            .findByPostId(post.getId())
-                            .map(this::mapLocation)
-                            .orElse(null);
+    return postRepository.findByStatus(PostStatus.ACTIVE)
+            .stream()
+            .sorted(
+                    Comparator
+                            .comparing(PostMapper::isEffectivelyUrgent)
+                            .reversed()
+                            .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+            )
+            .map(post -> {
+                LocationDto location = postLocationRepository
+                        .findByPostId(post.getId())
+                        .map(this::mapLocation)
+                        .orElse(null);
 
-                    return PostMapper.toListDto(post, location);
-                })
-                .toList();
+                return PostMapper.toListDto(post, location);
+            })
+            .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
@@ -333,7 +338,7 @@ public class PostService {
                             post.getTitle(),
                             location.getLatitude(),
                             location.getLongitude(),
-                            post.isUrgent(),
+                            PostMapper.isEffectivelyUrgent(post),
                             post.getPostMode().name(),
                             shortenDescription(post.getDescription()),
                             post.getCreatedAt()

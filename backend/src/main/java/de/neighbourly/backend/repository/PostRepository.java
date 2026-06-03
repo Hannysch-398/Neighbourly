@@ -10,5 +10,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByOrderByCreatedAtDesc();
 
-    List<Post> findByStatusOrderByIsUrgentDescCreatedAtDesc(PostStatus status);
+    List<Post> findByStatus(PostStatus status);
+
 }
