@@ -20,10 +20,6 @@ export class Navbar {
     return this.authService.isLoggedIn() ? '/posts/create' : '/auth';
   }
 
-  accountAriaLabel() {
-    return this.authService.isLoggedIn() ? 'Zum Profil gehen' : 'Zur Anmeldung gehen';
-  }
-
   createPostAriaLabel() {
     return this.authService.isLoggedIn()
       ? 'Beitrag erstellen'
