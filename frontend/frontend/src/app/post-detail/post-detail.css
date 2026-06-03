@@ -195,8 +195,9 @@ h2 {
 
 .gallery-main-image {
   width: 100%;
-  aspect-ratio: 16 / 10; /* Behält dein gewünschtes Format */
-  object-fit: cover;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
 }
@@ -208,7 +209,7 @@ h2 {
   font-size: 0.9rem;
 }
 
-/* Vorschaubilder Reihe */
+
 .thumbnail-row {
   display: flex;
   flex-wrap: wrap;
@@ -216,33 +217,32 @@ h2 {
 }
 
 .thumbnail-wrapper {
-  width: 80px; /* Feste Breite für die kleinen Quadrate wie auf dem Foto */
-  aspect-ratio: 1 / 1; /* Macht die Thumbnails quadratisch */
+  width: 80px;
+  aspect-ratio: 1 / 1;
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
-  border: 3px solid transparent; /* Platzhalter für den aktiven Rahmen */
+  border: 3px solid transparent;
   transition: border-color 0.2s ease;
 }
 
 .thumbnail-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #f7f9fa;
   display: block;
 }
 
-/* Genau wie auf dem Foto: Das aktive Bild bekommt den blauen Rahmen */
 .thumbnail-wrapper.active {
-  border-color: #0066cc; /* Dein gewünschtes Blau */
+  border-color: #0066cc;
 }
 
-/* Hover-Effekt für bessere UX */
 .thumbnail-wrapper:hover:not(.active) {
   border-color: #cbd5df;
 }
 
-figcaption {
+.figcaption {
   margin-top: 0.4rem;
   color: #74808b;
   font-size: 0.9rem;
