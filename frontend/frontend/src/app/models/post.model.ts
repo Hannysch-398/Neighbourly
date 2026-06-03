@@ -72,6 +72,7 @@ export interface PostResponse {
   createdAt: string;
   status: PostStatus;
   updatedAt: string;
+  location?: LocationDto | null;
 }
 
 export const MARKER_ICONS: Record<PostType, string> = {

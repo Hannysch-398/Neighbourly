@@ -29,7 +29,7 @@ public class PostMapper {
         return post;
     }
 
-    public static PostResponseDto toDto(Post post) {
+    public static PostResponseDto toDto(Post post, LocationDto location) {
         return new PostResponseDto(
 
                 post.getId(),
@@ -41,12 +41,12 @@ public class PostMapper {
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
-
+                post.getUpdatedAt(),
+                location
         );
     }
 
-    public static PostListItemResponseDto toListDto(Post post) {
+    public static PostListItemResponseDto toListDto(Post post, LocationDto location) {
         return new PostListItemResponseDto(
                 post.getId(),
                 post.getTitle(),
@@ -57,7 +57,8 @@ public class PostMapper {
                 post.getUrgentUntil(),
                 post.getCreatedAt(),
                 post.getStatus().name(),
-                post.getUpdatedAt()
+                post.getUpdatedAt(),
+                location
         );
     }
 
