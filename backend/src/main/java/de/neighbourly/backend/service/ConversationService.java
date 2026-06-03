@@ -26,6 +26,17 @@ public class ConversationService {
         this.userRepository = userRepository;
     }
 
+    public List<ConversationResponse> getOwnConversations(String email) {
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
+
+        return conversationRepository
+                .findDistinctByParticipantsUserIdOrderByUpdatedAtDesc(currentUser.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     public ConversationResponse createConversation(CreateConversationRequest request, String email) {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
