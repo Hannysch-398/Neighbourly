@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("ALL")
 @Service
@@ -392,7 +393,7 @@ public class PostService {
             throw new RuntimeException("You are not authorized to delete this post");
         }
 
-        post.setStatus(PostStatus.DELETED);
+        post.setStatus(PostStatus.Inactive);
         post.setUpdatedAt(LocalDateTime.now());
 
 

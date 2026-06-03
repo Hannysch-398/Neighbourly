@@ -11,9 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/posts")
