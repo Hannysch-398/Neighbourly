@@ -18,5 +18,6 @@ public class ProductDetailsDto implements PostDetailsDto {
     private String productName;
     private BigDecimal price;
     private String currency;
+
     private String condition;
 }

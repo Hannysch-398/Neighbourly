@@ -87,8 +87,8 @@
 }
 
 .urgent-badge {
-  color: var(--red-color);
-  background: #fee2e2;
+  color: var(--urgent-color-strong);
+  background: var(--urgent-color-soft);
 }
 
 .list-state {

@@ -1,7 +1,7 @@
 <section class="posts-list-page">
 
   <main class="posts-list-shell" aria-live="polite">
-    @if (isLoading()) {
+    @if (state() === 'loading') {
       <div class="posts-list" aria-label="Beiträge werden geladen">
         @for (item of [1, 2, 3]; track item) {
           <article class="post-list-skeleton">
@@ -15,13 +15,13 @@
           </article>
         }
       </div>
-    } @else if (errorMessage()) {
+    } @else if (state() === 'error') {
       <div class="list-state error-state">
         <h2>Laden fehlgeschlagen</h2>
         <p>{{ errorMessage() }}</p>
         <button type="button" class="retry-button" (click)="loadPosts()">Erneut versuchen</button>
       </div>
-    } @else if (!hasPosts()) {
+    } @else if (state() === 'empty') {
       <div class="list-state empty-state">
         <h2>Noch keine Beiträge vorhanden</h2>
         <p>In deiner Nachbarschaft gibt es aktuell keine Beiträge. Erstelle den ersten Beitrag und mache Angebot, Gesuch oder Veranstaltung sichtbar.</p>
