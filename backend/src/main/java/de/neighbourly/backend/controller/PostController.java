@@ -52,4 +52,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        postService.softDeletePost(id, email);
+        return ResponseEntity.noContent().build();
+    }
+
 }

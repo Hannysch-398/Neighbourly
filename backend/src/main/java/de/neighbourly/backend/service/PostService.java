@@ -383,4 +383,19 @@ public class PostService {
             throw new IllegalArgumentException("details do not match post type HOUSING");
         }
     }
+    @Transactional
+    public void softDeletePost(Long id, String email) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+
+        if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new RuntimeException("You are not authorized to delete this post");
+        }
+
+        post.setStatus(PostStatus.DELETED);
+        post.setUpdatedAt(LocalDateTime.now());
+
+
+        postRepository.save(post);
+    }
 }
