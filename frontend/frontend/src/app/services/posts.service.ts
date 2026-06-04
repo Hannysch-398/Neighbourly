@@ -5,6 +5,7 @@ import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
+import {UpdatePostRequest} from '../models/update-post-request.model';
 import {PostDetailResponse} from '../models/post-detail.model';
 import {postDetailMock} from '../mocks/post-detail.mock';
 
@@ -64,6 +65,12 @@ export class PostsService {
 
     return Math.max(1, Math.min(Math.round(radius), this.maxRadius));
   }
+
+  updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
+    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);}
+
+  deletePost(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);}
 
   getPostById(id: number): Observable<PostDetailResponse> {
     if (this.useMockPosts) {
