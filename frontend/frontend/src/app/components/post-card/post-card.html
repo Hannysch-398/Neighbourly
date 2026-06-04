@@ -1,4 +1,9 @@
-<article class="post-list-item" [class.post-list-item--urgent]="post.isUrgent" role="listitem">
+<article
+    class="post-list-item"
+    [class.post-list-item--urgent]="post.isUrgent"
+    [routerLink]="['/posts', post.id]"
+    role="listitem"
+    tabindex="0">
 
     <div class="post-main">
         <div class="post-title-row">

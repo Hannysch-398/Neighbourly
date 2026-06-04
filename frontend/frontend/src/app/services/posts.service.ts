@@ -71,4 +71,8 @@ export class PostsService {
     }
     return this.http.get<PostDetailResponse>(`${this.apiUrl}/${id}`);
   }
+
+  deletePost(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

@@ -59,6 +59,18 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
+  getCurrentUserEmail(): string | null {
+    const token = this.getToken();
+
+    if (!token) {
+      return null;
+    }
+
+    const payload = this.decodeJwtPayload(token);
+
+    return typeof payload?.['sub'] === 'string' ? payload['sub'] : null;
+  }
+
   logout(returnUrl?: string): Promise<boolean> {
     try {
       localStorage.removeItem(this.tokenKey);
@@ -81,5 +93,25 @@ export class AuthService {
 
   private hasStoredToken(): boolean {
     return this.getToken() !== null;
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> | null {
+    const payload = token.split('.')[1];
+
+    if (!payload) {
+      return null;
+    }
+
+    try {
+      const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const paddedPayload = normalizedPayload.padEnd(
+        normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+        '=',
+      );
+
+      return JSON.parse(atob(paddedPayload)) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
   }
 }

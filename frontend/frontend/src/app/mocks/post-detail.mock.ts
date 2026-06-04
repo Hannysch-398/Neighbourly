@@ -8,6 +8,7 @@ export const postDetailMock: PostDetailResponse = {
     isUrgent: true,
     urgentUntil: '2026-05-10T18:00:00',
     createdAt: '2026-05-07T10:30:00',
+    isOwner: true,
     location: {
         city: 'Berlin',
         district: 'Mitte',
