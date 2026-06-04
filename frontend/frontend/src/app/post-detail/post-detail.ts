@@ -93,7 +93,12 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       return 'Noch kein Standort hinterlegt';
     }
 
-    const parts = [location.district, location.city].filter(Boolean);
+    const parts = [
+      location.address,
+      location.postalCode,
+      location.city,
+    ].filter(Boolean);
+
     return parts.length > 0 ? parts.join(', ') : 'Standort ohne Ortsnamen';
   }
 

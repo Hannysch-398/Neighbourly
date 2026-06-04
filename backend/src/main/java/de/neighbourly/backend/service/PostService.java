@@ -27,6 +27,7 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final ObjectMapper objectMapper;
     private final HousingDetailRepository housingDetailRepository;
+    private final GeoService geoService;
 
     public PostService(
             PostRepository postRepository,
@@ -38,7 +39,9 @@ public class PostService {
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
             ObjectMapper objectMapper,
-            HousingDetailRepository housingDetailRepository
+            HousingDetailRepository housingDetailRepository,
+            GeoService geoService
+
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -50,6 +53,8 @@ public class PostService {
         this.postImageRepository = postImageRepository;
         this.objectMapper = objectMapper;
         this.housingDetailRepository = housingDetailRepository;
+
+        this.geoService = geoService;
     }
 
     public PostResponseDto createPost(CreatePostRequest request, String email) {
@@ -57,8 +62,9 @@ public class PostService {
 
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
+        validateLocation(request);
 
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
+        if (!request.getIsUrgent()  && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
         }
 
@@ -241,7 +247,8 @@ public class PostService {
     private LocationDto mapLocation(PostLocation location) {
         return new LocationDto(
                 location.getCity(),
-                location.getDistrict(),
+                location.getPostalCode(),
+                location.getAddress(),
                 location.getLatitude(),
                 location.getLongitude()
         );
@@ -370,6 +377,9 @@ public class PostService {
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
+        location.setCity(dto.getCity());
+        location.setPostalCode(dto.getPostalCode());
+        location.setAddress(dto.getAddress());
         location.setLatitude(dto.getLat());
         location.setLongitude(dto.getLng());
         location.setPrecision(dto.getPrecision());
@@ -401,6 +411,23 @@ public class PostService {
 
         if (request.getType() == PostType.HOUSING && !(details instanceof HousingDetailsDto)) {
             throw new IllegalArgumentException("details do not match post type HOUSING");
+        }
+    }
+
+    private void validateLocation(CreatePostRequest request) {
+        if (request.getLocation() == null) {
+            return;
+        }
+
+        CreatePostLocationDto location = request.getLocation();
+
+        GeoCoordinatesResponseDto geoResponse =
+                geoService.getCoordinatesByPlz(location.getPostalCode());
+
+        if (!geoResponse.city().equalsIgnoreCase(location.getCity().trim())) {
+            throw new IllegalArgumentException(
+                    "Die eingegebene Postleitzahl passt nicht zur angegebenen Stadt."
+            );
         }
     }
 }

@@ -18,7 +18,8 @@ export interface PostDetailResponse {
 
 export interface LocationDto {
   city: string;
-  district: string;
+  postalCode?: string | null;
+  address?: string | null;
   latitude: number;
   longitude: number;
 }

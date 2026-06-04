@@ -151,6 +151,9 @@ export class CreatePost {
           this.postModel.update((currentValue) => ({
             ...currentValue,
             resolvedLocation: {
+              city: value.city.trim(),
+              postalCode: value.postalCode.trim(),
+              address: value.address.trim() || null,
               lat: coordinates.latitude,
               lng: coordinates.longitude,
               precision: 'POSTAL_CODE',
