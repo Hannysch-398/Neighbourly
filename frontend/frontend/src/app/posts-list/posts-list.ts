@@ -19,6 +19,18 @@ export class PostsListComponent implements OnInit {
   readonly posts = signal<PostResponse[]>([]);
   readonly state = signal<ListState>('loading');
   readonly errorMessage = signal('');
+  readonly hasPosts = computed(() => this.posts().length > 0);
+  readonly urgentPosts = computed(() =>
+    this.posts()
+      .filter((post) => post.isUrgent)
+      .slice(0, 3)
+  );
+
+  readonly regularPosts = computed(() => {
+    const pinnedIds = new Set(this.urgentPosts().map((post) => post.id));
+
+    return this.posts().filter((post) => !pinnedIds.has(post.id));
+  });
   private readonly route = inject(ActivatedRoute);
   readonly isListView = signal(false);
 
@@ -58,5 +70,7 @@ export class PostsListComponent implements OnInit {
   private isListViewFromQuery(): boolean {
     return this.route.snapshot.queryParamMap.get('view') === 'list';
   }
+
+
 
 }

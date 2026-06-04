@@ -1,7 +1,8 @@
-import { Component, computed, signal } from '@angular/core';
-import { form, FormField, maxLength, required } from '@angular/forms/signals';
-import { CreatePostRequest, PostMode, PostType } from '../models/post.model';
-import { PostsService } from '../services/posts.service';
+import {Component, computed, signal} from '@angular/core';
+import {form, FormField, maxLength, required} from '@angular/forms/signals';
+import {CreatePostLocationDto, CreatePostRequest, PostMode, PostType} from '../models/post.model';
+import {PostsService} from '../services/posts.service';
+import {GeoService} from '../services/geo.service';
 
 type PostTypeOption = {
   value: PostType;
@@ -22,7 +23,6 @@ type PostBasicFormModel = {
   urgentUntil: string;
   hasLocation: boolean;
   city: string;
-  district: string;
   address: string;
   eventStartDate: string;
   eventEndDate: string;
@@ -39,6 +39,8 @@ type PostBasicFormModel = {
   condition: string;
   rooms: string;
   availableFrom: string;
+  postalCode: string;
+  resolvedLocation: CreatePostLocationDto | null;
 };
 
 const initialData: PostBasicFormModel = {
@@ -50,7 +52,6 @@ const initialData: PostBasicFormModel = {
   urgentUntil: '',
   hasLocation: false,
   city: '',
-  district: '',
   address: '',
   eventStartDate: '',
   eventEndDate: '',
@@ -67,6 +68,8 @@ const initialData: PostBasicFormModel = {
   condition: '',
   rooms: '',
   availableFrom: '',
+  postalCode: '',
+  resolvedLocation: null,
 };
 
 @Component({
@@ -81,35 +84,36 @@ export class CreatePost {
   readonly successMessage = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
-  readonly postModel = signal<PostBasicFormModel>({ ...initialData });
+  readonly postModel = signal<PostBasicFormModel>({...initialData});
 
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService, private geoService: GeoService,) {
+  }
 
   readonly postTypeOptions: PostTypeOption[] = [
-    { value: 'EVENT', label: 'Veranstaltung' },
-    { value: 'SKILL', label: 'Hilfe / Skill' },
-    { value: 'PRODUCT', label: 'Produkt' },
-    { value: 'HOUSING', label: 'Wohnen' },
+    {value: 'EVENT', label: 'Veranstaltung'},
+    {value: 'SKILL', label: 'Hilfe / Skill'},
+    {value: 'PRODUCT', label: 'Produkt'},
+    {value: 'HOUSING', label: 'Wohnen'},
   ];
 
   readonly postModeOptions: PostModeOption[] = [
-    { value: 'OFFER', label: 'Angebot' },
-    { value: 'REQUEST', label: 'Gesuch' },
+    {value: 'OFFER', label: 'Angebot'},
+    {value: 'REQUEST', label: 'Gesuch'},
   ];
 
   readonly postForm = form(this.postModel, (schemaPath) => {
-    required(schemaPath.title, { message: 'Bitte gib einen Titel ein.' });
+    required(schemaPath.title, {message: 'Bitte gib einen Titel ein.'});
     maxLength(schemaPath.title, 120, {
       message: 'Der Titel darf maximal 120 Zeichen lang sein.',
     });
 
-    required(schemaPath.description, { message: 'Bitte gib eine Beschreibung ein.' });
+    required(schemaPath.description, {message: 'Bitte gib eine Beschreibung ein.'});
     maxLength(schemaPath.description, 2000, {
       message: 'Die Beschreibung darf maximal 2000 Zeichen lang sein.',
     });
 
-    required(schemaPath.type, { message: 'Bitte wähle einen Typ aus.' });
-    required(schemaPath.postMode, { message: 'Bitte wähle Angebot oder Gesuch aus.' });
+    required(schemaPath.type, {message: 'Bitte wähle einen Typ aus.'});
+    required(schemaPath.postMode, {message: 'Bitte wähle Angebot oder Gesuch aus.'});
   });
 
   readonly payloadPreview = computed(() => this.createPayload());
@@ -122,7 +126,9 @@ export class CreatePost {
       !this.postForm.postMode().invalid() &&
       (!this.postModel().isUrgent || !!this.postModel().urgentUntil) &&
       this.hasRequiredDetails() &&
-      (!this.postModel().hasLocation || !!this.postModel().city.trim()),
+      (!this.postModel().hasLocation ||
+        (!!this.postModel().city.trim() &&
+          !!this.postModel().postalCode.trim()))
   );
 
   submitForm() {
@@ -135,8 +141,47 @@ export class CreatePost {
       return;
     }
 
-    const payload = this.createPayload();
+    const value = this.postModel();
 
+    if (value.hasLocation) {
+      this.isLoading.set(true);
+
+      this.geoService.getCoordinatesByPlz(value.postalCode).subscribe({
+        next: (coordinates) => {
+          this.postModel.update((currentValue) => ({
+            ...currentValue,
+            resolvedLocation: {
+              lat: coordinates.latitude,
+              lng: coordinates.longitude,
+              precision: 'POSTAL_CODE',
+              radius_m: 1000,
+            },
+          }));
+
+          const payload = this.createPayload();
+          this.createPost(payload);
+        },
+        error: (err) => {
+          console.error('geo error', err);
+
+          this.postModel.update((currentValue) => ({
+            ...currentValue,
+            resolvedLocation: null,
+          }));
+
+          this.errorMessage.set('Bitte ermittle gültige Koordinaten für die PLZ.');
+          this.isLoading.set(false);
+        },
+      });
+
+      return;
+    }
+
+    const payload = this.createPayload();
+    this.createPost(payload);
+  }
+
+  private createPost(payload: CreatePostRequest) {
     this.isLoading.set(true);
 
     this.postsService.createPost(payload).subscribe({
@@ -164,7 +209,7 @@ export class CreatePost {
     this.savedPayload.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    this.postModel.set({ ...initialData });
+    this.postModel.set({...initialData});
   }
 
   shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode') {
@@ -179,8 +224,22 @@ export class CreatePost {
     return this.submitted() && !this.hasRequiredDetails();
   }
 
-  shouldShowLocationError() {
-    return this.submitted() && this.postModel().hasLocation && !this.postModel().city.trim();
+  getLocationErrorMessage() {
+    const value = this.postModel();
+
+    if (!this.submitted() || !value.hasLocation) {
+      return null;
+    }
+
+    if (!value.city.trim()) {
+      return 'Bitte gib eine Stadt ein.';
+    }
+
+    if (!value.postalCode.trim()) {
+      return 'Bitte gib eine Postleitzahl ein.';
+    }
+
+    return null;
   }
 
   private createPayload(): CreatePostRequest {
@@ -193,7 +252,7 @@ export class CreatePost {
       postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-      location: null,
+      location: value.hasLocation ? value.resolvedLocation : null,
       details: this.createDetails(),
     };
   }

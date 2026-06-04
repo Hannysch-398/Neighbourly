@@ -58,17 +58,18 @@
     background: #edf9e9;
 }
 
+
 .post-list-item--urgent {
-    border: 2px solid #ef4444;
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+  border: 2px solid var(--urgent-color);
+  box-shadow: 0 0 0 4px var(--urgent-highlight-shadow);
 }
 
 .urgent-badge {
-    display: inline-flex;
-    align-items: center;
-    background: #fee2e2;
-    color: #b91c1c;
-    border-radius: 999px;
-    padding: 0.35rem 0.65rem;
-    font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  background: var(--urgent-color-soft);
+  color: var(--urgent-color-strong);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  font-weight: 700;
 }
