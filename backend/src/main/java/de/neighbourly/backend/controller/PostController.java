@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 import de.neighbourly.backend.dto.UpdatePostRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/posts")
@@ -59,4 +59,12 @@ public class PostController {
         String email = authentication.getName();
         return ResponseEntity.ok(postService.updatePost(id, request, email));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        postService.softDeletePost(id, email);
+        return ResponseEntity.noContent().build();
+    }
+
 }

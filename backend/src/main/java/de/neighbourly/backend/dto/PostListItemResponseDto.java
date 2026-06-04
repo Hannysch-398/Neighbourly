@@ -24,4 +24,5 @@ public class PostListItemResponseDto {
     private LocalDateTime createdAt;
     private String status;
     private LocalDateTime updatedAt;
+    private LocationDto location;
 }
