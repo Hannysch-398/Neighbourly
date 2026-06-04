@@ -5,6 +5,7 @@ import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
+import {UpdatePostRequest} from '../models/update-post-request.model';
 
 export interface MapMarkerQuery {
   lat: number;
