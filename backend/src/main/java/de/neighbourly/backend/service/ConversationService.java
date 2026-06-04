@@ -1,9 +1,6 @@
 package de.neighbourly.backend.service;
 
-import de.neighbourly.backend.dto.ConversationParticipantResponse;
-import de.neighbourly.backend.dto.ConversationResponse;
-import de.neighbourly.backend.dto.CreateConversationRequest;
-import de.neighbourly.backend.dto.MessageResponse;
+import de.neighbourly.backend.dto.*;
 import de.neighbourly.backend.entity.Conversation;
 import de.neighbourly.backend.entity.ConversationParticipant;
 import de.neighbourly.backend.entity.Message;
@@ -12,11 +9,12 @@ import de.neighbourly.backend.repository.ConversationParticipantRepository;
 import de.neighbourly.backend.repository.ConversationRepository;
 import de.neighbourly.backend.repository.MessageRepository;
 import de.neighbourly.backend.repository.UserRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import de.neighbourly.backend.dto.CreateMessageRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -120,7 +118,10 @@ public class ConversationService {
                 );
 
         if (!isParticipant) {
-            throw new IllegalArgumentException("User is not a participant of this conversation");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "User is not a participant of this conversation"
+            );
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -156,7 +157,10 @@ public class ConversationService {
                 );
 
         if (!isParticipant) {
-            throw new IllegalArgumentException("User is not a participant of this conversation");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "User is not a participant of this conversation"
+            );
         }
 
         Conversation conversation = conversationRepository.findById(conversationId)
