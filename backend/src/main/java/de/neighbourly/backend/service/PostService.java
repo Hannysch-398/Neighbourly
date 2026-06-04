@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("ALL")
 @Service
@@ -429,5 +430,42 @@ public class PostService {
                     "Die eingegebene Postleitzahl passt nicht zur angegebenen Stadt."
             );
         }
+    }
+    @Transactional
+    public Post updatePost(Long id, UpdatePostRequest request, String email) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+
+        if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new RuntimeException("You are not authorized to update this post");
+        }
+
+        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
+            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
+        }
+
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setUrgent(request.getIsUrgent());
+        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUpdatedAt(LocalDateTime.now());
+
+        return postRepository.save(post);
+    }
+
+    @Transactional
+    public void softDeletePost(Long id, String email) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+
+        if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new RuntimeException("You are not authorized to delete this post");
+        }
+
+        post.setStatus(PostStatus.Inactive);
+        post.setUpdatedAt(LocalDateTime.now());
+
+        postRepository.save(post);
+
     }
 }

@@ -1,3 +1,4 @@
+<a class="post-card-link" [routerLink]="['/posts', post.id]" aria-label="Beitrag {{ post.title }} öffnen">
 <article class="post-list-item" [class.post-list-item--urgent]="post.isUrgent" role="listitem">
 
     <div class="post-main">
@@ -22,3 +23,4 @@
         <span>{{ post.status }}</span>
     </div>
 </article>
+</a>
