@@ -9,9 +9,14 @@
     <div class="overlay-content">
       <!-- später Inhalt -->
 
-      @for(post of posts(); track post.id){
-        <app-sidebar-entry [post]="post"></app-sidebar-entry>
-      }
-    </div>
+      @for (post of posts(); track post.id) {
+        <app-sidebar-entry
+          [post]="post"
+          [class.selected]="selectedPost()?.id === post.id"
+          (click)="postService.selectMapPost(post)"
+          (selectPost)="selectPost($event)"
+          [selected]="selectedPost()?.id === post.id"
+        ></app-sidebar-entry>
+      }</div>
   }
 </aside>

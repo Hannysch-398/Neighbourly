@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, effect, ElementRef, OnDestroy, ViewChild, Input} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as L from 'leaflet';
 
-import { PostsService as PostService } from '../services/posts.service';
+import {PostsService, PostsService as PostService} from '../services/posts.service';
 import { createPostMarker } from '../map-marker/map-marker';
 import { MapPostMarker } from '../interface/MapPostMarker';
 import {MapLegendComponent} from '../map-legend/map-legend';
@@ -20,6 +20,9 @@ import {MapLegendComponent} from '../map-legend/map-legend';
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('map', { static: true }) mapElement!: ElementRef<HTMLDivElement>;
+  @Input() isSidebarOpen = false;
+
+  private readonly markersByPostId = new Map<number, L.Marker>();
 
   private map?: L.Map;
   private postMarkersLayer = L.layerGroup();
@@ -32,11 +35,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   selectedPost: MapPostMarker | null = null;
 
   constructor(
-    private readonly postService: PostService,
+    public readonly postService: PostsService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
-  ) {}
+    private readonly router: Router
+  ) {
+    effect(() => {
+      const posts = this.postService.mapPosts();
+      this.renderMarkers(posts);
+    });
 
+    effect(() => {
+      const selectedPost = this.postService.selectedMapPost();
+
+      if (!selectedPost || !this.map || !this.isSidebarOpen) {
+        return;
+      }
+
+      this.map.setView(
+        [selectedPost.lat, selectedPost.lng],
+        Math.max(this.map.getZoom(), 15),
+        { animate: true }
+      );
+    });
+  }
 
   ngAfterViewInit(): void {
     this.resolveInitialPosition().then(({ position, zoom }) => {
@@ -129,20 +150,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .addTo(this.map);
 
     this.postMarkersLayer.addTo(this.map);
-    this.postService.mapPosts$.subscribe((posts) => {
-      this.postMarkersLayer.clearLayers();
 
-      posts.forEach((post) => {
-        const marker = createPostMarker(post);
-
-        marker.on('click', () => {
-          this.selectedPostId = post.id;
-          this.selectedPost = post;
-        });
-
-        this.postMarkersLayer.addLayer(marker);
-      });
-    });
 
     this.addStartMarker(position);
     this.loadMarkersForCurrentView();
@@ -227,6 +235,35 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
 
+  private renderMarkers(posts: MapPostMarker[]): void {
+    if (!this.map) {
+      return;
+    }
+
+    this.postMarkersLayer.clearLayers();
+    this.markersByPostId.clear();
+
+    posts.forEach((post) => {
+      const marker = createPostMarker(post);
+
+      marker.on('click', () => {
+        this.selectedPostId = post.id;
+        this.selectedPost = post;
+        this.postService.selectMapPost(post);
+
+        if (this.isSidebarOpen) {
+          marker.closePopup();
+          return;
+        }
+
+        marker.openPopup();
+      });
+
+      this.markersByPostId.set(post.id, marker);
+      this.postMarkersLayer.addLayer(marker);
+    });
+  }
+
 
   ngOnDestroy(): void {
     if (this.markerLoadTimeout) {
@@ -235,4 +272,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     this.map?.remove();
   }
+
+
 }

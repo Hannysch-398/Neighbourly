@@ -99,3 +99,21 @@
   box-shadow: 0 8px 20px var(--urgent-marker-shadow);
 }
 
+.sidebar-entry--selected {
+  border: 2px solid var(--primary-color);
+
+  box-shadow:
+    0 0 0 4px rgba(31, 136, 210, 0.12),
+    0 18px 40px rgba(31, 136, 210, 0.2);
+
+  transform: translateY(-2px);
+}
+
+.sidebar-entry--selected .sidebar-entry__title {
+  color: var(--primary-color);
+}
+
+.sidebar-entry--selected .sidebar-entry__mode,
+.sidebar-entry--selected .sidebar-entry__type-icon {
+  transform: scale(1.15);
+}

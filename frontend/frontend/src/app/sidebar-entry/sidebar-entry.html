@@ -1,4 +1,9 @@
-<article class="sidebar-entry" [class.sidebar-entry--urgent]="post.isUrgent">
+<article
+  class="sidebar-entry"
+  [class.sidebar-entry--urgent]="post.isUrgent"
+  [class.sidebar-entry--selected]="selected"
+  (click)="onSelect()"
+>
   @if (post.isUrgent) {
     <div class="sidebar-entry__urgent">
       Dringend
@@ -31,8 +36,15 @@
     </p>
   }
 
-  <a [routerLink]="['/posts', post.id]" class="sidebar-entry__link">
-    <button class="sidebar-entry__button" type="button">
+  <a
+    [routerLink]="['/posts', post.id]"
+    class="sidebar-entry__link"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="sidebar-entry__button"
+      type="button"
+    >
       Post ansehen
     </button>
   </a>
