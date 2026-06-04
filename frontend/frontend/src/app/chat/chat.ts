@@ -31,8 +31,15 @@ export class Chat implements OnInit {
         this.conversations.set(conversations);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.errorMessage.set('Unterhaltungen konnten nicht geladen werden.');
+      error: (error) => {
+        if (error.status === 401) {
+          this.errorMessage.set('Bitte melde dich an, um deine Unterhaltungen zu sehen.');
+        } else if (error.status === 403) {
+          this.errorMessage.set('Du hast keinen Zugriff auf diese Unterhaltungen.');
+        } else {
+          this.errorMessage.set('Unterhaltungen konnten nicht geladen werden.');
+        }
+
         this.isLoading.set(false);
       },
     });
@@ -49,8 +56,15 @@ export class Chat implements OnInit {
         this.messages.set(response.content ?? []);
         this.isLoadingMessages.set(false);
       },
-      error: () => {
-        this.messageError.set('Nachrichten konnten nicht geladen werden.');
+      error: (error) => {
+        if (error.status === 403) {
+          this.messageError.set('Kein Zugriff auf diese Unterhaltung.');
+        } else if (error.status === 401) {
+          this.messageError.set('Bitte melde dich erneut an.');
+        } else {
+          this.messageError.set('Nachrichten konnten nicht geladen werden.');
+        }
+
         this.isLoadingMessages.set(false);
       },
     });
@@ -77,8 +91,15 @@ export class Chat implements OnInit {
         this.newMessage.set('');
         this.isSendingMessage.set(false);
       },
-      error: () => {
-        this.sendMessageError.set('Nachricht konnte nicht gesendet werden.');
+      error: (error) => {
+        if (error.status === 403) {
+          this.sendMessageError.set('Kein Zugriff auf diese Unterhaltung.');
+        } else if (error.status === 401) {
+          this.sendMessageError.set('Bitte melde dich erneut an.');
+        } else {
+          this.sendMessageError.set('Nachricht konnte nicht gesendet werden.');
+        }
+
         this.isSendingMessage.set(false);
       },
     });
