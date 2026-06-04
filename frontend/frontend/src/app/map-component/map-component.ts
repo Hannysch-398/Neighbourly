@@ -216,6 +216,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
+        view: null,
         lat: center.lat.toFixed(6),
         lng: center.lng.toFixed(6),
         zoom: this.map.getZoom(),
