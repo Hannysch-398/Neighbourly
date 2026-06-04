@@ -89,3 +89,47 @@
 .message-item p {
   margin: 0.4rem 0 0;
 }
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-list {
+  flex: 1;
+}
+
+.message-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.message-form input {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d8e1ea;
+  border-radius: 14px;
+  font: inherit;
+}
+
+.message-form button {
+  padding: 0.85rem 1.25rem;
+  border: none;
+  border-radius: 14px;
+  background: #2aa7c8;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.message-form button:disabled,
+.message-form input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message-error {
+  margin: 0.75rem 0 0;
+  color: #b91c1c;
+}

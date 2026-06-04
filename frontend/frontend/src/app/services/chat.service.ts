@@ -21,4 +21,11 @@ export class ChatService {
       `${this.apiUrl}/${conversationId}/messages`
     );
   }
+
+  sendMessage(conversationId: number, content: string): Observable<Message> {
+    return this.http.post<Message>(
+      `${this.apiUrl}/${conversationId}/messages`,
+      {content}
+    );
+  }
 }

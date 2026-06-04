@@ -21,6 +21,9 @@ export class Chat implements OnInit {
   isLoadingMessages = signal(false);
   errorMessage = signal('');
   messageError = signal('');
+  newMessage = signal('');
+  isSendingMessage = signal(false);
+  sendMessageError = signal('');
 
   ngOnInit(): void {
     this.chatService.getConversations().subscribe({
@@ -49,6 +52,34 @@ export class Chat implements OnInit {
       error: () => {
         this.messageError.set('Nachrichten konnten nicht geladen werden.');
         this.isLoadingMessages.set(false);
+      },
+    });
+  }
+
+  updateNewMessage(value: string): void {
+    this.newMessage.set(value);
+  }
+
+  sendMessage(): void {
+    const conversationId = this.selectedConversationId();
+    const content = this.newMessage().trim();
+
+    if (!conversationId || !content || this.isSendingMessage()) {
+      return;
+    }
+
+    this.isSendingMessage.set(true);
+    this.sendMessageError.set('');
+
+    this.chatService.sendMessage(conversationId, content).subscribe({
+      next: (message) => {
+        this.messages.update((currentMessages) => [...currentMessages, message]);
+        this.newMessage.set('');
+        this.isSendingMessage.set(false);
+      },
+      error: () => {
+        this.sendMessageError.set('Nachricht konnte nicht gesendet werden.');
+        this.isSendingMessage.set(false);
       },
     });
   }

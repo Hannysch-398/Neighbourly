@@ -48,7 +48,26 @@
             </article>
           }
         } @else {
-          <p class="empty-conversations">Noch keine Nachrichten vorhanden.</p>
+          <form class="message-form" (submit)="sendMessage(); $event.preventDefault()">
+            <input
+              type="text"
+              [value]="newMessage()"
+              (input)="updateNewMessage($any($event.target).value)"
+              placeholder="Nachricht schreiben..."
+              [disabled]="isSendingMessage()"
+            />
+
+            <button
+              type="submit"
+              [disabled]="!newMessage().trim() || isSendingMessage()"
+            >
+              Senden
+            </button>
+          </form>
+
+          @if (sendMessageError()) {
+            <p class="message-error">{{ sendMessageError() }}</p>
+          }
         }
       </section>
     }
