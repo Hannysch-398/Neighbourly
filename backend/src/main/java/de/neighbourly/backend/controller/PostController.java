@@ -11,9 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/posts")
@@ -50,6 +50,13 @@ public class PostController {
     public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
                                                         @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        postService.softDeletePost(id, email);
+        return ResponseEntity.noContent().build();
     }
 
 }
