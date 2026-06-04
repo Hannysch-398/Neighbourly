@@ -60,3 +60,32 @@
   color: #64748b;
   margin: 0;
 }
+
+.conversation-item {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.conversation-item-active {
+  border-color: #2aa7c8;
+  background: #ecfeff;
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.message-item {
+  max-width: 70%;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #d8e1ea;
+}
+
+.message-item p {
+  margin: 0.4rem 0 0;
+}

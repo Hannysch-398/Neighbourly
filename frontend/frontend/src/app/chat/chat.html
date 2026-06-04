@@ -9,9 +9,14 @@
         <p class="empty-conversations">{{ errorMessage() }}</p>
       } @else if (conversations().length > 0) {
         @for (conversation of conversations(); track conversation.id) {
-          <div class="conversation-item">
+          <button
+            type="button"
+            class="conversation-item"
+            [class.conversation-item-active]="selectedConversationId() === conversation.id"
+            (click)="selectConversation(conversation.id)"
+          >
             Unterhaltung #{{ conversation.id }}
-          </div>
+          </button>
         }
       } @else {
         <p class="empty-conversations">Keine Unterhaltungen vorhanden.</p>
@@ -20,9 +25,32 @@
   </aside>
 
   <main class="chat-window">
-    <div class="chat-empty-state">
-      <h2>Wähle eine Unterhaltung aus</h2>
-      <p>Hier wird später der Nachrichtenverlauf angezeigt.</p>
-    </div>
+    @if (!selectedConversationId()) {
+      <div class="chat-empty-state">
+        <h2>Wähle eine Unterhaltung aus</h2>
+        <p>Hier wird später der Nachrichtenverlauf angezeigt.</p>
+      </div>
+    } @else if (isLoadingMessages()) {
+      <div class="chat-empty-state">
+        <p>Nachrichten werden geladen...</p>
+      </div>
+    } @else if (messageError()) {
+      <div class="chat-empty-state">
+        <p>{{ messageError() }}</p>
+      </div>
+    } @else {
+      <section class="message-list">
+        @if (messages().length > 0) {
+          @for (message of messages(); track message.id) {
+            <article class="message-item">
+              <strong>{{ message.senderUsername }}</strong>
+              <p>{{ message.content }}</p>
+            </article>
+          }
+        } @else {
+          <p class="empty-conversations">Noch keine Nachrichten vorhanden.</p>
+        }
+      </section>
+    }
   </main>
 </section>

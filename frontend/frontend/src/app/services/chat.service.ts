@@ -1,8 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-import { Conversation } from '../models/conversation.model';
+import {Conversation} from '../models/conversation.model';
+import {Message} from '../models/message';
 
 @Injectable({
   providedIn: 'root',
@@ -13,5 +14,11 @@ export class ChatService {
 
   getConversations(): Observable<Conversation[]> {
     return this.http.get<Conversation[]>(this.apiUrl);
+  }
+
+  getMessages(conversationId: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/${conversationId}/messages`
+    );
   }
 }
