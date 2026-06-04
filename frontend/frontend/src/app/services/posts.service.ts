@@ -67,9 +67,10 @@ export class PostsService {
   }
 
   updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
-    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);
+    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);}
+
   deletePost(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);}
 
   getPostById(id: number): Observable<PostDetailResponse> {
     if (this.useMockPosts) {
