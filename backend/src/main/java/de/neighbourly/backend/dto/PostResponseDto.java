@@ -23,4 +23,5 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private String status;
     private LocalDateTime updatedAt;
+    private LocationDto location;
 }
