@@ -4,6 +4,7 @@ import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.MapPostDto;
 import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.entity.Post;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 import de.neighbourly.backend.dto.UpdatePostRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,9 +53,9 @@ public class PostController {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
-                                                      @Valid @RequestBody UpdatePostRequest request,
-                                                      Authentication authentication) {
+    public ResponseEntity<Post> updatePost(@PathVariable Long id,
+                                           @Valid @RequestBody UpdatePostRequest request,
+                                           Authentication authentication) {
         String email = authentication.getName();
         return ResponseEntity.ok(postService.updatePost(id, request, email));
     }
