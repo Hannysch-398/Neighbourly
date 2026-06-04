@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
-
+import de.neighbourly.backend.dto.CreateMessageRequest;
 
 import java.util.List;
 
@@ -139,6 +139,40 @@ public class ConversationService {
                 message.getContent(),
                 message.getCreatedAt()
         );
+    }
+
+    public MessageResponse sendMessage(
+            Long conversationId,
+            CreateMessageRequest request,
+            String email
+    ) {
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
+
+        boolean isParticipant =
+                conversationParticipantRepository.existsByConversationIdAndUserId(
+                        conversationId,
+                        currentUser.getId()
+                );
+
+        if (!isParticipant) {
+            throw new IllegalArgumentException("User is not a participant of this conversation");
+        }
+
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+
+        Message message = new Message();
+        message.setConversation(conversation);
+        message.setSender(currentUser);
+        message.setContent(request.getContent().trim());
+
+        Message savedMessage = messageRepository.save(message);
+
+        conversation.setUpdatedAt(savedMessage.getCreatedAt());
+        conversationRepository.save(conversation);
+
+        return mapMessageToResponse(savedMessage);
     }
 
 }
