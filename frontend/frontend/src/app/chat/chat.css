@@ -40,3 +40,23 @@
     padding: 1rem;
   }
 }
+
+.conversation-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.conversation-item {
+  padding: 0.9rem 1rem;
+  border: 1px solid #d8e1ea;
+  border-radius: 14px;
+  color: #1f2937;
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.empty-conversations {
+  color: #64748b;
+  margin: 0;
+}

@@ -2,8 +2,20 @@
   <aside class="conversation-list">
     <h1>Nachrichten</h1>
 
-    <div class="conversation-placeholder">
-      Conversation List
+    <div class="conversation-list-items">
+      @if (isLoading()) {
+        <p class="empty-conversations">Unterhaltungen werden geladen...</p>
+      } @else if (errorMessage()) {
+        <p class="empty-conversations">{{ errorMessage() }}</p>
+      } @else if (conversations().length > 0) {
+        @for (conversation of conversations(); track conversation.id) {
+          <div class="conversation-item">
+            Unterhaltung #{{ conversation.id }}
+          </div>
+        }
+      } @else {
+        <p class="empty-conversations">Keine Unterhaltungen vorhanden.</p>
+      }
     </div>
   </aside>
 
