@@ -3,7 +3,6 @@ import {RouterLink} from '@angular/router';
 import {PostResponse} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
 import {PostCard} from '../components/post-card/post-card';
-import { ActivatedRoute } from '@angular/router';
 type ListState = 'loading' | 'empty' | 'error' | 'ready';
 
 @Component({
@@ -31,12 +30,7 @@ export class PostsListComponent implements OnInit {
 
     return this.posts().filter((post) => !pinnedIds.has(post.id));
   });
-  private readonly route = inject(ActivatedRoute);
-  readonly isListView = signal(false);
-
-
   ngOnInit(): void {
-    this.isListView.set(this.isListViewFromQuery());
     this.loadPosts();
   }
 
@@ -66,11 +60,5 @@ export class PostsListComponent implements OnInit {
     this.errorMessage.set(message);
     this.state.set('error');
   }
-
-  private isListViewFromQuery(): boolean {
-    return this.route.snapshot.queryParamMap.get('view') === 'list';
-  }
-
-
 
 }
