@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class CreateConversationRequest {
 
-    @NotNull(message = "Participant user id must not be null")
-    private Long participantUserId;
+    @NotNull(message = "Post id must not be null")
+    private Long postId;
 }

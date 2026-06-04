@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
+
     List<Conversation> findDistinctByParticipantsUserIdOrderByUpdatedAtDesc(Long userId);
 
     @Query("""
@@ -18,11 +19,12 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             JOIN c.participants p2
             WHERE p1.user.id = :currentUserId
               AND p2.user.id = :participantUserId
+              AND c.post.id = :postId
               AND SIZE(c.participants) = 2
             """)
-    Optional<Conversation> findDirectConversationBetweenUsers(
+    Optional<Conversation> findDirectConversationForPost(
             @Param("currentUserId") Long currentUserId,
-            @Param("participantUserId") Long participantUserId
+            @Param("participantUserId") Long participantUserId,
+            @Param("postId") Long postId
     );
-
 }

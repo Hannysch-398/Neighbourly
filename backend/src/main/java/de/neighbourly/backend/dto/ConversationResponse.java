@@ -11,6 +11,8 @@ import java.util.List;
 public class ConversationResponse {
 
     private Long id;
+    private Long postId;
+    private String postTitle;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ConversationParticipantResponse> participants;

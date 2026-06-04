@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import de.neighbourly.backend.entity.Post;
+import de.neighbourly.backend.repository.PostRepository;
 
 import java.util.List;
 
@@ -23,17 +25,20 @@ public class ConversationService {
 
     private final ConversationRepository conversationRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final MessageRepository messageRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
 
     public ConversationService(
             ConversationRepository conversationRepository,
             UserRepository userRepository,
+            PostRepository postRepository,
             MessageRepository messageRepository,
             ConversationParticipantRepository conversationParticipantRepository
     ) {
         this.conversationRepository = conversationRepository;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
         this.messageRepository = messageRepository;
         this.conversationParticipantRepository = conversationParticipantRepository;
     }
@@ -53,21 +58,28 @@ public class ConversationService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
 
-        User participantUser = userRepository.findById(request.getParticipantUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Participant user not found"));
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        User participantUser = post.getUser();
 
         if (currentUser.getId().equals(participantUser.getId())) {
             throw new IllegalArgumentException("Cannot start conversation with yourself");
         }
 
         return conversationRepository
-                .findDirectConversationBetweenUsers(currentUser.getId(), participantUser.getId())
+                .findDirectConversationForPost(
+                        currentUser.getId(),
+                        participantUser.getId(),
+                        post.getId()
+                )
                 .map(this::mapToResponse)
-                .orElseGet(() -> createNewConversation(currentUser, participantUser));
+                .orElseGet(() -> createNewConversation(currentUser, participantUser, post));
     }
 
-    private ConversationResponse createNewConversation(User currentUser, User participantUser) {
+    private ConversationResponse createNewConversation(User currentUser, User participantUser, Post post) {
         Conversation conversation = new Conversation();
+        conversation.setPost(post);
 
         ConversationParticipant currentParticipant = new ConversationParticipant();
         currentParticipant.setConversation(conversation);
@@ -96,6 +108,8 @@ public class ConversationService {
 
         return new ConversationResponse(
                 conversation.getId(),
+                conversation.getPost() != null ? conversation.getPost().getId() : null,
+                conversation.getPost() != null ? conversation.getPost().getTitle() : null,
                 conversation.getCreatedAt(),
                 conversation.getUpdatedAt(),
                 participants
