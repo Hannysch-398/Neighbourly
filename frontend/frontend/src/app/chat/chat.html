@@ -30,46 +30,63 @@
         <h2>Wähle eine Unterhaltung aus</h2>
         <p>Hier wird später der Nachrichtenverlauf angezeigt.</p>
       </div>
-    } @else if (isLoadingMessages()) {
-      <div class="chat-empty-state">
-        <p>Nachrichten werden geladen...</p>
-      </div>
-    } @else if (messageError()) {
-      <div class="chat-empty-state">
-        <p>{{ messageError() }}</p>
-      </div>
     } @else {
-      <section class="message-list">
-        @if (messages().length > 0) {
-          @for (message of messages(); track message.id) {
-            <article class="message-item">
-              <strong>{{ message.senderUsername }}</strong>
-              <p>{{ message.content }}</p>
-            </article>
-          }
+      <div class="chat-content">
+        @if (isLoadingMessages()) {
+          <div class="chat-empty-state">
+            <p>Nachrichten werden geladen...</p>
+          </div>
+        } @else if (messageError()) {
+          <div class="chat-empty-state">
+            <p>{{ messageError() }}</p>
+          </div>
         } @else {
-          <form class="message-form" (submit)="sendMessage(); $event.preventDefault()">
-            <input
-              type="text"
-              [value]="newMessage()"
-              (input)="updateNewMessage($any($event.target).value)"
-              placeholder="Nachricht schreiben..."
-              [disabled]="isSendingMessage()"
-            />
-
+          @if (hasMoreMessages()) {
             <button
-              type="submit"
-              [disabled]="!newMessage().trim() || isSendingMessage()"
+              type="button"
+              class="load-more-messages"
+              (click)="loadOlderMessages()"
+              [disabled]="isLoadingMoreMessages()"
             >
-              Senden
+              {{ isLoadingMoreMessages() ? 'Wird geladen...' : 'Ältere Nachrichten laden' }}
             </button>
-          </form>
-
-          @if (sendMessageError()) {
-            <p class="message-error">{{ sendMessageError() }}</p>
           }
+
+          <section class="message-list">
+            @if (messages().length > 0) {
+              @for (message of messages(); track message.id) {
+                <article class="message-item">
+                  <strong>{{ message.senderUsername }}</strong>
+                  <p>{{ message.content }}</p>
+                </article>
+              }
+            } @else {
+              <p class="empty-conversations">Noch keine Nachrichten vorhanden.</p>
+            }
+          </section>
         }
-      </section>
+      </div>
+
+      <form class="message-form" (submit)="sendMessage(); $event.preventDefault()">
+        <input
+          type="text"
+          [value]="newMessage()"
+          (input)="updateNewMessage($any($event.target).value)"
+          placeholder="Nachricht schreiben..."
+          [disabled]="isSendingMessage()"
+        />
+
+        <button
+          type="submit"
+          [disabled]="!newMessage().trim() || isSendingMessage()"
+        >
+          Senden
+        </button>
+      </form>
+
+      @if (sendMessageError()) {
+        <p class="message-error">{{ sendMessageError() }}</p>
+      }
     }
   </main>
 </section>

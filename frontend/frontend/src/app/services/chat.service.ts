@@ -16,9 +16,19 @@ export class ChatService {
     return this.http.get<Conversation[]>(this.apiUrl);
   }
 
-  getMessages(conversationId: number): Observable<any> {
+  getMessages(
+    conversationId: number,
+    page = 0,
+    size = 20
+  ): Observable<any> {
     return this.http.get<any>(
-      `${this.apiUrl}/${conversationId}/messages`
+      `${this.apiUrl}/${conversationId}/messages`,
+      {
+        params: {
+          page,
+          size,
+        },
+      }
     );
   }
 

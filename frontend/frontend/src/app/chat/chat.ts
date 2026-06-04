@@ -21,9 +21,14 @@ export class Chat implements OnInit {
   isLoadingMessages = signal(false);
   errorMessage = signal('');
   messageError = signal('');
+
   newMessage = signal('');
   isSendingMessage = signal(false);
   sendMessageError = signal('');
+
+  currentMessagePage = signal(0);
+  hasMoreMessages = signal(false);
+  isLoadingMoreMessages = signal(false);
 
   ngOnInit(): void {
     this.chatService.getConversations().subscribe({
@@ -49,11 +54,18 @@ export class Chat implements OnInit {
     this.selectedConversationId.set(conversationId);
     this.messages.set([]);
     this.messageError.set('');
+    this.sendMessageError.set('');
     this.isLoadingMessages.set(true);
 
-    this.chatService.getMessages(conversationId).subscribe({
+    this.currentMessagePage.set(0);
+    this.hasMoreMessages.set(false);
+    this.isLoadingMoreMessages.set(false);
+
+    this.chatService.getMessages(conversationId, 0).subscribe({
       next: (response) => {
         this.messages.set(response.content ?? []);
+        this.hasMoreMessages.set(!response.last);
+        this.currentMessagePage.set(response.number ?? 0);
         this.isLoadingMessages.set(false);
       },
       error: (error) => {
@@ -66,6 +78,48 @@ export class Chat implements OnInit {
         }
 
         this.isLoadingMessages.set(false);
+      },
+    });
+  }
+
+  loadOlderMessages(): void {
+    const conversationId = this.selectedConversationId();
+
+    if (!conversationId || !this.hasMoreMessages() || this.isLoadingMoreMessages()) {
+      return;
+    }
+
+    const nextPage = this.currentMessagePage() + 1;
+
+    this.isLoadingMoreMessages.set(true);
+    this.messageError.set('');
+
+    this.chatService.getMessages(conversationId, nextPage).subscribe({
+      next: (response) => {
+        const existingIds = new Set(this.messages().map((message) => message.id));
+        const olderMessages = (response.content ?? []).filter(
+          (message: Message) => !existingIds.has(message.id)
+        );
+
+        this.messages.update((currentMessages) => [
+          ...currentMessages,
+          ...olderMessages,
+        ]);
+
+        this.hasMoreMessages.set(!response.last);
+        this.currentMessagePage.set(response.number ?? nextPage);
+        this.isLoadingMoreMessages.set(false);
+      },
+      error: (error) => {
+        if (error.status === 403) {
+          this.messageError.set('Kein Zugriff auf diese Unterhaltung.');
+        } else if (error.status === 401) {
+          this.messageError.set('Bitte melde dich erneut an.');
+        } else {
+          this.messageError.set('Ältere Nachrichten konnten nicht geladen werden.');
+        }
+
+        this.isLoadingMoreMessages.set(false);
       },
     });
   }
