@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 
 import { SidebarEntry } from '../sidebar-entry/sidebar-entry';
 import { MapPostMarker } from '../interface/MapPostMarker';
@@ -19,17 +11,20 @@ import { PostsService as PostService } from '../services/posts.service';
   styleUrls: ['./map-overlay.css'],
   imports: [SidebarEntry],
 })
-export class MapOverlayComponent implements OnInit {
+export class MapOverlayComponent {
+  public readonly postService = inject(PostService);
+
   @Input() isOpen = false;
   @Output() toggleOverlay = new EventEmitter<void>();
 
-  posts: WritableSignal<MapPostMarker[]> = signal([]);
+  readonly posts = this.postService.mapPosts;
+  readonly selectedPost = this.postService.selectedMapPost;
 
-  constructor(private readonly postService: PostService) {}
+  selectPost(post: MapPostMarker): void {
+    if (!this.isOpen) {
+      return;
+    }
 
-  ngOnInit(): void {
-    this.postService.mapPosts$.subscribe((posts) => {
-      this.posts.set(posts);
-    });
+    this.postService.selectMapPost(post);
   }
 }
