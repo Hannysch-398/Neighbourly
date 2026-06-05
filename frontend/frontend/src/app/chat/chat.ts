@@ -3,7 +3,7 @@ import {Component, OnInit, inject, signal} from '@angular/core';
 import {ChatService} from '../services/chat.service';
 import {Conversation} from '../models/conversation.model';
 import {Message} from '../models/message';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -14,6 +14,7 @@ import {ActivatedRoute} from '@angular/router';
 export class Chat implements OnInit {
   private readonly chatService = inject(ChatService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   conversations = signal<Conversation[]>([]);
   messages = signal<Message[]>([]);
   selectedConversationId = signal<number | null>(null);
@@ -45,6 +46,7 @@ export class Chat implements OnInit {
 
           if (exists) {
             this.selectConversation(conversationId);
+
           }
         }
       },
@@ -64,6 +66,12 @@ export class Chat implements OnInit {
 
   selectConversation(conversationId: number): void {
     this.selectedConversationId.set(conversationId);
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {conversationId},
+      queryParamsHandling: 'merge',
+    });
     this.messages.set([]);
     this.messageError.set('');
     this.sendMessageError.set('');
