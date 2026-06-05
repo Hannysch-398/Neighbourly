@@ -1,15 +1,11 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
 import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
-import {UpdatePostRequest} from '../models/update-post-request.model';
 import {PostDetailResponse} from '../models/post-detail.model';
 import {postDetailMock} from '../mocks/post-detail.mock';
 import { UpdatePostRequest } from '../models/update-post-request.model';
@@ -75,13 +71,6 @@ export class PostsService {
     return this.http.post<PostResponse>(this.apiUrl, payload);
   }
 
-  updatePost(id: number, payload: UpdatePostRequest): Observable<PostResponse> {
-    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, payload);
-  }
-
-  deletePost(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
-  }
 
   resolvePostMutationError(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
