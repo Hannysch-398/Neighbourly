@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import {CommonModule, DatePipe} from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostResponse } from '../../models/post.model';
-import { RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-post-card',
