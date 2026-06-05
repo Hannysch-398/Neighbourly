@@ -13,6 +13,8 @@ import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
+import de.neighbourly.backend.model.PrecisionType;
+import de.neighbourly.backend.util.LocationMaskingUtil;
 
 @SuppressWarnings("ALL")
 @Service
@@ -244,7 +246,9 @@ public class PostService {
                 location.getCity(),
                 location.getDistrict(),
                 location.getLatitude(),
-                location.getLongitude()
+                location.getLongitude(),
+                location.getPrecision(),
+                location.getRadiusM()
         );
     }
 
@@ -368,11 +372,23 @@ public class PostService {
         }
 
         CreatePostLocationDto dto = request.getLocation();
+        dto.validate();
+
+        Double latitude = dto.getLat();
+        Double longitude = dto.getLng();
+
+        if (dto.getPrecision() == PrecisionType.RADIUS) {
+            LocationMaskingUtil.MaskedCoordinates maskedCoordinates =
+                    LocationMaskingUtil.maskedCoordinates(dto.getLat(), dto.getLng(), dto.getRadiusM());
+
+            latitude = maskedCoordinates.lat();
+            longitude = maskedCoordinates.lng();
+        }
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
-        location.setLatitude(dto.getLat());
-        location.setLongitude(dto.getLng());
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
         location.setPrecision(dto.getPrecision());
         location.setRadiusM(dto.getRadiusM());
 
