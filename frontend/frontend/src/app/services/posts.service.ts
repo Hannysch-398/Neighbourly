@@ -10,6 +10,8 @@ import {UpdatePostRequest} from '../models/update-post-request.model';
 import {PostDetailResponse} from '../models/post-detail.model';
 import {postDetailMock} from '../mocks/post-detail.mock';
 
+type MapPostsState = 'loading' | 'empty' | 'error' | 'ready';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,6 +24,9 @@ export class PostsService {
 
   readonly mapPosts = signal<MapPostMarker[]>([]);
   readonly selectedMapPost = signal<MapPostMarker | null>(null);
+  readonly mapPostsState = signal<MapPostsState>('loading');
+  readonly mapPostsError = signal('');
+
 
   getPosts(): Observable<PostResponse[]> {
     if (this.useMockPosts) {
@@ -36,8 +41,12 @@ export class PostsService {
   }
 
   loadMapPostMarkers(lat: number, lng: number, radius: number): void {
+    this.mapPostsState.set('loading');
+    this.mapPostsError.set('');
+
     if (this.useMockPosts) {
       this.mapPosts.set(MOCK_MAP_POST_MARKERS);
+      this.mapPostsState.set(MOCK_MAP_POST_MARKERS.length === 0 ? 'empty' : 'ready');
       return;
     }
 
@@ -50,8 +59,23 @@ export class PostsService {
 
     this.http
       .get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params })
-      .subscribe((posts) => {
-        this.mapPosts.set(posts);
+      .subscribe({
+        next: (posts) => {
+          this.mapPosts.set(posts);
+          this.mapPostsState.set(posts.length === 0 ? 'empty' : 'ready');
+
+          const selectedPost = this.selectedMapPost();
+
+          if (selectedPost && !posts.some((post) => post.id === selectedPost.id)) {
+            this.selectedMapPost.set(null);
+          }
+        },
+        error: () => {
+          this.mapPosts.set([]);
+          this.selectedMapPost.set(null);
+          this.mapPostsError.set('Beiträge auf der Karte konnten nicht geladen werden.');
+          this.mapPostsState.set('error');
+        },
       });
   }
 
