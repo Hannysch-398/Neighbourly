@@ -1,5 +1,6 @@
 package de.neighbourly.backend.dto;
 
+import de.neighbourly.backend.model.PrecisionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
