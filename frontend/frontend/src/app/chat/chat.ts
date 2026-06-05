@@ -3,6 +3,7 @@ import {Component, OnInit, inject, signal} from '@angular/core';
 import {ChatService} from '../services/chat.service';
 import {Conversation} from '../models/conversation.model';
 import {Message} from '../models/message';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -12,7 +13,7 @@ import {Message} from '../models/message';
 })
 export class Chat implements OnInit {
   private readonly chatService = inject(ChatService);
-
+  private readonly route = inject(ActivatedRoute);
   conversations = signal<Conversation[]>([]);
   messages = signal<Message[]>([]);
   selectedConversationId = signal<number | null>(null);
@@ -30,11 +31,22 @@ export class Chat implements OnInit {
   hasMoreMessages = signal(false);
   isLoadingMoreMessages = signal(false);
 
+
   ngOnInit(): void {
     this.chatService.getConversations().subscribe({
       next: (conversations) => {
         this.conversations.set(conversations);
         this.isLoading.set(false);
+
+        const conversationId = Number(this.route.snapshot.queryParamMap.get('conversationId'));
+
+        if (Number.isInteger(conversationId) && conversationId > 0) {
+          const exists = conversations.some((conversation) => conversation.id === conversationId);
+
+          if (exists) {
+            this.selectConversation(conversationId);
+          }
+        }
       },
       error: (error) => {
         if (error.status === 401) {
@@ -158,4 +170,17 @@ export class Chat implements OnInit {
       },
     });
   }
+
+  getOtherParticipantName(conversation: Conversation): string {
+    const currentUsernames = this.messages().map((message) => message.senderUsername);
+
+    const knownCurrentUsername = currentUsernames[0];
+
+    const otherParticipant = conversation.participants.find(
+      (participant) => participant.username !== knownCurrentUsername
+    );
+
+    return otherParticipant?.username ?? 'Unbekannter Nutzer';
+  }
+
 }

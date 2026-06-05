@@ -53,4 +53,10 @@ export const routes: Routes = [
     component: Chat,
     canActivate: [authGuard],
   },
+
+  {
+    path: 'posts/:id',
+    loadComponent: () =>
+      import('./post-detail/post-detail').then((m) => m.PostDetailComponent),
+  },
 ];

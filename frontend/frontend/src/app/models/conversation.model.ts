@@ -5,6 +5,8 @@ export interface ConversationParticipant {
 
 export interface Conversation {
   id: number;
+  postId: number | null;
+  postTitle: string | null;
   createdAt: string;
   updatedAt: string;
   participants: ConversationParticipant[];

@@ -38,4 +38,10 @@ export class ChatService {
       {content}
     );
   }
+  createConversation(postId: number): Observable<Conversation> {
+    return this.http.post<Conversation>(
+      this.apiUrl,
+      { postId }
+    );
+  }
 }

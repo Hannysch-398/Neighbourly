@@ -153,4 +153,18 @@
   min-height: 0;
 }
 
+.conversation-title,
+.conversation-participants {
+  display: block;
+}
 
+.conversation-title {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.conversation-participants {
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}

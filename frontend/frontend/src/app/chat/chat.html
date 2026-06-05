@@ -15,7 +15,15 @@
             [class.conversation-item-active]="selectedConversationId() === conversation.id"
             (click)="selectConversation(conversation.id)"
           >
-            Unterhaltung #{{ conversation.id }}
+           <span class="conversation-title">
+  {{ conversation.postTitle ?? 'Ohne Post' }}
+</span>
+
+            <span class="conversation-participants">
+  @for (participant of conversation.participants; track participant.userId) {
+    {{ participant.username }}
+  }
+</span>
           </button>
         }
       } @else {
