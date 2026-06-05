@@ -3,7 +3,6 @@ import {RouterLink} from '@angular/router';
 import {PostResponse} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
 import {PostCard} from '../components/post-card/post-card';
-
 type ListState = 'loading' | 'empty' | 'error' | 'ready';
 
 @Component({
@@ -31,8 +30,6 @@ export class PostsListComponent implements OnInit {
 
     return this.posts().filter((post) => !pinnedIds.has(post.id));
   });
-
-
   ngOnInit(): void {
     this.loadPosts();
   }
@@ -63,6 +60,5 @@ export class PostsListComponent implements OnInit {
     this.errorMessage.set(message);
     this.state.set('error');
   }
-
 
 }

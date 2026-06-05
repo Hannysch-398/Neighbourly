@@ -1,8 +1,9 @@
-import {Component, computed, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {form, FormField, maxLength, required} from '@angular/forms/signals';
 import {CreatePostLocationDto, CreatePostRequest, PostMode, PostType} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
 import {GeoService} from '../services/geo.service';
+import {Router} from '@angular/router';
 
 type PostTypeOption = {
   value: PostType;
@@ -79,6 +80,7 @@ const initialData: PostBasicFormModel = {
   styleUrl: './create-post.css',
 })
 export class CreatePost {
+  private router = inject(Router);
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
@@ -160,6 +162,10 @@ export class CreatePost {
 
           const payload = this.createPayload();
           this.createPost(payload);
+          setTimeout(() => {
+            this.router.navigate(['/map']);
+          }, 1500);
+
         },
         error: (err) => {
           console.error('geo error', err);
@@ -179,6 +185,10 @@ export class CreatePost {
 
     const payload = this.createPayload();
     this.createPost(payload);
+    setTimeout(() => {
+      this.router.navigate(['/posts']);
+    }, 1500);
+
   }
 
   private createPost(payload: CreatePostRequest) {

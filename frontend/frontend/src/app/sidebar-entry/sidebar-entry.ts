@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MapPostMarker } from '../interface/MapPostMarker';
@@ -27,6 +27,12 @@ export class SidebarEntry {
   @Input({ required: true })
   post!: MapPostMarker;
 
+  @Input()
+  selected = false;
+
+  @Output()
+  selectPost = new EventEmitter<MapPostMarker>();
+
   get typeIcon(): string {
     return this.post.type ? TYPE_ICONS[this.post.type] : '';
   }
@@ -35,15 +41,15 @@ export class SidebarEntry {
     return this.post.postMode ? MODE_ICONS[this.post.postMode] : '';
   }
 
-  get urgentClass(): string {
-    return this.post.isUrgent ? 'sidebar-entry--urgent' : '';
-  }
-
   formatDate(value: string | Date): string {
     return new Intl.DateTimeFormat('de-DE', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     }).format(new Date(value));
+  }
+
+  onSelect(): void {
+    this.selectPost.emit(this.post);
   }
 }
