@@ -12,4 +12,6 @@ public class LocationDto {
     private String district;
     private Double latitude;
     private Double longitude;
+    private PrecisionType precision;
+    private Integer radiusM;
 }

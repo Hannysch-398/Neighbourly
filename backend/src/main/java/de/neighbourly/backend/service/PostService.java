@@ -246,7 +246,9 @@ public class PostService {
                 location.getCity(),
                 location.getDistrict(),
                 location.getLatitude(),
-                location.getLongitude()
+                location.getLongitude(),
+                location.getPrecision(),
+                location.getRadiusM()
         );
     }
 
