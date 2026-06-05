@@ -163,7 +163,7 @@ export class CreatePost {
           const payload = this.createPayload();
           this.createPost(payload);
           setTimeout(() => {
-            this.router.navigate(['/maps']);
+            this.router.navigate(['/map']);
           }, 1500);
 
         },
