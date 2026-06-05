@@ -37,44 +37,60 @@
         <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
       }
       @if (post()?.tags?.length) {
-      <div class="tag-list">
-        @for (tag of post()?.tags; track tag) {
-        <span class="tag">{{ tag }}</span>
-        }
-      </div>
+        <div class="tag-list">
+          @for (tag of post()?.tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
       } @else {
-      <p class="fallback-text">Keine Tags hinterlegt.</p>
+        <p class="fallback-text">Keine Tags hinterlegt.</p>
       }
     </section>
+    <section class="content-panel main-panel">
+      <h2>Details</h2>
 
+      @if (typeSpecificDetails().length > 0) {
+        <dl class="detail-list">
+          @for (entry of typeSpecificDetails(); track entry.label) {
+            <div>
+              <dt>{{ entry.label }}</dt>
+              <dd>{{ entry.value }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="fallback-text">Keine zusätzlichen Details hinterlegt.</p>
+      }
+    </section>
     <section class="content-panel image-panel">
       <h2>Bilder</h2>
       @if (post()?.images?.length) {
-      <div class="gallery-container">
+        <div class="gallery-container">
 
-        @if (selectedImage(); as activeImage) {
-        <div class="main-image-wrapper">
-          <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'" class="gallery-main-image" />
-          @if (activeImage.altText) {
-          <p class="gallery-caption">{{ activeImage.altText }}</p>
+          @if (selectedImage(); as activeImage) {
+            <div class="main-image-wrapper">
+              <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'"
+                   class="gallery-main-image"/>
+              @if (activeImage.altText) {
+                <p class="gallery-caption">{{ activeImage.altText }}</p>
+              }
+            </div>
           }
-        </div>
-        }
 
-        <div class="thumbnail-row">
-          @for (image of post()?.images; track image.id) {
-          <div
-            class="thumbnail-wrapper"
-            [class.active]="image.id === selectedImage()?.id"
-            (click)="selectImage(image)">
-            <img [src]="image.url" [alt]="image.altText || 'Vorschau'" />
+          <div class="thumbnail-row">
+            @for (image of post()?.images; track image.id) {
+              <div
+                class="thumbnail-wrapper"
+                [class.active]="image.id === selectedImage()?.id"
+                (click)="selectImage(image)">
+                <img [src]="image.url" [alt]="image.altText || 'Vorschau'"/>
+              </div>
+            }
           </div>
-          }
-        </div>
 
-      </div>
+        </div>
       } @else {
-      <div class="image-placeholder">Keine Bilder verfügbar</div>
+        <div class="image-placeholder">Keine Bilder verfügbar</div>
       }
     </section>
 
@@ -83,7 +99,6 @@
         <h2>Standort</h2>
         <p class="location-title">{{ locationText(post()?.location) }}</p>
       </section>
-
 
 
       <section class="content-panel">
@@ -120,7 +135,6 @@
               <p class="payment-text">{{ paymentText() }}</p>
             </div>
           </div>
-
 
 
         } @else {

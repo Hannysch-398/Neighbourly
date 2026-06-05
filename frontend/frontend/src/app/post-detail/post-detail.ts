@@ -1,11 +1,11 @@
-import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, computed, inject, signal, effect } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnDestroy, OnInit, computed, inject, signal, effect} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Subject, catchError, map, of, switchMap, takeUntil, tap} from 'rxjs';
 
-import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
-import { PostsService } from '../services/posts.service';
+import {LocationDto, PostDetailResponse} from '../models/post-detail.model';
+import {PostsService} from '../services/posts.service';
 
 interface DetailEntry {
   label: string;
@@ -19,6 +19,7 @@ interface PostDetailState {
 
 @Component({
   selector: 'app-post-detail',
+  standalone: true,
   imports: [DatePipe],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css',
@@ -41,6 +42,52 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
 
     return this.formatLabel(type);
+  });
+  protected readonly typeSpecificDetails = computed<DetailEntry[]>(() => {
+    const post = this.post();
+
+    if (!post || typeof post.details !== 'object' || post.details === null || Array.isArray(post.details)) {
+      return [];
+    }
+
+    const details = post.details as Record<string, unknown>;
+
+    switch (post.type) {
+      case 'EVENT':
+        return this.buildDetails(details, [
+          ['Start', 'startTime'],
+          ['Ende', 'endTime'],
+          ['Ort', 'location'],
+          ['Teilnehmerlimit', 'maxParticipants'],
+        ]);
+
+      case 'SKILL':
+        return this.buildDetails(details, [
+          ['Skill', 'skillName'],
+          ['Tags', 'skillTags'],
+          ['Verfügbarkeit', 'availabilityNote'],
+          ['Erfahrung', 'experience'],
+        ]);
+
+      case 'PRODUCT':
+        return this.buildDetails(details, [
+          ['Produktname', 'productName'],
+          ['Preis', 'price'],
+          ['Währung', 'currency'],
+          ['Zustand', 'condition'],
+        ]);
+
+      case 'HOUSING':
+        return this.buildDetails(details, [
+          ['Wohnfläche', 'area'],
+          ['Zimmer', 'rooms'],
+          ['Miete', 'rent'],
+          ['Verfügbar ab', 'availableFrom'],
+        ]);
+
+      default:
+        return [];
+    }
   });
 
   ngOnInit(): void {
@@ -136,6 +183,30 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
 
     return 'VB';
+  }
+
+  private buildDetails(
+    details: Record<string, unknown>,
+    fields: [string, string][]
+  ): DetailEntry[] {
+    return fields
+      .map(([label, key]) => ({
+        label,
+        value: this.formatDetailValue(details[key]),
+      }))
+      .filter(entry => entry.value !== '');
+  }
+
+  private formatDetailValue(value: unknown): string {
+    if (value === null || value === undefined || value === '') {
+      return '';
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? 'Ja' : 'Nein';
+    }
+
+    return String(value);
   }
 
   private parsePostId(value: string | null): number | null {
