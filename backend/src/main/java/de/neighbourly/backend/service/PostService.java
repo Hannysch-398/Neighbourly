@@ -9,9 +9,11 @@ import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("ALL")
@@ -232,11 +234,52 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(null, null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null, null, null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null, null, null);
+            case EVENT -> eventRepository.findByPostId(post.getId())
+                    .map(event -> new EventDetailsDto(
+                            "EVENT",
+                            event.getStartDate(),
+                            event.getEndDate(),
+                            event.getVenue()
+                    ))
+                    .orElse(null);
+
+            case SKILL -> skillDetailRepository.findByPostId(post.getId())
+                    .map(skillDetail -> new SkillDetailsDto(
+                            "SKILL",
+                            null,
+                            splitSkillTags(skillDetail.getSkillTags()),
+                            skillDetail.getAvailabilityNote(),
+                            skillDetail.getExperienceLevel()
+                    ))
+                    .orElse(null);
+
+            case PRODUCT -> productDetailRepository.findByPostId(post.getId())
+                    .map(productDetail -> new ProductDetailsDto(
+                            "PRODUCT",
+                            productDetail.getProductName(),
+                            productDetail.getPrice(),
+                            productDetail.getCurrency(),
+                            productDetail.getCondition()
+                    ))
+                    .orElse(null);
+
+            case HOUSING -> housingDetailRepository.findByPostId(post.getId())
+                    .map(housingDetail -> new HousingDetailsDto(
+                            "HOUSING",
+                            housingDetail.getRent(),
+                            housingDetail.getRooms(),
+                            housingDetail.getAvailableFrom()
+                    ))
+                    .orElse(null);
         };
+    }
+
+    private List<String> splitSkillTags(String skillTags) {
+        if (skillTags == null || skillTags.isBlank()) {
+            return List.of();
+        }
+
+        return List.of(skillTags.split(","));
     }
 
     private LocationDto mapLocation(PostLocation location) {
@@ -305,23 +348,23 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-    return postRepository.findByStatus(PostStatus.ACTIVE)
-            .stream()
-            .sorted(
-                    Comparator
-                            .comparing(PostMapper::isEffectivelyUrgent)
-                            .reversed()
-                            .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
-            )
-            .map(post -> {
-                LocationDto location = postLocationRepository
-                        .findByPostId(post.getId())
-                        .map(this::mapLocation)
-                        .orElse(null);
+        return postRepository.findByStatus(PostStatus.ACTIVE)
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
+                .map(post -> {
+                    LocationDto location = postLocationRepository
+                            .findByPostId(post.getId())
+                            .map(this::mapLocation)
+                            .orElse(null);
 
-                return PostMapper.toListDto(post, location);
-            })
-            .toList();
+                    return PostMapper.toListDto(post, location);
+                })
+                .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
