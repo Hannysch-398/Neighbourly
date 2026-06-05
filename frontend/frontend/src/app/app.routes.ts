@@ -1,10 +1,11 @@
-import {Routes} from '@angular/router';
-import {authGuard} from './core/guards/auth.guard';
-import {VerifyEmail} from './verify-email/verify-email';
-import {CreatePost} from './create-post/create-post';
-import {PostsListComponent} from './posts-list/posts-list';
-import {MapAndOverlayComponent} from './map-and-overlay-component/map-and-overlay-component';
-import {Chat} from './chat/chat';
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+
+import { VerifyEmail } from './verify-email/verify-email';
+import { CreatePost } from './create-post/create-post';
+import { PostsListComponent } from './posts-list/posts-list';
+import { MapAndOverlayComponent } from './map-and-overlay-component/map-and-overlay-component';
+import { Chat } from './chat/chat';
 
 export const routes: Routes = [
   {

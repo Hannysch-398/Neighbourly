@@ -4,10 +4,11 @@ import {Component, OnDestroy, OnInit, computed, inject, signal, effect} from '@a
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject, catchError, map, of, switchMap, takeUntil, tap} from 'rxjs';
 
-import {LocationDto, PostDetailResponse} from '../models/post-detail.model';
-import {PostsService} from '../service/posts.service';
-import {ChatService} from '../services/chat.service';
-import {Conversation} from '../models/conversation.model';
+import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
+import { PostsService } from '../services/posts.service';
+import { ChatService } from '../services/chat.service';
+import { Conversation } from '../models/conversation.model';
+
 
 interface DetailEntry {
   label: string;

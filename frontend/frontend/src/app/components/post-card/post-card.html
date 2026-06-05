@@ -2,9 +2,9 @@
   class="post-list-item"
   [class.post-list-item--urgent]="post.isUrgent"
   [routerLink]="['/posts', post.id]"
+  [attr.aria-label]="'Beitrag ' + post.title + ' öffnen'"
   role="listitem"
 >
-
   <div class="post-main">
     <div class="post-title-row">
       <h2>{{ post.title }}</h2>
