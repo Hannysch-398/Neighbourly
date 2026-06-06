@@ -72,6 +72,7 @@ public class PostMapper {
     ) {
         return new PostDetailResponseDto(
                 post.getId(),
+                post.getUser().getId(),
                 post.getTitle(),
                 post.getDescription(),
                 post.getType().name(),

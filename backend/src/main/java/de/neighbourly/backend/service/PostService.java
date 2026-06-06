@@ -271,11 +271,7 @@ public class PostService {
     }
 
     private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(
-                image.getId(),
-                image.getUrl(),
-                image.getAltText()
-        );
+        return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
     }
 
     private static final double MAX_RADIUS = 200_000;
@@ -349,25 +345,14 @@ public class PostService {
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
 
-        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
-                .stream()
-                .map(location -> {
-                    Post post = postRepository.findById(location.getPost().getId())
-                            .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius).stream().map(location -> {
+            Post post = postRepository.findById(location.getPost().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-                    return new MapPostDto(
-                            post.getId(),
-                            post.getType().name(),
-                            post.getTitle(),
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            PostMapper.isEffectivelyUrgent(post),
-                            post.getPostMode().name(),
-                            shortenDescription(post.getDescription()),
-                            post.getCreatedAt()
-                    );
-                })
-                .toList();
+            return new MapPostDto(post.getId(), post.getType().name(), post.getTitle(), location.getLatitude(),
+                    location.getLongitude(), PostMapper.isEffectivelyUrgent(post), post.getPostMode().name(),
+                    shortenDescription(post.getDescription()), post.getCreatedAt());
+        }).toList();
     }
 
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
@@ -495,8 +480,7 @@ public class PostService {
 
     @Transactional
     public Post updatePost(Long id, UpdatePostRequest request, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
             throw new RuntimeException("You are not authorized to update this post");
@@ -513,8 +497,7 @@ public class PostService {
 
     @Transactional
     public void softDeletePost(Long id, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
             throw new RuntimeException("You are not authorized to delete this post");
@@ -525,5 +508,17 @@ public class PostService {
 
         postRepository.save(post);
 
+    }
+
+
+    public List<PostListItemResponseDto> getPostsByUserId(Long userId) {
+        return postRepository.findByUserIdAndStatus(userId, PostStatus.ACTIVE).stream()
+                .sorted(Comparator.comparing(PostMapper::isEffectivelyUrgent).reversed()
+                        .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())).map(post -> {
+                    LocationDto location =
+                            postLocationRepository.findByPostId(post.getId()).map(this::mapLocation).orElse(null);
+
+                    return PostMapper.toListDto(post, location);
+                }).toList();
     }
 }

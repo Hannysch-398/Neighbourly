@@ -2,6 +2,7 @@ import { PostDetailResponse } from '../models/post-detail.model';
 
 export const postDetailMock: PostDetailResponse = {
   id: 1,
+  userId: 1,
   title: 'Need help repairing my bike',
   description: 'My bike chain is broken and I need help fixing it.',
   type: 'SKILL',

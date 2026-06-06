@@ -2,6 +2,7 @@ import {AverageRatingResponse} from "../interface/AverageRatingResponse";
 
 export interface PostDetailResponse {
   id: number;
+  userId: number;
   title: string;
   description: string;
   type: string;

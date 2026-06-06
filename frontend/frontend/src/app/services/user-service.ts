@@ -5,10 +5,10 @@ import { map } from 'rxjs';
 
 export interface ProfileData {
   id: number;
-  name: string;
+  username: string;
   email: string;
-  role?: string;
-  createdAt?: string;
+  // role?: string;
+  // createdAt?: string;
 }
 
 export interface SuccessResponse {
@@ -58,5 +58,10 @@ export class UserService {
     return this.http.delete<SuccessResponse>(`${this.baseUrl}/me`, {
       headers: this.getHeaders()
     });
+  }
+
+  getUserById(id: number) {
+
+    return this.http.get<ProfileData>(`${this.baseUrl}/${id}`);
   }
 }

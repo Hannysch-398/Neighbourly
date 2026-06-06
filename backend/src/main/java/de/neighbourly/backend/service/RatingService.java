@@ -59,10 +59,12 @@ public class RatingService {
                 .mapToDouble(RatingResponse::getRating)
                 .summaryStatistics();
 
+        double roundedAverage = Math.round(stats.getAverage() * 10.0) / 10.0;
+
         return new AverageRatingResponse(
-                userId,                    // id
-                stats.getAverage(),       // average
-                (int) stats.getCount()    // ratingAmount
+                userId,
+                roundedAverage,
+                (int) stats.getCount()
         );
     }
 

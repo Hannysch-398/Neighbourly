@@ -1,0 +1,54 @@
+<section class="profile-container">
+  @if (isLoading()) {
+    <div class="profile-state state-loading">
+      <div class="spinner"></div>
+      <p>Profil wird geladen...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="profile-state state-error">
+      <h3>Fehler</h3>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else if (profile()) {
+    <div class="profile-layout">
+      <main class="profile-main">
+        <section class="profile-card card-style">
+          <div class="avatar">
+            <div class="avatar-placeholder">
+              {{ userInitials() }}
+            </div>
+          </div>
+
+          <div class="profile-name-block">
+            <h1>{{ profile()?.username }}</h1>
+            <p>Öffentliches Profil</p>
+          </div>
+        </section>
+
+        <section class="posts-section card-style">
+          <div class="section-header">
+            <h2>Beiträge von {{ profile()?.username }}</h2>
+          </div>
+
+          @if (posts().length > 0) {
+            <div class="post-grid">
+              @for (post of posts(); track post.id) {
+                <app-post-card [post]="post"></app-post-card>
+              }
+            </div>
+          } @else {
+            <p class="post-placeholder">
+              Dieser Nutzer hat noch keine Beiträge veröffentlicht.
+            </p>
+          }
+        </section>
+      </main>
+
+      <aside class="rating-sidebar card-style">
+        <app-rating [userId]="profile()?.id ?? 0"></app-rating>
+
+        <app-create-rating (ratingCreated)="refreshRating()"></app-create-rating>
+      </aside>
+    </div>
+  }
+</section>

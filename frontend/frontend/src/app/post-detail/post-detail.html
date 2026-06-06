@@ -144,7 +144,13 @@
         @if (post()) {
           <div class="user-info-profile">
             <h4 class="user-name">{{ userName() }}</h4>
-            <div class="user-avatar">{{ userInitials() }}</div>
+            @if (userId()) {
+              <a [routerLink]="['/user', userId()]">
+                <div class="user-avatar">{{ userInitials() }}</div>
+              </a>
+            }
+
+
           </div>
           <div class="user-info-contact">
             <div>
@@ -172,7 +178,6 @@
               <p class="conversation-error">{{ conversationError() }}</p>
             }
           </div>
-
 
         } @else {
           <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
