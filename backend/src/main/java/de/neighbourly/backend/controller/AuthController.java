@@ -5,6 +5,7 @@ import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.security.CustomUserDetailsService;
 import de.neighbourly.backend.security.JwtService;
 import de.neighbourly.backend.service.UserService;
+import de.neighbourly.backend.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,8 @@ public class AuthController {
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generateToken(userDetails);
+        User user = userService.getCurrentUserByEmail(request.getEmail());
+        String token = jwtService.generateToken(userDetails, user.getId());
 
         return ResponseEntity.ok(token);
     }
