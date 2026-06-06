@@ -4,6 +4,9 @@ import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.MapPostDto;
 import de.neighbourly.backend.dto.PostResponseDto;
+import de.neighbourly.backend.dto.SuccessResponseDto;
+import de.neighbourly.backend.dto.UpdatePostRequestDto;
+import de.neighbourly.backend.security.AuthenticatedUserPrincipal;
 import de.neighbourly.backend.entity.Post;
 import de.neighbourly.backend.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -42,24 +45,20 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id, Authentication authentication) {
-        String email = authentication != null ? authentication.getName() : null;
-        PostDetailResponseDto response = postService.getPostDetail(id, email);
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id) {
+        PostDetailResponseDto response = postService.getPostDetail(id);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/marker")
-    public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
-                                                        @RequestParam double radius) {
-        return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
-    }
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long id,
-                                           @Valid @RequestBody UpdatePostRequest request,
-                                           Authentication authentication) {
-        String email = authentication.getName();
-        return ResponseEntity.ok(postService.updatePost(id, request, email));
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdatePostRequestDto request,
+                                                      Authentication authentication) {
+        PostResponseDto response = postService.updatePost(id, request, getAuthenticatedUserId(authentication));
+        return ResponseEntity.ok(response);
     }
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
@@ -68,4 +67,24 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/marker")
+    public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
+                                                        @RequestParam double radius) {
+        return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
+    }
+
+
+
+
+    private Long getAuthenticatedUserId(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUserPrincipal principal)) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
+        if (principal.getUserId() == null) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "JWT user_id is missing");
+        }
+
+        return principal.getUserId();
+    }
 }
