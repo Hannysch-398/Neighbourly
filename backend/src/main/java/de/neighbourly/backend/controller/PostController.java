@@ -42,8 +42,9 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id) {
-        PostDetailResponseDto response = postService.getPostDetail(id);
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id, Authentication authentication) {
+        String email = authentication != null ? authentication.getName() : null;
+        PostDetailResponseDto response = postService.getPostDetail(id, email);
         return ResponseEntity.ok(response);
     }
 
