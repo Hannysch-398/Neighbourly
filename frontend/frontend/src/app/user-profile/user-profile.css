@@ -1,5 +1,7 @@
 .profile-container {
   margin: var(--spacing);
+ width: 90%;
+  margin: 1rem auto
 }
 
 .profile-layout {
@@ -76,9 +78,9 @@
 }
 
 .post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+ display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .post-placeholder {
