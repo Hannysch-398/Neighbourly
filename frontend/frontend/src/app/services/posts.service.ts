@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of ,catchError, throwError} from 'rxjs';
+import { BehaviorSubject, Observable, of ,catchError, throwError, tap} from 'rxjs';
 import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
@@ -65,11 +65,13 @@ export class PostsService {
       .set('radius', safeRadius.toString());
 
     return this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params }).pipe(
+      tap((posts) => this.mapPosts.set(posts)),
       catchError((error: HttpErrorResponse) => {
         if (error.status === 404) {
           this.router.navigate(['/404']);
         }
 
+        this.mapPosts.set([]);
         return of([]);
       }),
     );
