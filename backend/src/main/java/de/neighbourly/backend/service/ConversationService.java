@@ -141,7 +141,7 @@ public class ConversationService {
         Pageable pageable = PageRequest.of(page, size);
 
         return messageRepository
-                .findByConversationIdOrderByCreatedAtAsc(conversationId, pageable)
+                .findByConversationIdOrderByCreatedAtDesc(conversationId, pageable)
                 .map(this::mapMessageToResponse);
     }
 

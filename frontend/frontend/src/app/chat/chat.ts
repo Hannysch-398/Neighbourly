@@ -83,7 +83,8 @@ export class Chat implements OnInit {
 
     this.chatService.getMessages(conversationId, 0).subscribe({
       next: (response) => {
-        this.messages.set(response.content ?? []);
+        const messages = [...(response.content ?? [])].reverse();
+        this.messages.set(messages);
         this.hasMoreMessages.set(!response.last);
         this.currentMessagePage.set(response.number ?? 0);
         this.isLoadingMessages.set(false);
@@ -117,13 +118,13 @@ export class Chat implements OnInit {
     this.chatService.getMessages(conversationId, nextPage).subscribe({
       next: (response) => {
         const existingIds = new Set(this.messages().map((message) => message.id));
-        const olderMessages = (response.content ?? []).filter(
-          (message: Message) => !existingIds.has(message.id)
-        );
+        const olderMessages = [...(response.content ?? [])]
+            .reverse()
+            .filter((message: Message) => !existingIds.has(message.id));
 
         this.messages.update((currentMessages) => [
-          ...currentMessages,
           ...olderMessages,
+          ...currentMessages,
         ]);
 
         this.hasMoreMessages.set(!response.last);
