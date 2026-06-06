@@ -80,7 +80,7 @@ public class PostService {
         return PostMapper.toDto(savedPost, location);
     }
 
-    public PostDetailResponseDto getPostDetail(Long postId, String currentUserEmail) {
+    public PostDetailResponseDto getPostDetail(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
@@ -92,10 +92,10 @@ public class PostService {
         List<PostImageDto> images =
                 postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId).stream().map(this::mapImage).toList();
 
-        boolean isOwner = currentUserEmail != null
+        boolean isOwner = currentUserId != null
                 && post.getUser() != null
-                && post.getUser().getEmail() != null
-                && post.getUser().getEmail().equalsIgnoreCase(currentUserEmail);
+                && post.getUser().getId() != null
+                && post.getUser().getId().equals(currentUserId);
 
         return PostMapper.toDetailDto(post, location, tags, images, details, isOwner);
     }
