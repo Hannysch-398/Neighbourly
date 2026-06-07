@@ -55,6 +55,7 @@ public class PostService {
         this.housingDetailRepository = housingDetailRepository;
     }
 
+    @Transactional
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
