@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { form, FormField, maxLength, required } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CreatePostLocationDto, CreatePostRequest, PostMode, PostType } from '../models/post.model';
 import { PostsService } from '../services/posts.service';
 import { GeoService } from '../services/geo.service';
 import { UpdatePostRequest } from '../models/update-post-request.model';
+import {PostDetailResponse} from '../models/post-detail.model';
 
 type PostTypeOption = {
   value: PostType;
@@ -125,7 +125,13 @@ export class CreatePost implements OnInit {
   loadPostForEditing(id: number): void {
     this.isLoading.set(true);
     this.postsService.getPostById(id).subscribe({
-      next: (post) => {
+      next: (post: PostDetailResponse | null) => {
+        if (!post) {
+          this.errorMessage.set('Beitrag konnte nicht geladen werden.');
+          this.isLoading.set(false);
+          return;
+        }
+
         this.postModel = {
           ...this.postModel,
           title: post.title ?? '',
@@ -170,7 +176,6 @@ export class CreatePost implements OnInit {
       this.saveUpdatedPost();
       return;
     }
-  }
 
     if (this.postModel.hasLocation) {
       this.isLoading.set(true);
@@ -185,7 +190,7 @@ export class CreatePost implements OnInit {
               precision: 'POSTAL_CODE',
               radius_m: 1000,
             },
-          }));
+          };
 
           const payload = this.createPayload();
           this.createPost(payload);
