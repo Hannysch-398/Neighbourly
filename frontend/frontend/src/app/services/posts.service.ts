@@ -44,7 +44,15 @@ export class PostsService {
       return of(postListMock);
     }
 
-    return this.http.get<PostResponse[]>(this.apiUrl);
+    return this.http.get<PostResponse[]>(this.apiUrl).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          this.router.navigate(['/404']);
+        }
+
+        return of([]);
+      }),
+    );
   }
 
   selectMapPost(post: MapPostMarker | null): void {
