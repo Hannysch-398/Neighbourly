@@ -8,8 +8,9 @@ import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
 import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -389,6 +390,44 @@ public class PostService {
                     );
                 })
                 .toList();
+    }
+
+    public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
+        Post post = findPostForOwnerAction(postId, userId);
+
+        if (!request.isUrgent() && request.getUrgentUntil() != null) {
+            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
+        }
+
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setUrgent(request.isUrgent());
+        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUpdatedAt(LocalDateTime.now());
+
+        Post savedPost = postRepository.save(post);
+        LocationDto location = postLocationRepository.findByPostId(postId).map(this::mapLocation).orElse(null);
+
+        return PostMapper.toDto(savedPost, location);
+    }
+
+    public void deletePost(Long postId, Long userId) {
+        Post post = findPostForOwnerAction(postId, userId);
+
+        post.setStatus(PostStatus.Deleted);
+        post.setUpdatedAt(LocalDateTime.now());
+        postRepository.save(post);
+    }
+
+    private Post findPostForOwnerAction(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        if (post.getUser() == null || post.getUser().getId() == null || !post.getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the post owner may modify this post");
+        }
+
+        return post;
     }
 
     private String shortenDescription(String description) {

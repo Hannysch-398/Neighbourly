@@ -43,9 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring(7);
         System.out.println("JWT: " + jwt);
         final String userEmail;
+        final Long userId;
 
         try {
             userEmail = jwtService.extractUsername(jwt);
+            userId = jwtService.extractUserId(jwt);
             System.out.println("Extracted userEmail: " + userEmail);
         } catch (JwtException | IllegalArgumentException e) {
             System.out.println("JWT Fehler: " + e.getMessage());
@@ -59,10 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             System.out.println("Token wird validiert...");
             if (jwtService.isTokenValid(jwt, userDetails)) {
+                AuthenticatedUserPrincipal principal = new AuthenticatedUserPrincipal(userId, userDetails);
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        principal,
                         null,
-                        userDetails.getAuthorities()
+                        principal.getAuthorities()
                 );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

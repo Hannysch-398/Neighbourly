@@ -136,6 +136,20 @@
             </div>
           </div>
 
+          <div class="user-actions">
+            <button
+              type="button"
+              class="message-button"
+              (click)="startConversation()"
+              [disabled]="isStartingConversation()"
+            >
+              {{ isStartingConversation() ? 'Wird geöffnet...' : 'Nachricht schreiben' }}
+            </button>
+
+            @if (conversationError()) {
+              <p class="conversation-error">{{ conversationError() }}</p>
+            }
+          </div>
 
         } @else {
           <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
