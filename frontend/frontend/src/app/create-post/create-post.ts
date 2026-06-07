@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { form, FormField, maxLength, required } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CreatePostLocationDto, CreatePostRequest, PostMode, PostType } from '../models/post.model';
 import { PostsService } from '../services/posts.service';
 import { GeoService } from '../services/geo.service';
@@ -81,6 +82,7 @@ const initialData: PostBasicFormModel = {
   styleUrl: './create-post.css',
 })
 export class CreatePost implements OnInit {
+  private router = inject(Router);
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
@@ -168,6 +170,7 @@ export class CreatePost implements OnInit {
       this.saveUpdatedPost();
       return;
     }
+  }
 
     if (this.postModel.hasLocation) {
       this.isLoading.set(true);
@@ -182,8 +185,14 @@ export class CreatePost implements OnInit {
               precision: 'POSTAL_CODE',
               radius_m: 1000,
             },
-          };
-          this.createPost(this.createPayload());
+          }));
+
+          const payload = this.createPayload();
+          this.createPost(payload);
+          setTimeout(() => {
+            this.router.navigate(['/map']);
+          }, 1500);
+
         },
         error: (err) => {
           console.error('geo error', err);
@@ -196,7 +205,12 @@ export class CreatePost implements OnInit {
       return;
     }
 
-    this.createPost(this.createPayload());
+    const payload = this.createPayload();
+    this.createPost(payload);
+    setTimeout(() => {
+      this.router.navigate(['/posts']);
+    }, 1500);
+
   }
 
   private createPost(payload: CreatePostRequest): void {
