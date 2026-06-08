@@ -185,9 +185,9 @@ export class CreatePost implements OnInit {
           this.postModel = {
             ...this.postModel,
             resolvedLocation: {
-              city: value.city.trim(),
-              postalCode: value.postalCode.trim(),
-              address: value.address.trim() || null,
+              city: this.postModel.city.trim(),
+              postalCode: this.postModel.postalCode.trim(),
+              address: this.postModel.address.trim() || null,
               lat: coordinates.latitude,
               lng: coordinates.longitude,
               precision: 'POSTAL_CODE',
