@@ -170,7 +170,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     return 'VB';
   }
   protected editPost(): void {
-    return;
+    const id = this.postId();
+
+    if (id === null) {
+      return;
+    }
+
+    void this.router.navigate(['/posts', id, 'edit']);
   }
 
   protected deletePost(): void {
@@ -309,3 +315,4 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     });
   }
 }
+

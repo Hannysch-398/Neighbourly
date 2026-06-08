@@ -52,13 +52,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'posts/:id',
-    component: PostDetailComponent,
-  },
-  {
     path: 'posts/:id/edit',
     component: CreatePost,
     canActivate: [authGuard],
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetailComponent,
   },
     {
     path: 'chat',
@@ -76,3 +76,4 @@ export const routes: Routes = [
     component: NotFound,
   },
 ];
+
