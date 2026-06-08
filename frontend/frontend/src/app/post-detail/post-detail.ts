@@ -7,7 +7,8 @@ import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
 import { PostsService } from '../services/posts.service';
 import { AuthService } from '../services/auth.service';
-
+import { ChatService } from '../services/chat.service';
+import { Conversation } from '../models/conversation.model';
 interface DetailEntry {
   label: string;
   value: string;
@@ -37,6 +38,10 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   protected readonly isDeleting = signal(false);
   protected readonly isConfirmingDelete = signal(false);
   protected readonly errorMessage = signal('');
+  private readonly chatService = inject(ChatService);
+
+  protected readonly isStartingConversation = signal(false);
+  protected readonly conversationError = signal('');
 
   protected readonly typeLabel = computed(() => {
     const type = this.post()?.type;
@@ -276,5 +281,31 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
   selectImage(image: any): void {
     this.selectedImage.set(image);
+  }
+
+  protected startConversation(): void {
+    const id = this.postId();
+
+    if (!id || this.isStartingConversation()) {
+      return;
+    }
+
+    this.isStartingConversation.set(true);
+    this.conversationError.set('');
+
+    this.chatService.createConversation(id).subscribe({
+      next: (conversation: Conversation) => {
+        this.isStartingConversation.set(false);
+        void this.router.navigate(['/chat'], {
+          queryParams: {
+            conversationId: conversation.id,
+          },
+        });
+      },
+      error: () => {
+        this.conversationError.set('Unterhaltung konnte nicht gestartet werden.');
+        this.isStartingConversation.set(false);
+      },
+    });
   }
 }

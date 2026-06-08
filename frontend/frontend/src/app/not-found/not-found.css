@@ -1,0 +1,232 @@
+.not-found-page {
+  min-height: calc(100vh - 90px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, rgba(87, 199, 122, 0.22), transparent 34%),
+  radial-gradient(circle at 80% 25%, rgba(31, 136, 210, 0.2), transparent 32%),
+  radial-gradient(circle at 50% 90%, rgba(249, 115, 22, 0.12), transparent 38%),
+  #eef4f8;
+}
+
+.not-found-page::before {
+  content: "";
+  position: absolute;
+  inset: 32px;
+  border-radius: 36px;
+  background-image: linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 78%);
+  pointer-events: none;
+}
+
+.not-found-card {
+  width: min(680px, 100%);
+  position: relative;
+  z-index: 2;
+  padding: 44px;
+  border-radius: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22);
+  text-align: center;
+}
+
+.not-found-badge {
+  width: fit-content;
+  margin: 0 auto 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+}
+
+.not-found-code {
+  line-height: 0.9;
+  font-size: clamp(5rem, 18vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 18px 44px rgba(29, 125, 223, 0.18);
+}
+
+.not-found-card h1 {
+  margin: 18px 0 12px;
+  color: var(--text-dark);
+  font-size: clamp(1.7rem, 4vw, 2.55rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.not-found-card p {
+  max-width: 520px;
+  margin: 0 auto;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.not-found-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.primary-action,
+.secondary-action {
+  min-width: 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.2s ease,
+  box-shadow 0.2s ease,
+  filter 0.2s ease;
+}
+
+.primary-action {
+  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  box-shadow: 0 16px 34px rgba(29, 125, 223, 0.28);
+}
+
+.secondary-action {
+  color: var(--text-dark);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+}
+
+.primary-action:hover,
+.secondary-action:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+}
+
+.floating-marker {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.85;
+  filter: blur(0.1px);
+}
+
+.marker-one {
+  left: 12%;
+  top: 24%;
+}
+
+.marker-two {
+  right: 13%;
+  top: 30%;
+}
+
+.marker-three {
+  left: 18%;
+  bottom: 18%;
+}
+
+.marker-pin {
+  width: 42px;
+  height: 42px;
+  border-radius: 50% 50% 50% 10%;
+  background: linear-gradient(135deg, #1f88d2 0%, #57c77a 70%);
+  transform: rotate(-45deg);
+  box-shadow: 0 16px 30px rgba(29, 125, 223, 0.28),
+  0 0 0 8px rgba(123, 203, 98, 0.16);
+  position: relative;
+  animation: floatMarker 4s ease-in-out infinite;
+}
+
+.marker-pin.urgent {
+  background: var(--urgent-marker-gradient);
+  box-shadow: 0 16px 30px var(--urgent-marker-shadow),
+  0 0 0 8px var(--urgent-marker-pulse);
+}
+
+.marker-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  box-shadow: inset 0 0 0 3px rgba(29, 125, 223, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transform: rotate(45deg);
+}
+
+.marker-two .marker-pin {
+  animation-delay: 0.8s;
+}
+
+.marker-three .marker-pin {
+  animation-delay: 1.4s;
+}
+
+@keyframes floatMarker {
+  0%,
+  100% {
+    transform: rotate(-45deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-45deg) translateY(-10px);
+  }
+}
+
+@media (max-width: 720px) {
+  .not-found-page {
+    padding: 28px 14px;
+  }
+
+  .not-found-card {
+    padding: 34px 22px;
+    border-radius: 28px;
+  }
+
+  .floating-marker {
+    display: none;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+  }
+
+  .primary-action,
+  .secondary-action {
+    width: 100%;
+  }
+}
