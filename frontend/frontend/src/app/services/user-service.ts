@@ -61,7 +61,11 @@ export class UserService {
   }
 
   getUserById(id: number) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
 
-    return this.http.get<ProfileData>(`${this.baseUrl}/${id}`);
+    return this.http.get<ProfileData>(`${this.baseUrl}/${id}`, {headers});
   }
 }
