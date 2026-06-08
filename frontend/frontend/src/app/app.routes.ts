@@ -56,6 +56,11 @@ export const routes: Routes = [
     component: PostDetailComponent,
   },
   {
+    path: 'posts/:id/edit',
+    component: CreatePost,
+    canActivate: [authGuard],
+  },
+    {
     path: 'chat',
     component: Chat,
     canActivate: [authGuard],
