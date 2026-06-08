@@ -16,10 +16,8 @@ public class UpdatePostRequest {
     @NotBlank(message = "Description must not be empty")
     private String description;
 
-    private boolean isUrgent;
+    private Boolean isUrgent;
     private LocalDateTime urgentUntil;
-
-    public boolean getIsUrgent() { return isUrgent; }
 
     @JsonAnySetter
     public void handleUnknownProperty(String name, Object value) {

@@ -61,10 +61,6 @@ public class PostService {
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
 
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         Post post = PostMapper.toEntity(request, user);
 
         LocalDateTime now = LocalDateTime.now();
@@ -353,14 +349,10 @@ public class PostService {
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
         Post post = findPostForOwnerAction(postId, userId);
 
-        if (!request.isUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.isUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.isUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         Post savedPost = postRepository.save(post);
@@ -454,14 +446,10 @@ public class PostService {
             throw new RuntimeException("You are not authorized to update this post");
         }
 
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.getIsUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post);
