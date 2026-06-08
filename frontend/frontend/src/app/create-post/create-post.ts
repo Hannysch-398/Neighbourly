@@ -202,13 +202,12 @@ export class CreatePost {
       error: (err) => {
         console.error(err);
 
-        if (err.status === 401) {
-          this.errorMessage.set('Du bist nicht eingeloggt. Bitte melde dich an.');
-        }
+
 
         const backendMessage = err?.error?.errors?.request || err?.error?.message;
-
-        if (err.status === 400) {
+        if (err.status === 401) {
+          this.errorMessage.set('Du bist nicht eingeloggt. Bitte melde dich an.');
+        } else if (err.status === 400) {
           this.errorMessage.set(backendMessage || 'Ungültige Eingabe.');
         } else {
           this.errorMessage.set('Beitrag konnte nicht gespeichert werden.');
