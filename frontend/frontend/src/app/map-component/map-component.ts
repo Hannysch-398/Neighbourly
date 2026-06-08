@@ -212,7 +212,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const bounds = this.map.getBounds();
     const radius = center.distanceTo(bounds.getNorthEast());
 
-    this.postService.loadMapPostMarkers(center.lat, center.lng, radius);
+    this.postService.loadMapPostMarkers(center.lat, center.lng, radius).subscribe();
   }
   private updateMapViewQueryParams(): void {
     if (!this.map) {
