@@ -1,16 +1,18 @@
 import {AverageRatingResponse} from "../interface/AverageRatingResponse";
+import { PostImage } from './post-image.model';
 
 export interface PostDetailResponse {
   id: number;
   title: string;
   description: string;
   type: string;
+  postMode: string;
   isUrgent: boolean;
   urgentUntil?: string | null;
   createdAt: string;
   location?: LocationDto;
   tags: string[];
-  images: PostImageDto[];
+  images: PostImage[];
   details?: unknown;
   reportSummary?: ReportSummaryDto | null;
   averageRating?: AverageRatingResponse | null;
@@ -22,13 +24,6 @@ export interface LocationDto {
   latitude: number;
   longitude: number;
 }
-
-export interface PostImageDto {
-  id: number;
-  url: string;
-  altText: string;
-}
-
 
 export interface ReportSummaryDto {
   reportCount: number;

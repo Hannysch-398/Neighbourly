@@ -10,7 +10,10 @@ import de.neighbourly.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
+    private static final int MAX_IMAGES_PER_POST = 10;
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
@@ -28,6 +33,7 @@ public class PostService {
     private final PostLocationRepository postLocationRepository;
     private final PostTagRepository postTagRepository;
     private final PostImageRepository postImageRepository;
+    private final PostImageStorageService postImageStorageService;
     private final ObjectMapper objectMapper;
     private final HousingDetailRepository housingDetailRepository;
 
@@ -40,6 +46,7 @@ public class PostService {
             PostLocationRepository postLocationRepository,
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
+            PostImageStorageService postImageStorageService,
             ObjectMapper objectMapper,
             HousingDetailRepository housingDetailRepository
     ) {
@@ -51,6 +58,7 @@ public class PostService {
         this.postLocationRepository = postLocationRepository;
         this.postTagRepository = postTagRepository;
         this.postImageRepository = postImageRepository;
+        this.postImageStorageService = postImageStorageService;
         this.objectMapper = objectMapper;
         this.housingDetailRepository = housingDetailRepository;
     }
@@ -254,8 +262,79 @@ public class PostService {
         return new PostImageDto(
                 image.getId(),
                 image.getUrl(),
-                image.getAltText()
+                image.getAltText(),
+                image.getOrderIndex(),
+                image.getCreatedAt()
         );
+    }
+
+    @Transactional
+    public PostImageDto uploadPostImage(Long postId, MultipartFile file, String altText, Long userId) {
+        Post post = findPostForOwnerAction(postId, userId);
+        validateImageLimit(postId);
+        String imageUrl = postImageStorageService.store(file);
+        return createPostImage(post, imageUrl, altText);
+    }
+
+    @Transactional
+    public PostImageDto addPostImageUrl(Long postId, PostImageUrlRequest request, Long userId) {
+        validateImageUrl(request.getUrl());
+        Post post = findPostForOwnerAction(postId, userId);
+        validateImageLimit(postId);
+        return createPostImage(post, request.getUrl().trim(), request.getAltText());
+    }
+
+    private void validateImageLimit(Long postId) {
+        long imageCount = postImageRepository.countByPostId(postId);
+
+        if (imageCount >= MAX_IMAGES_PER_POST) {
+            throw new IllegalArgumentException("A post can have at most " + MAX_IMAGES_PER_POST + " images");
+        }
+    }
+
+    private PostImageDto createPostImage(Post post, String imageUrl, String altText) {
+        int nextOrderIndex = postImageRepository.findTopByPostIdOrderByOrderIndexDesc(post.getId())
+                .map(PostImage::getOrderIndex)
+                .map(index -> index + 1)
+                .orElse(0);
+
+        PostImage image = new PostImage();
+        image.setPost(post);
+        image.setUrl(imageUrl);
+        image.setAltText(normalizeAltText(altText));
+        image.setOrderIndex(nextOrderIndex);
+        image.setCreatedAt(LocalDateTime.now());
+
+        return mapImage(postImageRepository.save(image));
+    }
+
+    private void validateImageUrl(String url) {
+        if (url == null || url.isBlank()) {
+            throw new IllegalArgumentException("url is required");
+        }
+
+        try {
+            URI uri = new URI(url.trim());
+            String scheme = uri.getScheme();
+
+            if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
+                throw new IllegalArgumentException("url must use http or https");
+            }
+
+            if (uri.getHost() == null || uri.getHost().isBlank()) {
+                throw new IllegalArgumentException("url host is required");
+            }
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException("url is invalid");
+        }
+    }
+
+    private String normalizeAltText(String altText) {
+        if (altText == null || altText.isBlank()) {
+            return null;
+        }
+
+        return altText.trim();
     }
 
     private static final double MAX_RADIUS = 200_000;
