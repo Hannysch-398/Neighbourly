@@ -363,3 +363,29 @@
   transform: translateY(-1px);
   box-shadow: var(--navbar-hover-shadow);
 }
+
+.chat-nav-icon {
+  width: 64px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  color: #4e5d69;
+  background: transparent;
+
+  text-decoration: none;
+  font-size: 1.15rem;
+
+  transition: all 0.2s ease;
+}
+
+.chat-nav-icon:hover,
+.chat-nav-icon.active {
+  background: linear-gradient(90deg, #2aa7c8, #4ecb8b);
+  color: white;
+  box-shadow: 0 8px 18px rgba(42, 167, 200, 0.25);
+}

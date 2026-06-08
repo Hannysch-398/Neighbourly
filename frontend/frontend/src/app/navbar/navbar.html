@@ -1,20 +1,59 @@
 <nav class="custom-navbar" aria-label="Hauptnavigation">
   <div class="navbar-shell">
-    <a routerLink="/map" class="brand-card" aria-label="Neighbourly Startseite">
+    <a
+      routerLink="/map"
+      queryParamsHandling="merge"
+      class="brand-card"
+      aria-label="Neighbourly Startseite"
+    >
       <img src="assets/logo.png" alt="Neighbourly" class="brand-logo">
     </a>
 
     <div class="navbar-center">
       <div class="search-field">
-        <input type="text" class="search-input-custom" placeholder="Suche" aria-label="Suche">
-        <button class="search-btn-custom" type="button" aria-label="Suche starten">
+        <input
+          type="text"
+          class="search-input-custom"
+          placeholder="Suche"
+          aria-label="Suche"
+        >
+
+        <button
+          class="search-btn-custom"
+          type="button"
+          aria-label="Suche starten"
+        >
           <span class="search-icon" aria-hidden="true"></span>
         </button>
       </div>
 
       <div class="nav-links">
-        <a routerLink="/map" routerLinkActive="active" class="nav-item-link">Karte</a>
-        <a routerLink="/posts" routerLinkActive="active" class="nav-item-link">Übersicht</a>
+        <a
+          routerLink="/map"
+          queryParamsHandling="merge"
+          routerLinkActive="active"
+          class="nav-item-link"
+        >
+          Karte
+        </a>
+
+        <a
+          routerLink="/posts"
+          queryParamsHandling="merge"
+          routerLinkActive="active"
+          class="nav-item-link"
+        >
+          Übersicht
+        </a>
+
+        <a
+          routerLink="/chat"
+          routerLinkActive="active"
+          class="chat-nav-icon"
+          aria-label="Nachrichten"
+        >
+          💬
+        </a>
       </div>
     </div>
 
@@ -27,6 +66,7 @@
         <span aria-hidden="true">+</span>
         Post erstellen
       </a>
+
       <a
         [routerLink]="accountRoute()"
         class="profile-circle"
@@ -34,6 +74,7 @@
       >
         <span class="profile-icon" aria-hidden="true"></span>
       </a>
+
       @if (isLoggedIn()) {
         <button
           type="button"
@@ -47,5 +88,3 @@
     </div>
   </div>
 </nav>
-
-
