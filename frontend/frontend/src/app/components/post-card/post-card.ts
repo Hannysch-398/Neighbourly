@@ -3,6 +3,7 @@ import {CommonModule, DatePipe} from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostResponse } from '../../models/post.model';
 
+
 @Component({
   selector: 'app-post-card',
   standalone: true,
