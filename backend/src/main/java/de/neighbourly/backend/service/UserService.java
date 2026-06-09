@@ -25,10 +25,8 @@ public class UserService {
     private final VerificationTokenRepository tokenRepository;
     private final EmailService emailService;
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       VerificationTokenRepository tokenRepository,
-                       EmailService emailService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       VerificationTokenRepository tokenRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
@@ -37,16 +35,10 @@ public class UserService {
 
     public void registerUser(RegistrationRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "E-Mail ist bereits registriert"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-Mail ist bereits registriert");
         }
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Username ist bereits vergeben"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username ist bereits vergeben");
         }
 
         User newUser = new User();
@@ -63,7 +55,8 @@ public class UserService {
 
 
         String verifyLink = ("http://localhost:4200/verify-email?token=" + tokenValue);
-        emailService.sendSimpleEmail(request.getEmail(),"Neighbourly - E-mail Bestätigung","Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link. " + verifyLink);
+        emailService.sendSimpleEmail(request.getEmail(), "Neighbourly - E-mail Bestätigung",
+                "Um Ihre E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link. " + verifyLink);
 
     }
 
@@ -73,20 +66,14 @@ public class UserService {
 
         if (verificationToken.isExpired()) {
             tokenRepository.delete(verificationToken);
-            throw new ResponseStatusException(HttpStatus.GONE, "Verifizierungs-Link abgelaufen. Bitte neu " +
-                    "registrieren.");
+            throw new ResponseStatusException(HttpStatus.GONE,
+                    "Verifizierungs-Link abgelaufen. Bitte neu " + "registrieren.");
         }
-
 
 
         User user = verificationToken.getUser();
         if ("DELETED".equals(user.getStatus())) {
-            throw new AccountException(
-                    HttpStatus.UNAUTHORIZED,
-                    "ACCOUNT_DELETED",
-                    "auth",
-                    "Account wurde gelöscht"
-            );
+            throw new AccountException(HttpStatus.UNAUTHORIZED, "ACCOUNT_DELETED", "auth", "Account wurde gelöscht");
         }
 
         user.setEmailVerified(true);
@@ -97,32 +84,19 @@ public class UserService {
 
 
     public void changePasswordByEmail(String email, PasswordChangeRequest request) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AccountException(
-                        HttpStatus.NOT_FOUND,
-                        "USER_NOT_FOUND",
-                        "auth",
-                        "User nicht gefunden"
-                ));
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new AccountException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "auth", "User nicht gefunden"));
 
         if (Objects.equals(request.getOldPassword(), request.getNewPassword())) {
 
-            throw new AccountException(
-                    HttpStatus.BAD_REQUEST,
-                    "PASSWORD_EQUAL",
-                    "newPassword",
-                    "Das neue Passwort darf nicht dem alten Passwort entsprechen"
-            );
+            throw new AccountException(HttpStatus.BAD_REQUEST, "PASSWORD_EQUAL", "newPassword",
+                    "Das neue Passwort darf nicht dem alten Passwort entsprechen");
         }
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
 
-            throw new AccountException(
-                    HttpStatus.BAD_REQUEST,
-                    "INVALID_OLD_PASSWORD",
-                    "oldPassword",
-                    "Das alte Passwort ist falsch"
-            );
+            throw new AccountException(HttpStatus.BAD_REQUEST, "INVALID_OLD_PASSWORD", "oldPassword",
+                    "Das alte Passwort ist falsch");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -130,13 +104,8 @@ public class UserService {
     }
 
     public void deleteUserByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AccountException(
-                        HttpStatus.NOT_FOUND,
-                        "USER_NOT_FOUND",
-                        "auth",
-                        "User nicht gefunden"
-                ));
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new AccountException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "auth", "User nicht gefunden"));
 
         user.setStatus("DELETED");
         userRepository.save(user);
@@ -155,23 +124,22 @@ public class UserService {
     public void validateLoginAllowed(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED,
-                        "Invalid credentials"
-                ));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
         if ("DELETED".equals(user.getStatus())) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Account wurde gelöscht"
-            );
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account wurde gelöscht");
         }
 
         if ("DISABLED".equals(user.getStatus())) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Account ist deaktiviert"
-            );
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account ist deaktiviert");
         }
+    }
+
+
+    public UserProfileDto getUserById(Long id) {
+        User user = userRepository.getUserById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User nicht gefunden"));
+        ;
+        return UserMapper.toDto(user);
     }
 }

@@ -15,6 +15,8 @@ public class PostDetailResponseDto {
 
     private Long id;
 
+    private Long userId;
+
     private String title;
 
     private String description;
