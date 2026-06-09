@@ -53,6 +53,7 @@ button {
 
 button:hover {
   background-color: var(--primary-color-hover);
+  color: white;
 }
 
 .error-text {
@@ -68,6 +69,7 @@ p {
 
 .tab-active {
   background-color: var(--primary-color);
+  border-radius: 0;
   color: white;
 }
 

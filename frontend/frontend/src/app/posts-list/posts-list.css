@@ -11,7 +11,7 @@
 }
 
 .posts-list-shell {
-  min-height: 520px;
+  min-height: 150px;
   padding: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: var(--border-radius);
