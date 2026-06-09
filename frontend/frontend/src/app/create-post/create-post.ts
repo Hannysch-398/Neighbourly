@@ -187,6 +187,8 @@ export class CreatePost implements OnInit {
 
       this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
         next: (coordinates) => {
+          console.log('GEO OK', coordinates);
+
           this.postModel = {
             ...this.postModel,
             resolvedLocation: {
@@ -201,6 +203,7 @@ export class CreatePost implements OnInit {
           };
 
           const payload = this.createPayload();
+          console.log('PAYLOAD', payload);
 
           this.createPost(payload, () => {
             setTimeout(() => this.router.navigate(['/map']), 1500);
@@ -429,8 +432,13 @@ export class CreatePost implements OnInit {
     }
   }
 
-  private toOptionalNumber(value: string): number | null {
-    const normalizedValue = value.trim();
+  private toOptionalNumber(value: string | number | null | undefined): number | null {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    const normalizedValue = String(value).trim().replace(',', '.');
+
     return normalizedValue ? Number(normalizedValue) : null;
   }
 
