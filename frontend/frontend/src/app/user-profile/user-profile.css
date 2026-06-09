@@ -1,0 +1,137 @@
+.profile-container {
+  margin: var(--spacing);
+ width: 90%;
+  margin: 1rem auto
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-card,
+.posts-section,
+.rating-sidebar {
+  background: #ffffff;
+  border-radius: var(--border-radius);
+}
+
+.profile-card {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+.profile-name-block h1 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.profile-name-block p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.rating-sidebar {
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.posts-section {
+  padding: 24px;
+}
+
+.section-header h2 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+}
+
+.post-grid {
+ display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.post-placeholder {
+  margin: 0;
+  color: #6b7280;
+}
+
+.profile-state {
+  background: #ffffff;
+  border-radius: var(--border-radius);
+  padding: 24px;
+}
+
+.state-error {
+  color: #991b1b;
+}
+
+@media (max-width: 1000px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-container {
+    margin: 12px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .post-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-sidebar,
+  .profile-card,
+  .posts-section {
+    padding: 16px;
+  }
+}
+
+.card-style{
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+  box-shadow: var(--navbar-shell-shadow);
+}

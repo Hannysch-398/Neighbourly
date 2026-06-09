@@ -2,6 +2,7 @@ import {AverageRatingResponse} from "../interface/AverageRatingResponse";
 
 export interface PostDetailResponse {
   id: number;
+  userId: number;
   title: string;
   description: string;
   type: string;
@@ -14,11 +15,17 @@ export interface PostDetailResponse {
   details?: unknown;
   reportSummary?: ReportSummaryDto | null;
   averageRating?: AverageRatingResponse | null;
+  isOwner?: boolean;
+  owner?: PostOwnerDto | null;
+  author?: PostOwnerDto | null;
+  user?: PostOwnerDto | null;
+  userEmail?: string | null;
 }
 
 export interface LocationDto {
   city: string;
-  district: string;
+  postalCode?: string | null;
+  address?: string | null;
   latitude: number;
   longitude: number;
 }
@@ -32,4 +39,10 @@ export interface PostImageDto {
 
 export interface ReportSummaryDto {
   reportCount: number;
+}
+
+export interface PostOwnerDto {
+  email?: string | null;
+  username?: string | null;
+  name?: string | null;
 }

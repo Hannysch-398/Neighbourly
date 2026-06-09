@@ -4,13 +4,18 @@ export type PostStatus = 'ACTIVE' | 'ARCHIVED' | string;
 
 export interface LocationDto {
   city: string;
-  district?: string | null;
+  postalCode?: string | null;
   address?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  precision?: string | null;
+  radiusM?: number | null;
 }
 
 export interface CreatePostLocationDto {
+  city: string;
+  postalCode: string;
+  address?: string | null;
   lat: number;
   lng: number;
   precision: string;

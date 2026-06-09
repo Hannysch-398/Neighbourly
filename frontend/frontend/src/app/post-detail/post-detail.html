@@ -16,7 +16,44 @@
         <h1>Beitrag</h1>
       }
     </div>
+
+    @if (post() && isOwner()) {
+      <div class="owner-actions" aria-label="Beitragsaktionen">
+        <button
+          type="button"
+          class="owner-action secondary"
+          [disabled]="isDeleting()"
+          (click)="editPost()">
+          Bearbeiten
+        </button>
+        <button
+          type="button"
+          class="owner-action danger"
+          [disabled]="isDeleting()"
+          (click)="deletePost()">
+          {{ isDeleting() ? 'Wird gelöscht...' : 'Löschen' }}
+        </button>
+      </div>
+    }
   </header>
+  @if (isConfirmingDelete()) {
+    <div class="delete-confirmation alert alert-danger">
+      <h6 class="alert-heading fw-bold">Sicherheitsabfrage</h6>
+      <p>Diese Aktion kann <strong>nicht</strong> rückgängig gemacht werden. Der Beitrag wird gelöscht.</p>
+      <hr>
+      <p class="mb-3">Bist du dir absolut sicher, dass du diesen Beitrag löschen möchtest?</p>
+
+      <div class="d-flex gap-2 align-items-center">
+        <button class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+          {{ isDeleting() ? 'Beitrag wird gelöscht...' : 'Ja, Beitrag endgültig löschen' }}
+        </button>
+        <button class="btn btn-secondary" (click)="cancelDelete()" [disabled]="isDeleting()">
+          Abbrechen
+        </button>
+      </div>
+    </div>
+  }
+
 
   @if (isLoading()) {
     <div class="state-panel">Beitrag wird geladen...</div>
@@ -122,7 +159,13 @@
         @if (post()) {
           <div class="user-info-profile">
             <h4 class="user-name">{{ userName() }}</h4>
-            <div class="user-avatar">{{ userInitials() }}</div>
+            @if (userId()) {
+              <a [routerLink]="['/user', userId()]">
+                <div class="user-avatar">{{ userInitials() }}</div>
+              </a>
+            }
+
+
           </div>
           <div class="user-info-contact">
             <div>

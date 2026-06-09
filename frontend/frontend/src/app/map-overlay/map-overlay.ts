@@ -19,6 +19,8 @@ export class MapOverlayComponent {
 
   readonly posts = this.postService.mapPosts;
   readonly selectedPost = this.postService.selectedMapPost;
+  readonly state = this.postService.mapPostsState;
+  readonly errorMessage = this.postService.mapPostsError;
 
   selectPost(post: MapPostMarker): void {
     if (!this.isOpen) {
