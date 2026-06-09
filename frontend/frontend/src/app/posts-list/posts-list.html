@@ -1,4 +1,9 @@
 <section class="posts-list-page">
+  @if (successMessage()) {
+    <div class="success-message" role="status">
+      {{ successMessage() }}
+    </div>
+  }
 
   <main class="posts-list-shell" aria-live="polite">
     @if (state() === 'loading') {

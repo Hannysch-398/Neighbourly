@@ -480,10 +480,10 @@ public class PostService {
     @Transactional
     public void softDeletePost(Long id, String email) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
-            throw new RuntimeException("You are not authorized to delete this post");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the post owner may delete this post");
         }
 
         post.setStatus(PostStatus.Inactive);
