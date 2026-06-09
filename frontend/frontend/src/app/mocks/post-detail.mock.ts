@@ -1,4 +1,4 @@
-import {PostDetailResponse} from '../models/post-detail.model';
+import { PostDetailResponse } from '../models/post-detail.model';
 
 export const postDetailMock: PostDetailResponse = {
   id: 1,
@@ -8,6 +8,7 @@ export const postDetailMock: PostDetailResponse = {
   isUrgent: true,
   urgentUntil: '2026-05-10T18:00:00',
   createdAt: '2026-05-07T10:30:00',
+  isOwner: true,
   location: {
     city: 'Berlin',
     postalCode: '10115',
@@ -32,7 +33,6 @@ export const postDetailMock: PostDetailResponse = {
     requestedHelpType: 'REPAIR',
     preferredTime: 'Evening',
   },
-
   reportSummary: {
     reportCount: 0,
   },

@@ -45,8 +45,8 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id) {
-        PostDetailResponseDto response = postService.getPostDetail(id);
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable Long id, Authentication authentication) {
+        PostDetailResponseDto response = postService.getPostDetail(id, getOptionalAuthenticatedUserId(authentication));
         return ResponseEntity.ok(response);
     }
 
@@ -83,6 +83,14 @@ public class PostController {
 
         if (principal.getUserId() == null) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "JWT user_id is missing");
+        }
+
+        return principal.getUserId();
+    }
+
+    private Long getOptionalAuthenticatedUserId(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUserPrincipal principal)) {
+            return null;
         }
 
         return principal.getUserId();

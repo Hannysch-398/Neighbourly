@@ -1,5 +1,6 @@
 package de.neighbourly.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,5 +40,8 @@ public class PostDetailResponseDto {
     private AverageRatingResponse averageRating;
 
     private ReportSummaryDto reportSummary;
+
+    @JsonProperty("isOwner")
+    private boolean isOwner;
 
 }
