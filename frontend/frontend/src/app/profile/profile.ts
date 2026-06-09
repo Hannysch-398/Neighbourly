@@ -25,7 +25,7 @@ export class Profile {
   errorMessage = signal<string | null>(null);
   posts = signal<PostResponse[]>([]);
 
-  activePosts = false;
+  activePosts = true;
   archivedPosts = false;
 
   constructor() {
@@ -39,10 +39,11 @@ export class Profile {
     this.profileService.getProfile().subscribe({
       next: (data) => {
         this.profile.set(data);
-        this.isLoading.set(false);
 
         if (data.id != null) {
           this.loadUserPosts(data.id);
+        } else {
+          this.isLoading.set(false);
         }
       },
       error: (err) => {
@@ -65,14 +66,14 @@ export class Profile {
     this.postsService.getPostsByUserId(userId).subscribe({
       next: (posts) => {
         this.posts.set(posts);
-        if(posts.length > 0) {
-          this.activePosts = true;
-        }
+        this.activePosts = posts.length > 0;
+        this.isLoading.set(false);
       },
       error: () => {
         this.posts.set([]);
+        this.activePosts = false;
+        this.isLoading.set(false);
       },
     });
   }
-
 }
