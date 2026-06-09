@@ -11,10 +11,14 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
+import de.neighbourly.backend.model.PrecisionType;
+import de.neighbourly.backend.util.LocationMaskingUtil;
 
 @SuppressWarnings("ALL")
 @Service
@@ -60,6 +64,7 @@ public class PostService {
         this.geoService = geoService;
     }
 
+    @Transactional
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -67,7 +72,8 @@ public class PostService {
         validateTypeSpecificDetails(request);
         validateLocation(request);
 
-        if (!request.getIsUrgent()  && request.getUrgentUntil() != null) {
+
+        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
         }
 
@@ -253,7 +259,9 @@ public class PostService {
                 location.getPostalCode(),
                 location.getAddress(),
                 location.getLatitude(),
-                location.getLongitude()
+                location.getLongitude(),
+                location.getPrecision(),
+                location.getRadiusM()
         );
     }
 
@@ -314,23 +322,23 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-    return postRepository.findByStatus(PostStatus.ACTIVE)
-            .stream()
-            .sorted(
-                    Comparator
-                            .comparing(PostMapper::isEffectivelyUrgent)
-                            .reversed()
-                            .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
-            )
-            .map(post -> {
-                LocationDto location = postLocationRepository
-                        .findByPostId(post.getId())
-                        .map(this::mapLocation)
-                        .orElse(null);
+        return postRepository.findByStatus(PostStatus.ACTIVE)
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
+                .map(post -> {
+                    LocationDto location = postLocationRepository
+                            .findByPostId(post.getId())
+                            .map(this::mapLocation)
+                            .orElse(null);
 
-                return PostMapper.toListDto(post, location);
-            })
-            .toList();
+                    return PostMapper.toListDto(post, location);
+                })
+                .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
@@ -360,14 +368,10 @@ public class PostService {
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
         Post post = findPostForOwnerAction(postId, userId);
 
-        if (!request.isUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.isUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.isUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         Post savedPost = postRepository.save(post);
@@ -415,14 +419,26 @@ public class PostService {
         }
 
         CreatePostLocationDto dto = request.getLocation();
+        dto.validate();
+
+        Double latitude = dto.getLat();
+        Double longitude = dto.getLng();
+
+        if (dto.getPrecision() == PrecisionType.RADIUS) {
+            LocationMaskingUtil.MaskedCoordinates maskedCoordinates =
+                    LocationMaskingUtil.maskedCoordinates(dto.getLat(), dto.getLng(), dto.getRadiusM());
+
+            latitude = maskedCoordinates.lat();
+            longitude = maskedCoordinates.lng();
+        }
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
         location.setCity(dto.getCity());
         location.setPostalCode(dto.getPostalCode());
         location.setAddress(dto.getAddress());
-        location.setLatitude(dto.getLat());
-        location.setLongitude(dto.getLng());
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
         location.setPrecision(dto.getPrecision());
         location.setRadiusM(dto.getRadiusM());
 
@@ -471,6 +487,7 @@ public class PostService {
             );
         }
     }
+
     @Transactional
     public Post updatePost(Long id, UpdatePostRequest request, String email) {
         Post post = postRepository.findById(id)
@@ -480,14 +497,10 @@ public class PostService {
             throw new RuntimeException("You are not authorized to update this post");
         }
 
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.getIsUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post);

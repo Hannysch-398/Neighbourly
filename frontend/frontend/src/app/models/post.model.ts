@@ -8,6 +8,8 @@ export interface LocationDto {
   address?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  precision?: string | null;
+  radiusM?: number | null;
 }
 
 export interface CreatePostLocationDto {

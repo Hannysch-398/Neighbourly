@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+import de.neighbourly.backend.model.PrecisionType;
 
 @Entity
 @Table(name = "post_locations")
@@ -25,7 +26,8 @@ public class PostLocation {
 
         private Double longitude;
 
-        private String precision;
+        @Enumerated(EnumType.STRING)
+        private PrecisionType precision;
 
 
         @Column(name = "radius_m")
