@@ -1,203 +1,235 @@
 <section class="post-detail-page">
-  <header class="post-detail-header">
+    <header class="post-detail-header">
 
-    <div class="title-group">
-      <p class="eyebrow">{{ typeLabel() }}</p>
+        <div class="title-group">
+            <p class="eyebrow">{{ typeLabel() }}</p>
 
-      @if (post(); as post) {
-        <h1>{{ post.title }}</h1>
-        <p class="meta">
-          Erstellt am {{ post.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
-          @if (post.isUrgent) {
-            <span class="urgent-badge">Dringend</span>
-          }
-        </p>
-      } @else {
-        <h1>Beitrag</h1>
-      }
-    </div>
+            @if (post(); as post) {
+                <h1>{{ post.title }}</h1>
+                <p class="meta">
+                    Erstellt am {{ post.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
+                    @if (post.isUrgent) {
+                        <span class="urgent-badge">Dringend</span>
+                    }
+                </p>
+            } @else {
+                <h1>Beitrag</h1>
+            }
+        </div>
 
-    @if (post() && isOwner()) {
-      <div class="owner-actions" aria-label="Beitragsaktionen">
-        <button
-          type="button"
-          class="owner-action secondary"
-          [disabled]="isDeleting()"
-          (click)="editPost()">
-          Bearbeiten
-        </button>
-        <button
-          type="button"
-          class="owner-action danger"
-          [disabled]="isDeleting()"
-          (click)="deletePost()">
-          {{ isDeleting() ? 'Wird gelöscht...' : 'Löschen' }}
-        </button>
-      </div>
+        @if (post() && isOwner()) {
+            <div class="owner-actions" aria-label="Beitragsaktionen">
+                <button
+                        type="button"
+                        class="owner-action secondary"
+                        [disabled]="isDeleting()"
+                        (click)="editPost()">
+                    Bearbeiten
+                </button>
+                <button
+                        type="button"
+                        class="owner-action danger"
+                        [disabled]="isDeleting()"
+                        (click)="deletePost()">
+                    {{ isDeleting() ? 'Wird gelöscht...' : 'Löschen' }}
+                </button>
+            </div>
+        }
+    </header>
+    @if (isConfirmingDelete()) {
+        <div class="delete-confirmation alert alert-danger">
+            <h6 class="alert-heading fw-bold">Sicherheitsabfrage</h6>
+            <p>Diese Aktion kann <strong>nicht</strong> rückgängig gemacht werden. Der Beitrag wird gelöscht.</p>
+            <hr>
+            <p class="mb-3">Bist du dir absolut sicher, dass du diesen Beitrag löschen möchtest?</p>
+
+            <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+                    {{ isDeleting() ? 'Beitrag wird gelöscht...' : 'Ja, Beitrag endgültig löschen' }}
+                </button>
+                <button class="btn btn-secondary" (click)="cancelDelete()" [disabled]="isDeleting()">
+                    Abbrechen
+                </button>
+            </div>
+        </div>
     }
-  </header>
-  @if (isConfirmingDelete()) {
-    <div class="delete-confirmation alert alert-danger">
-      <h6 class="alert-heading fw-bold">Sicherheitsabfrage</h6>
-      <p>Diese Aktion kann <strong>nicht</strong> rückgängig gemacht werden. Der Beitrag wird gelöscht.</p>
-      <hr>
-      <p class="mb-3">Bist du dir absolut sicher, dass du diesen Beitrag löschen möchtest?</p>
-
-      <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
-          {{ isDeleting() ? 'Beitrag wird gelöscht...' : 'Ja, Beitrag endgültig löschen' }}
-        </button>
-        <button class="btn btn-secondary" (click)="cancelDelete()" [disabled]="isDeleting()">
-          Abbrechen
-        </button>
-      </div>
-    </div>
-  }
 
 
-  @if (isLoading()) {
-    <div class="state-panel">Beitrag wird geladen...</div>
-  }
+    @if (isLoading()) {
+        <div class="state-panel">Beitrag wird geladen...</div>
+    }
 
-  @if (errorMessage()) {
-    <div class="state-panel error">{{ errorMessage() }}</div>
-  }
+    @if (errorMessage()) {
+        <div class="state-panel error">{{ errorMessage() }}</div>
+    }
 
-  <main class="detail-grid">
+    <main class="detail-grid">
 
 
-    <section class="content-panel main-panel">
-      <h2>Beschreibung</h2>
-      @if (post(); as post) {
-        <p class="description">{{ post.description }}</p>
-      } @else {
-        <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
-      }
-      @if (post()?.tags?.length) {
-        <div class="tag-list">
-          @for (tag of post()?.tags; track tag) {
-            <span class="tag">{{ tag }}</span>
-          }
-        </div>
-      } @else {
-        <p class="fallback-text">Keine Tags hinterlegt.</p>
-      }
-    </section>
-    <section class="content-panel main-panel">
-      <h2>Details</h2>
-
-      @if (typeSpecificDetails().length > 0) {
-        <dl class="detail-list">
-          @for (entry of typeSpecificDetails(); track entry.label) {
-            <div>
-              <dt>{{ entry.label }}</dt>
-              <dd>{{ entry.value }}</dd>
-            </div>
-          }
-        </dl>
-      } @else {
-        <p class="fallback-text">Keine zusätzlichen Details hinterlegt.</p>
-      }
-    </section>
-    <section class="content-panel image-panel">
-      <h2>Bilder</h2>
-      @if (post()?.images?.length) {
-        <div class="gallery-container">
-
-          @if (selectedImage(); as activeImage) {
-            <div class="main-image-wrapper">
-              <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'"
-                   class="gallery-main-image"/>
-              @if (activeImage.altText) {
-                <p class="gallery-caption">{{ activeImage.altText }}</p>
-              }
-            </div>
-          }
-
-          <div class="thumbnail-row">
-            @for (image of post()?.images; track image.id) {
-              <div
-                class="thumbnail-wrapper"
-                [class.active]="image.id === selectedImage()?.id"
-                (click)="selectImage(image)">
-                <img [src]="image.url" [alt]="image.altText || 'Vorschau'"/>
-              </div>
+        <section class="content-panel main-panel">
+            <h2>Beschreibung</h2>
+            @if (post(); as post) {
+                <p class="description">{{ post.description }}</p>
+            } @else {
+                <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
             }
-          </div>
-
-        </div>
-      } @else {
-        <div class="image-placeholder">Keine Bilder verfügbar</div>
-      }
-    </section>
-
-    <aside class="side-column">
-      <section class="content-panel">
-        <h2>Standort</h2>
-        <p class="location-title">{{ locationText(post()?.location) }}</p>
-      </section>
-
-
-      <section class="content-panel">
-        <h2>Status</h2>
-        @if (post(); as post) {
-          <dl class="detail-list compact">
-
-            @if (post.urgentUntil) {
-              <div>
-                <dt>Dringend bis</dt>
-                <dd>{{ post.urgentUntil | date: 'dd.MM.yyyy, HH:mm' }}</dd>
-              </div>
+            @if (post()?.tags?.length) {
+                <div class="tag-list">
+                    @for (tag of post()?.tags; track tag) {
+                        <span class="tag">{{ tag }}</span>
+                    }
+                </div>
+            } @else {
+                <p class="fallback-text">Keine Tags hinterlegt.</p>
             }
-          </dl>
-        } @else {
-          <p class="fallback-text">Statusdaten werden nach dem Laden angezeigt.</p>
-        }
-      </section>
+        </section>
+        <section class="content-panel main-panel">
+            <h2>Details</h2>
 
-      <section class="content-panel user-info-panel">
-        @if (post()) {
-          <div class="user-info-profile">
-            <h4 class="user-name">{{ userName() }}</h4>
-            @if (userId()) {
-              <a [routerLink]="['/user', userId()]">
-                <div class="user-avatar">{{ userInitials() }}</div>
-              </a>
+            @if (typeSpecificDetails().length > 0) {
+                <dl class="detail-list">
+                    @for (entry of typeSpecificDetails(); track entry.label) {
+                        <div>
+                            <dt>{{ entry.label }}</dt>
+                            <dd>{{ entry.value }}</dd>
+                        </div>
+                    }
+                </dl>
+            } @else {
+                <p class="fallback-text">Keine zusätzlichen Details hinterlegt.</p>
             }
+        </section>
+        <section class="content-panel image-panel">
+            <h2>Bilder</h2>
+            @if (post()?.images?.length) {
+                <div class="gallery-container">
 
+                    @if (selectedImage(); as activeImage) {
+                        <div class="main-image-wrapper">
+                            <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'"
+                                 class="gallery-main-image"/>
+                            @if (activeImage.altText) {
+                                <p class="gallery-caption">{{ activeImage.altText }}</p>
+                            }
+                        </div>
+                    }
 
-          </div>
-          <div class="user-info-contact">
-            <div>
-              <h2>E-Mail:</h2>
-              <p class="user-email">{{ userEmail() }}</p>
-            </div>
+                    <div class="thumbnail-row">
+                        @for (image of post()?.images; track image.id) {
+                            <div
+                                    class="thumbnail-wrapper"
+                                    [class.active]="image.id === selectedImage()?.id"
+                                    (click)="selectImage(image)">
+                                <img [src]="image.url" [alt]="image.altText || 'Vorschau'"/>
+                            </div>
+                        }
+                    </div>
 
-            <div>
-              <h2>Bezahlung:</h2>
-              <p class="payment-text">{{ paymentText() }}</p>
-            </div>
-          </div>
-
-          <div class="user-actions">
-            <button
-              type="button"
-              class="message-button"
-              (click)="startConversation()"
-              [disabled]="isStartingConversation()"
-            >
-              {{ isStartingConversation() ? 'Wird geöffnet...' : 'Nachricht schreiben' }}
-            </button>
-
-            @if (conversationError()) {
-              <p class="conversation-error">{{ conversationError() }}</p>
+                </div>
+            } @else {
+                <div class="image-placeholder">Keine Bilder verfügbar</div>
             }
-          </div>
+        </section>
 
-        } @else {
-          <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
-        }
-      </section>
-    </aside>
-  </main>
+        <aside class="side-column">
+            <section class="content-panel">
+                <h2>Standort</h2>
+                <p class="location-title">{{ locationText(post()?.location) }}</p>
+            </section>
+
+
+            <section class="content-panel">
+                <h2>Status</h2>
+                @if (post(); as post) {
+                    <dl class="detail-list compact">
+
+                        @if (post.urgentUntil) {
+                            <div>
+                                <dt>Dringend bis</dt>
+                                <dd>{{ post.urgentUntil | date: 'dd.MM.yyyy, HH:mm' }}</dd>
+                            </div>
+                        }
+                    </dl>
+                } @else {
+                    <p class="fallback-text">Statusdaten werden nach dem Laden angezeigt.</p>
+                }
+            </section>
+            <section class="content-panel">
+                <h2>Bewertungen & Meldungen</h2>
+
+                @if (post()?.averageRating || post()?.reportSummary) {
+                    <dl class="detail-list compact">
+
+                        @if (post()?.averageRating) {
+                            <div>
+                                <dt>Durchschnittsbewertung</dt>
+                                <dd>{{ post()?.averageRating?.average }}</dd>
+                            </div>
+
+                            <div>
+                                <dt>Anzahl Bewertungen</dt>
+                                <dd>{{ post()?.averageRating?.ratingAmount }}</dd>
+                            </div>
+                        }
+
+                        @if (post()?.reportSummary) {
+                            <div>
+                                <dt>Meldungen</dt>
+                                <dd>{{ post()?.reportSummary?.reportCount }}</dd>
+                            </div>
+                        }
+
+                    </dl>
+                } @else {
+                    <p class="fallback-text">
+                        Noch keine Bewertungs- oder Meldungsdaten vorhanden.
+                    </p>
+                }
+            </section>
+
+            <section class="content-panel user-info-panel">
+                @if (post()) {
+                    <div class="user-info-profile">
+                        <h4 class="user-name">{{ userName() }}</h4>
+                        @if (userId()) {
+                            <a [routerLink]="['/user', userId()]">
+                                <div class="user-avatar">{{ userInitials() }}</div>
+                            </a>
+                        }
+
+
+                    </div>
+                    <div class="user-info-contact">
+                        <div>
+                            <h2>E-Mail:</h2>
+                            <p class="user-email">{{ userEmail() }}</p>
+                        </div>
+
+                        <div>
+                            <h2>Bezahlung:</h2>
+                            <p class="payment-text">{{ paymentText() }}</p>
+                        </div>
+                    </div>
+
+                    <div class="user-actions">
+                        <button
+                                type="button"
+                                class="message-button"
+                                (click)="startConversation()"
+                                [disabled]="isStartingConversation()"
+                        >
+                            {{ isStartingConversation() ? 'Wird geöffnet...' : 'Nachricht schreiben' }}
+                        </button>
+
+                        @if (conversationError()) {
+                            <p class="conversation-error">{{ conversationError() }}</p>
+                        }
+                    </div>
+
+                } @else {
+                    <p class="fallback-text">Nutzerdaten werden nach dem Laden angezeigt.</p>
+                }
+            </section>
+        </aside>
+    </main>
 </section>

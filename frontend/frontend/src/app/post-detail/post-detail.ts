@@ -1,14 +1,14 @@
-import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, computed, inject, signal, effect } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Subject, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnDestroy, OnInit, computed, inject, signal, effect} from '@angular/core';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {Subject, catchError, map, of, switchMap, takeUntil, tap} from 'rxjs';
 
-import { LocationDto, PostDetailResponse } from '../models/post-detail.model';
-import { PostsService } from '../services/posts.service';
-import { AuthService } from '../services/auth.service';
-import { ChatService } from '../services/chat.service';
-import { Conversation } from '../models/conversation.model';
+import {LocationDto, PostDetailResponse} from '../models/post-detail.model';
+import {PostsService} from '../services/posts.service';
+import {AuthService} from '../services/auth.service';
+import {ChatService} from '../services/chat.service';
+import {Conversation} from '../models/conversation.model';
 
 interface DetailEntry {
   label: string;
@@ -163,8 +163,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           this.isLoading.set(false);
         },
       });
-
-    console.log(this.post());
   }
 
   ngOnDestroy(): void {
@@ -239,6 +237,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
     return 'VB';
   }
+
   protected editPost(): void {
     const id = this.postId();
 
@@ -321,18 +320,25 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   private resolveErrorMessage(error: unknown): string {
-    if (error instanceof HttpErrorResponse && error.status === 404) {
-      return 'Der Beitrag wurde nicht gefunden.';
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 404) {
+        return 'Der Beitrag wurde nicht gefunden.';
+      }
+
+      if (error.status === 403) {
+        return 'Du hast keinen Zugriff auf diesen Beitrag.';
+      }
     }
 
     return 'Der Beitrag konnte nicht geladen werden.';
   }
+
   private resolveDeleteErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse && error.status === 403) {
-      return 'Du darfst diesen Beitrag nicht loeschen.';
+      return 'Du darfst diesen Beitrag nicht löschen.';
     }
 
-    return 'Der Beitrag konnte nicht geloescht werden.';
+    return 'Der Beitrag könnte nicht gelöscht werden.';
   }
 
   private formatLabel(value: string): string {
@@ -406,7 +412,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         });
       },
       error: () => {
-        this.conversationError.set('Unterhaltung konnte nicht gestartet werden.');
+        this.conversationError.set('Unterhaltung könnte nicht gestartet werden.');
         this.isStartingConversation.set(false);
       },
     });
