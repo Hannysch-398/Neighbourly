@@ -121,6 +121,7 @@
 
 .nav-item-link {
   min-width: 104px;
+  min-height: 44px;
   padding: 10px 16px;
   text-decoration: none;
   text-align: center;
@@ -284,6 +285,7 @@
 
   .nav-links {
     flex: 0 0 auto;
+
   }
 }
 
@@ -340,6 +342,7 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
     border-radius: 18px;
+
   }
 
   .nav-item-link,

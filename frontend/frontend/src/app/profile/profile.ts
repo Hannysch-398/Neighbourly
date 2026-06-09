@@ -1,22 +1,29 @@
-import { Component, inject, signal } from '@angular/core';
-import { Rating } from '../rating/rating';
-import { ProfileService, ProfileData } from '../services/profile.service';
-import { Router, RouterLink } from '@angular/router';
+import {Component, inject, signal} from '@angular/core';
+import {Rating} from '../rating/rating';
+import {ProfileService, ProfileData} from '../services/profile.service';
+import {Router, RouterLink} from '@angular/router';
+import {PostCard} from '../components/post-card/post-card';
+import {PostsService} from '../services/posts.service';
+import {PostResponse} from '../models/post.model';
+import {UserService} from '../services/user-service';
 
 @Component({
   selector: 'app-profile',
-  imports: [Rating, RouterLink],
+  imports: [Rating, RouterLink, PostCard],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile {
   private profileService = inject(ProfileService);
   private router = inject(Router);
+  private postsService = inject(PostsService);
+  private userService = inject(UserService);
 
   active = signal<boolean>(true);
   profile = signal<ProfileData | null>(null);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string | null>(null);
+  posts = signal<PostResponse[]>([]);
 
   activePosts = false;
   archivedPosts = false;
@@ -33,9 +40,14 @@ export class Profile {
       next: (data) => {
         this.profile.set(data);
         this.isLoading.set(false);
+
+        if (data.id != null) {
+          this.loadUserPosts(data.id);
+        }
       },
       error: (err) => {
         this.profile.set(null);
+        this.posts.set([]);
         this.isLoading.set(false);
 
         if (err.status === 401) {
@@ -48,4 +60,19 @@ export class Profile {
       },
     });
   }
+
+  private loadUserPosts(userId: number): void {
+    this.postsService.getPostsByUserId(userId).subscribe({
+      next: (posts) => {
+        this.posts.set(posts);
+        if(posts.length > 0) {
+          this.activePosts = true;
+        }
+      },
+      error: () => {
+        this.posts.set([]);
+      },
+    });
+  }
+
 }
