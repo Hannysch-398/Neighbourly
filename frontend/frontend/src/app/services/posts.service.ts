@@ -41,7 +41,7 @@ export class PostsService {
 
   private readonly router = inject(Router);
   //toggle to see mock or real posts
-  private readonly useMockPosts = true;
+  private readonly useMockPosts = false;
 
   getPosts(): Observable<PostResponse[]> {
     if (this.useMockPosts) {

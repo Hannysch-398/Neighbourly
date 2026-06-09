@@ -70,7 +70,7 @@ export class PostsListComponent implements OnInit {
       return;
     }
 
-    this.successMessage.set('Beitrag wurde erfolgreich geloescht.');
+    this.successMessage.set('Beitrag wurde erfolgreich gelöscht.');
 
     void this.router.navigate([], {
       relativeTo: this.route,
