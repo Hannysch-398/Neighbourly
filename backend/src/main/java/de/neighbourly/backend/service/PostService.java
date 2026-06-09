@@ -251,11 +251,52 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(null, null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null, null, null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null, null, null);
+            case EVENT -> eventRepository.findByPostId(post.getId())
+                    .map(event -> new EventDetailsDto(
+                            "EVENT",
+                            event.getStartDate(),
+                            event.getEndDate(),
+                            event.getVenue()
+                    ))
+                    .orElse(null);
+
+            case SKILL -> skillDetailRepository.findByPostId(post.getId())
+                    .map(skillDetail -> new SkillDetailsDto(
+                            "SKILL",
+                            null,
+                            splitSkillTags(skillDetail.getSkillTags()),
+                            skillDetail.getAvailabilityNote(),
+                            skillDetail.getExperienceLevel()
+                    ))
+                    .orElse(null);
+
+            case PRODUCT -> productDetailRepository.findByPostId(post.getId())
+                    .map(productDetail -> new ProductDetailsDto(
+                            "PRODUCT",
+                            productDetail.getProductName(),
+                            productDetail.getPrice(),
+                            productDetail.getCurrency(),
+                            productDetail.getCondition()
+                    ))
+                    .orElse(null);
+
+            case HOUSING -> housingDetailRepository.findByPostId(post.getId())
+                    .map(housingDetail -> new HousingDetailsDto(
+                            "HOUSING",
+                            housingDetail.getRent(),
+                            housingDetail.getRooms(),
+                            housingDetail.getAvailableFrom()
+                    ))
+                    .orElse(null);
         };
+    }
+
+    private List<String> splitSkillTags(String skillTags) {
+        if (skillTags == null || skillTags.isBlank()) {
+            return List.of();
+        }
+
+        return List.of(skillTags.split(","));
     }
 
     private LocationDto mapLocation(PostLocation location) {

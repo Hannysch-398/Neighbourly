@@ -83,7 +83,22 @@
         <p class="fallback-text">Keine Tags hinterlegt.</p>
       }
     </section>
+    <section class="content-panel main-panel">
+      <h2>Details</h2>
 
+      @if (typeSpecificDetails().length > 0) {
+        <dl class="detail-list">
+          @for (entry of typeSpecificDetails(); track entry.label) {
+            <div>
+              <dt>{{ entry.label }}</dt>
+              <dd>{{ entry.value }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="fallback-text">Keine zusätzlichen Details hinterlegt.</p>
+      }
+    </section>
     <section class="content-panel image-panel">
       <h2>Bilder</h2>
       @if (post()?.images?.length) {
