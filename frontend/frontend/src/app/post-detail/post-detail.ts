@@ -63,10 +63,9 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     switch (post.type) {
       case 'EVENT':
         return this.buildDetails(details, [
-          ['Start', 'startTime'],
-          ['Ende', 'endTime'],
-          ['Ort', 'location'],
-          ['Teilnehmerlimit', 'maxParticipants'],
+          ['Start', 'startDate'],
+          ['Ende', 'endDate'],
+          ['Ort', 'venue'],
         ]);
 
       case 'SKILL':
@@ -74,7 +73,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           ['Skill', 'skillName'],
           ['Tags', 'skillTags'],
           ['Verfügbarkeit', 'availabilityNote'],
-          ['Erfahrung', 'experience'],
+          ['Erfahrung', 'experienceLevel'],
         ]);
 
       case 'PRODUCT':
