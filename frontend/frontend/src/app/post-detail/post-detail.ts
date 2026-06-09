@@ -99,6 +99,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       default:
         return [];
     }
+  });
   protected readonly isOwner = computed(() => {
     const post = this.post();
 
