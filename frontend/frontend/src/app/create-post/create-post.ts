@@ -197,9 +197,7 @@ export class CreatePost implements OnInit {
 
           const payload = this.createPayload();
           this.createPost(payload);
-          setTimeout(() => {
-            this.router.navigate(['/map']);
-          }, 1500);
+
 
         },
         error: (err) => {
@@ -215,9 +213,6 @@ export class CreatePost implements OnInit {
 
     const payload = this.createPayload();
     this.createPost(payload);
-    setTimeout(() => {
-      this.router.navigate(['/posts']);
-    }, 1500);
 
   }
 
@@ -229,6 +224,10 @@ export class CreatePost implements OnInit {
         this.savedPayload.set(payload);
         this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
         this.isLoading.set(false);
+
+        setTimeout(() => {
+          this.router.navigate(['/map']);
+        }, 1500);
       },
       error: (err) => {
         console.error(err);
