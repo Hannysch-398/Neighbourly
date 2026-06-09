@@ -193,10 +193,9 @@ export class CreatePost implements OnInit {
           };
 
           const payload = this.createPayload();
-          this.createPost(payload);
-          setTimeout(() => {
-            this.router.navigate(['/map']);
-          }, 1500);
+          this.createPost(payload, () => {
+            setTimeout(() => this.router.navigate(['/map']), 1500);
+          });
 
         },
         error: (err) => {
@@ -211,14 +210,13 @@ export class CreatePost implements OnInit {
     }
 
     const payload = this.createPayload();
-    this.createPost(payload);
-    setTimeout(() => {
-      this.router.navigate(['/posts']);
-    }, 1500);
+    this.createPost(payload, () => {
+      setTimeout(() => this.router.navigate(['/posts']), 1500);
+    });
 
   }
 
-  private createPost(payload: CreatePostRequest): void {
+  private createPost(payload: CreatePostRequest, onSuccess?: () => void) {
     this.isLoading.set(true);
 
     this.postsService.createPost(payload).subscribe({
@@ -226,13 +224,22 @@ export class CreatePost implements OnInit {
         this.savedPayload.set(payload);
         this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
         this.isLoading.set(false);
+        onSuccess?.();
       },
       error: (err) => {
         console.error(err);
+
+
+
         const backendMessage = err?.error?.errors?.request || err?.error?.message;
-        this.errorMessage.set(
-          backendMessage || 'Beitrag konnte nicht gespeichert werden. Bitte versuche es erneut.',
-        );
+        if (err.status === 401) {
+          this.errorMessage.set('Du bist nicht eingeloggt. Bitte melde dich an.');
+        } else if (err.status === 400) {
+          this.errorMessage.set(backendMessage || 'Ungültige Eingabe.');
+        } else {
+          this.errorMessage.set('Beitrag konnte nicht gespeichert werden.');
+        }
+
         this.isLoading.set(false);
       },
     });

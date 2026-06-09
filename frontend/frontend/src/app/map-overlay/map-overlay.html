@@ -7,16 +7,21 @@
 
   @if (isOpen) {
     <div class="overlay-content">
-      <!-- später Inhalt -->
-
-      @for (post of posts(); track post.id) {
-        <app-sidebar-entry
-          [post]="post"
-          [class.selected]="selectedPost()?.id === post.id"
-          (click)="postService.selectMapPost(post)"
-          (selectPost)="selectPost($event)"
-          [selected]="selectedPost()?.id === post.id"
-        ></app-sidebar-entry>
-      }</div>
+      @if (state() === 'loading') {
+        <p class="overlay-state">Beiträge werden geladen...</p>
+      } @else if (state() === 'error') {
+        <p class="overlay-state overlay-state--error">{{ errorMessage() }}</p>
+      } @else if (state() === 'empty') {
+        <p class="overlay-state">Keine Beiträge in diesem Kartenausschnitt.</p>
+      } @else {
+        @for (post of posts(); track post.id) {
+          <app-sidebar-entry
+            [post]="post"
+            [selected]="selectedPost()?.id === post.id"
+            (selectPost)="selectPost($event)"
+          ></app-sidebar-entry>
+        }
+      }
+    </div>
   }
 </aside>

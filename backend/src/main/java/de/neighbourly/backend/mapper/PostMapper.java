@@ -22,7 +22,7 @@ public class PostMapper {
         post.setType(request.getType());
         post.setPostMode(request.getPostMode());
         post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.getIsUrgent() ? request.getUrgentUntil() : null);
         post.setStatus(PostStatus.ACTIVE);
         post.setUser(user);
 

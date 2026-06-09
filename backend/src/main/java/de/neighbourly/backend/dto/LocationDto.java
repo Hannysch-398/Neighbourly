@@ -1,5 +1,6 @@
 package de.neighbourly.backend.dto;
 
+import de.neighbourly.backend.model.PrecisionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,4 +13,6 @@ public class LocationDto {
     private String district;
     private Double latitude;
     private Double longitude;
+    private PrecisionType precision;
+    private Integer radiusM;
 }
