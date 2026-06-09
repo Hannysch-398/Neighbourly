@@ -199,3 +199,12 @@
   height: 100%;
 }
 
+.error-message {
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-weight: 500;
+}

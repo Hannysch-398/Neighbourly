@@ -185,6 +185,9 @@ export class CreatePost implements OnInit {
           this.postModel = {
             ...this.postModel,
             resolvedLocation: {
+              city: this.postModel.city.trim(),
+              postalCode: this.postModel.postalCode.trim(),
+              address: this.postModel.address.trim() || null,
               lat: coordinates.latitude,
               lng: coordinates.longitude,
               precision: 'POSTAL_CODE',
@@ -193,9 +196,14 @@ export class CreatePost implements OnInit {
           };
 
           const payload = this.createPayload();
+
+
+
+
           this.createPost(payload, () => {
             setTimeout(() => this.router.navigate(['/map']), 1500);
           });
+
 
         },
         error: (err) => {
@@ -210,9 +218,11 @@ export class CreatePost implements OnInit {
     }
 
     const payload = this.createPayload();
+
     this.createPost(payload, () => {
       setTimeout(() => this.router.navigate(['/posts']), 1500);
     });
+
 
   }
 
@@ -224,7 +234,9 @@ export class CreatePost implements OnInit {
         this.savedPayload.set(payload);
         this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
         this.isLoading.set(false);
+
         onSuccess?.();
+
       },
       error: (err) => {
         console.error(err);
