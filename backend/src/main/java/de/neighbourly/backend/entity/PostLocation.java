@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+import de.neighbourly.backend.model.PrecisionType;
 
 @Entity
 @Table(name = "post_locations")
@@ -15,16 +16,19 @@ public class PostLocation {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
         private String city;
 
-        private String district;
+        private String postalCode;
+
+        private String address;
 
         private Double latitude;
 
         private Double longitude;
 
-        private String precision;
+        @Enumerated(EnumType.STRING)
+        private PrecisionType precision;
+
 
         @Column(name = "radius_m")
         private Integer radiusM;

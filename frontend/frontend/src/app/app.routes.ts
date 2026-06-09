@@ -1,10 +1,12 @@
+import { PostDetailComponent } from './post-detail/post-detail';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-
-import { MapComponent } from './map-component/map-component';
 import { VerifyEmail } from './verify-email/verify-email';
 import { CreatePost } from './create-post/create-post';
 import { PostsListComponent } from './posts-list/posts-list';
+import { MapAndOverlayComponent } from './map-and-overlay-component/map-and-overlay-component';
+import { NotFound } from './not-found/not-found';
+import { Chat } from './chat/chat';
 
 export const routes: Routes = [
   {
@@ -15,7 +17,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('./Authentification/Auth-Page/auth-page').then((m) => m.AuthPageComponent),
+      import('./authentification/auth-page/auth-page').then((m) => m.AuthPageComponent),
   },
   {
     path: 'profile/settings',
@@ -34,7 +36,7 @@ export const routes: Routes = [
   },
   {
     path: 'map',
-    component: MapComponent,
+    component: MapAndOverlayComponent,
   },
   {
     path: 'posts',
@@ -47,5 +49,31 @@ export const routes: Routes = [
   {
     path: 'posts/create',
     component: CreatePost,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'posts/:id/edit',
+    component: CreatePost,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetailComponent,
+  },
+    {
+    path: 'chat',
+    component: Chat,
+    canActivate: [authGuard],
+  },
+
+  {
+    path: 'posts/:id',
+    loadComponent: () =>
+      import('./post-detail/post-detail').then((m) => m.PostDetailComponent),
+  },
+  {
+    path: '404',
+    component: NotFound,
   },
 ];
+

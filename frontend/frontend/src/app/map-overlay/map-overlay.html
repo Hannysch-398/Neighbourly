@@ -1,0 +1,27 @@
+<aside class="map-overlay" [class.open]="isOpen">
+  <button type="button" class="burger-button" (click)="toggleOverlay.emit()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (isOpen) {
+    <div class="overlay-content">
+      @if (state() === 'loading') {
+        <p class="overlay-state">Beiträge werden geladen...</p>
+      } @else if (state() === 'error') {
+        <p class="overlay-state overlay-state--error">{{ errorMessage() }}</p>
+      } @else if (state() === 'empty') {
+        <p class="overlay-state">Keine Beiträge in diesem Kartenausschnitt.</p>
+      } @else {
+        @for (post of posts(); track post.id) {
+          <app-sidebar-entry
+            [post]="post"
+            [selected]="selectedPost()?.id === post.id"
+            (selectPost)="selectPost($event)"
+          ></app-sidebar-entry>
+        }
+      }
+    </div>
+  }
+</aside>

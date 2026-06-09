@@ -146,12 +146,13 @@
 }
 
 .primary-button {
-  background: var(--primary-color);
+  background: var(--navbar-accent-gradient);
   color: #ffffff;
 }
 
 .primary-button:hover {
-  background: var(--primary-color-hover);
+  background: var(--navbar-accent-gradient);
+  box-shadow: var(--navbar-hover-shadow);
 }
 
 .secondary-button {
@@ -205,7 +206,7 @@
   color: var(--red-color);
   font-size: 1rem;
   font-weight: 700;
-  margin-top: 8px;
+  margin-top: 16px;
   padding: 12px 14px;
 }
 

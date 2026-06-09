@@ -1,0 +1,119 @@
+.sidebar-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.sidebar-entry:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
+}
+
+.sidebar-entry__urgent {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: var(--red-color);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-entry__title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-entry__mode,
+.sidebar-entry__type-icon {
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+}
+
+.sidebar-entry__title {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.sidebar-entry__date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.sidebar-entry__text {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.sidebar-entry__link {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.sidebar-entry__button {
+  margin-top: 4px;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidebar-entry__button:hover {
+  filter: brightness(1.05);
+}
+
+.sidebar-entry--urgent {
+  border-color: rgba(249, 115, 22, 0.35);
+}
+
+.sidebar-entry--urgent .sidebar-entry__button {
+  background: var(--urgent-marker-gradient);
+  box-shadow: 0 8px 20px var(--urgent-marker-shadow);
+}
+
+.sidebar-entry--selected {
+  border: 2px solid var(--primary-color);
+
+  box-shadow:
+    0 0 0 4px rgba(31, 136, 210, 0.12),
+    0 18px 40px rgba(31, 136, 210, 0.2);
+
+  transform: translateY(-2px);
+}
+
+.sidebar-entry--selected .sidebar-entry__title {
+  color: var(--primary-color);
+}
+
+.sidebar-entry--selected .sidebar-entry__mode,
+.sidebar-entry--selected .sidebar-entry__type-icon {
+  transform: scale(1.15);
+}

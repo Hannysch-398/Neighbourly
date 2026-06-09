@@ -1,20 +1,25 @@
 <section class="create-post-page">
   <header class="create-post-header">
-    <h3 class="eyebrow">Beitrag erstellen</h3>
-    <p>Erstelle einen neuen Beitrag für deine Nachbarschaft.</p>
+    <h3 class="eyebrow">{{ isEditMode ? 'Beitrag bearbeiten' : 'Beitrag erstellen' }}</h3>
+    <p>{{ isEditMode ? 'Ändere die Daten deines Beitrags.' : 'Erstelle einen neuen Beitrag für deine Nachbarschaft.' }}</p>
   </header>
 
-  <form class="post-form" (submit)="$event.preventDefault(); submitForm()">
+  <form
+    class="post-form"
+    novalidate
+    (submit)="$event.preventDefault(); submitForm()"
+  >
     <label class="field">
       <span>Titel</span>
       <input
         type="text"
-        [formField]="postForm.title"
+        name="title"
+        [(ngModel)]="postModel.title"
         placeholder="Wobei brauchst du Hilfe?"
         [class.invalid]="shouldShowFieldError('title')"
       />
       @if (shouldShowFieldError('title')) {
-        <small>{{ postForm.title().errors()[0]?.message }}</small>
+        <small>{{ getFieldErrorMessage('title') }}</small>
       }
     </label>
 
@@ -22,160 +27,189 @@
       <span>Beschreibung</span>
       <textarea
         rows="6"
-        [formField]="postForm.description"
+        name="description"
+        [(ngModel)]="postModel.description"
         placeholder="Beschreibe kurz, worum es geht."
         [class.invalid]="shouldShowFieldError('description')"
       ></textarea>
       @if (shouldShowFieldError('description')) {
-        <small>{{ postForm.description().errors()[0]?.message }}</small>
+        <small>{{ getFieldErrorMessage('description') }}</small>
       }
     </label>
 
-    <div class="form-grid">
-      <label class="field">
-        <span>Typ</span>
-        <select [formField]="postForm.type" [class.invalid]="shouldShowFieldError('type')">
-          @for (option of postTypeOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
+    @if (!isEditMode) {
+      <div class="form-grid">
+        <label class="field">
+          <span>Typ</span>
+          <select
+            name="type"
+            [(ngModel)]="postModel.type"
+            [class.invalid]="shouldShowFieldError('type')"
+          >
+            @for (option of postTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          @if (shouldShowFieldError('type')) {
+            <small>{{ getFieldErrorMessage('type') }}</small>
           }
-        </select>
-        @if (shouldShowFieldError('type')) {
-          <small>{{ postForm.type().errors()[0]?.message }}</small>
-        }
-      </label>
+        </label>
 
-      <label class="field">
-        <span>Art</span>
-        <select [formField]="postForm.postMode" [class.invalid]="shouldShowFieldError('postMode')">
-          @for (option of postModeOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
+        <label class="field">
+          <span>Art</span>
+          <select
+            name="postMode"
+            [(ngModel)]="postModel.postMode"
+            [class.invalid]="shouldShowFieldError('postMode')"
+          >
+            @for (option of postModeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          @if (shouldShowFieldError('postMode')) {
+            <small>{{ getFieldErrorMessage('postMode') }}</small>
           }
-        </select>
-        @if (shouldShowFieldError('postMode')) {
-          <small>{{ postForm.postMode().errors()[0]?.message }}</small>
+        </label>
+      </div>
+
+      @switch (postModel.type) {
+        @case ('EVENT') {
+          <div class="details-grid">
+            <label class="field">
+              <span>Start</span>
+              <input type="datetime-local" name="eventStartDate" [(ngModel)]="postModel.eventStartDate" />
+            </label>
+
+            <label class="field">
+              <span>Ende</span>
+              <input type="datetime-local" name="eventEndDate" [(ngModel)]="postModel.eventEndDate" />
+            </label>
+
+            <label class="field span-two">
+              <span>Veranstaltungsort</span>
+              <input
+                type="text"
+                name="eventVenue"
+                [(ngModel)]="postModel.eventVenue"
+                placeholder="z. B. Nachbarschaftshaus"
+              />
+            </label>
+          </div>
         }
-      </label>
-    </div>
+        @case ('SKILL') {
+          <div class="details-grid">
+            <label class="field">
+              <span>Skill-Tags</span>
+              <input
+                type="text"
+                name="skillTags"
+                [(ngModel)]="postModel.skillTags"
+                placeholder="z. B. Fahrradreparatur, Gartenhilfe"
+              />
+            </label>
 
-    @switch (postModel().type) {
-      @case ('EVENT') {
-        <div class="details-grid">
-          <label class="field">
-            <span>Start</span>
-            <input type="datetime-local" [formField]="postForm.eventStartDate"/>
-          </label>
+            <label class="field">
+              <span>Verfügbarkeit</span>
+              <input
+                type="text"
+                name="availabilityNote"
+                [(ngModel)]="postModel.availabilityNote"
+                placeholder="z. B. Abends oder am Wochenende"
+              />
+            </label>
 
-          <label class="field">
-            <span>Ende</span>
-            <input type="datetime-local" [formField]="postForm.eventEndDate"/>
-          </label>
+            <label class="field">
+              <span>Erfahrungslevel</span>
+              <input
+                type="text"
+                name="experienceLevel"
+                [(ngModel)]="postModel.experienceLevel"
+                placeholder="z. B. Fortgeschritten"
+              />
+            </label>
+          </div>
+        }
+        @case ('PRODUCT') {
+          <div class="details-grid">
+            <label class="field">
+              <span>Produktname</span>
+              <input type="text" name="productName" [(ngModel)]="postModel.productName" placeholder="z. B. Akkuschrauber" />
+            </label>
 
-          <label class="field span-two">
-            <span>Veranstaltungsort</span>
-            <input
-              type="text"
-              [formField]="postForm.eventVenue"
-              placeholder="z. B. Nachbarschaftshaus"
-            />
-          </label>
-        </div>
+            <label class="field">
+              <span>Preis</span>
+              <input type="number" step="0.01" name="price" [(ngModel)]="postModel.price" placeholder="0.00" />
+            </label>
+
+            <label class="field">
+              <span>Währung</span>
+              <input type="text" name="currency" [(ngModel)]="postModel.currency" placeholder="EUR" />
+            </label>
+
+            <label class="field">
+              <span>Zustand</span>
+              <input type="text" name="condition" [(ngModel)]="postModel.condition" placeholder="z. B. gebraucht" />
+            </label>
+          </div>
+        }
+        @case ('HOUSING') {
+          <div class="details-grid">
+            <label class="field">
+              <span>Wohnart</span>
+              <input type="text" name="housingType" [(ngModel)]="postModel.housingType" placeholder="z. B. WG-Zimmer" />
+            </label>
+
+            <label class="field">
+              <span>Miete</span>
+              <input type="number" step="0.01" name="rent" [(ngModel)]="postModel.rent" placeholder="650.00" />
+            </label>
+
+            <label class="field">
+              <span>Zimmer</span>
+              <input type="number" step="1" name="rooms" [(ngModel)]="postModel.rooms" placeholder="2" />
+            </label>
+
+            <label class="field">
+              <span>Verfügbar ab</span>
+              <input type="date" name="availableFrom" [(ngModel)]="postModel.availableFrom" />
+            </label>
+          </div>
+        }
       }
-      @case ('SKILL') {
-        <div class="details-grid">
-          <label class="field">
-            <span>Skill-Tags</span>
-            <input
-              type="text"
-              [formField]="postForm.skillTags"
-              placeholder="z. B. Fahrradreparatur, Gartenhilfe"
-            />
-          </label>
 
-          <label class="field">
-            <span>Verfügbarkeit</span>
-            <input
-              type="text"
-              [formField]="postForm.availabilityNote"
-              placeholder="z. B. Abends oder am Wochenende"
-            />
-          </label>
-
-          <label class="field">
-            <span>Erfahrungslevel</span>
-            <input
-              type="text"
-              [formField]="postForm.experienceLevel"
-              placeholder="z. B. Fortgeschritten"
-            />
-          </label>
-        </div>
+      @if (shouldShowDetailsError()) {
+        @switch (postModel.type) {
+          @case ('EVENT') {
+            <small class="form-error">Bitte gib Start, Ende und Veranstaltungsort ein.</small>
+          }
+          @case ('SKILL') {
+            <small class="form-error">Bitte gib Skill-Tags, Verfügbarkeit und Erfahrungslevel ein.</small>
+          }
+          @case ('PRODUCT') {
+            <small class="form-error">Bitte gib Produktname, Preis, Währung und Zustand ein.</small>
+          }
+          @case ('HOUSING') {
+            <small class="form-error">Bitte gib Wohnart, Miete, Zimmer und Verfügbar-ab-Datum ein.</small>
+          }
+        }
       }
-      @case ('PRODUCT') {
-        <div class="details-grid">
-          <label class="field">
-            <span>Produktname</span>
-            <input type="text" [formField]="postForm.productName" placeholder="z. B. Akkuschrauber"/>
-          </label>
-
-          <label class="field">
-            <span>Preis</span>
-            <input type="number" step="0.01" [formField]="postForm.price" placeholder="0.00"/>
-          </label>
-
-          <label class="field">
-            <span>Währung</span>
-            <input type="text" [formField]="postForm.currency" placeholder="EUR"/>
-          </label>
-
-          <label class="field">
-            <span>Zustand</span>
-            <input type="text" [formField]="postForm.condition" placeholder="z. B. gebraucht"/>
-          </label>
-        </div>
-      }
-      @case ('HOUSING') {
-        <div class="details-grid">
-          <label class="field">
-            <span>Wohnart</span>
-            <input type="text" [formField]="postForm.housingType" placeholder="z. B. WG-Zimmer"/>
-          </label>
-
-          <label class="field">
-            <span>Miete</span>
-            <input type="number" step="0.01" [formField]="postForm.rent" placeholder="650.00"/>
-          </label>
-
-          <label class="field">
-            <span>Zimmer</span>
-            <input type="number" step="1" [formField]="postForm.rooms" placeholder="2"/>
-          </label>
-
-          <label class="field">
-            <span>Verfügbar ab</span>
-            <input type="date" [formField]="postForm.availableFrom"/>
-          </label>
-        </div>
-      }
-    }
-
-    @if (shouldShowDetailsError()) {
-      <small class="form-error">Bitte fuelle die Detailfelder fuer diesen Beitragstyp aus.</small>
     }
 
     <label class="urgent-toggle">
-      <input type="checkbox" [formField]="postForm.isUrgent"/>
+      <input type="checkbox" name="isUrgent" [(ngModel)]="postModel.isUrgent" />
       <span>
         <strong>Dringend</strong>
         <small>Aktivieren, wenn der Beitrag zeitkritisch ist.</small>
       </span>
     </label>
 
-    @if (postModel().isUrgent) {
+    @if (postModel.isUrgent) {
       <label class="field">
         <span>Dringend bis</span>
         <input
           type="datetime-local"
-          [formField]="postForm.urgentUntil"
+          name="urgentUntil"
+          [(ngModel)]="postModel.urgentUntil"
           [class.invalid]="shouldShowUrgentUntilError()"
         />
         @if (shouldShowUrgentUntilError()) {
@@ -184,53 +218,69 @@
       </label>
     }
 
-    <label class="location-toggle">
-      <input type="checkbox" [formField]="postForm.hasLocation"/>
-      <span>
-        <strong>Location</strong>
-        <small>Aktivieren, wenn der Beitrag einen Ort haben soll.</small>
-      </span>
-    </label>
+    @if (!isEditMode) {
+      <label class="location-toggle">
+        <input type="checkbox" name="hasLocation" [(ngModel)]="postModel.hasLocation" />
+        <span>
+          <strong>Location</strong>
+          <small>Aktivieren, wenn der Beitrag einen Ort haben soll.</small>
+        </span>
+      </label>
 
-    @if (postModel().hasLocation) {
-      <div class="location-fields">
-        <label class="field">
-          <span>Stadt</span>
-          <input
-            type="text"
-            [formField]="postForm.city"
-            placeholder="z. B. Berlin"
-            [class.invalid]="shouldShowLocationError()"
-          />
-          @if (shouldShowLocationError()) {
-            <small>Bitte gib eine Stadt für die Location ein.</small>
+      @if (postModel.hasLocation) {
+        <div class="location-fields">
+          <label class="field">
+            <span>Stadt</span>
+            <input
+              type="text"
+              name="city"
+              [(ngModel)]="postModel.city"
+              placeholder="z. B. Berlin"
+              [class.invalid]="getLocationErrorMessage()"
+            />
+          </label>
+
+          <label class="field">
+            <span>Postleitzahl</span>
+            <input
+              type="text"
+              name="postalCode"
+              [(ngModel)]="postModel.postalCode"
+              placeholder="z. B. 10115"
+              [class.invalid]="getLocationErrorMessage()"
+            />
+          </label>
+
+          @if (getLocationErrorMessage()) {
+            <small class="form-error span-two">
+              {{ getLocationErrorMessage() }}
+            </small>
           }
-        </label>
 
-        <label class="field">
-          <span>Stadtteil</span>
-          <input type="text" [formField]="postForm.district" placeholder="z. B. Kreuzberg"/>
-        </label>
-
-        <label class="field span-two">
-          <span>Adresse</span>
-          <input
-            type="text"
-            [formField]="postForm.address"
-            placeholder="z. B. Musterstrasse 12"
-          />
-        </label>
-      </div>
+          <label class="field span-two">
+            <span>Adresse</span>
+            <input
+              type="text"
+              name="address"
+              [(ngModel)]="postModel.address"
+              placeholder="z. B. Musterstrasse 12"
+            />
+          </label>
+        </div>
+      }
     }
 
     <div class="form-actions">
       <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
-      <button type="submit" class="primary-button">Speichern</button>
+      <button
+        type="submit"
+        class="primary-button"
+        [disabled]="isLoading()"
+      >
+        {{ isEditMode ? 'Aktualisieren' : 'Speichern' }}
+      </button>
     </div>
 
-    @if (savedPayload()) {
-      <p class="success-message">Die Basisdaten wurden erfolgreich erfasst.</p>
-    }
   </form>
 
   @if (errorMessage()) {
@@ -251,6 +301,6 @@
   }
 
   @if (isLoading()) {
-    <p class="loading-message">Beitrag wird gespeichert...</p>
+    <p class="loading-message">{{ isEditMode ? 'Beitrag wird aktualisiert...' : 'Beitrag wird gespeichert...' }}</p>
   }
 </section>

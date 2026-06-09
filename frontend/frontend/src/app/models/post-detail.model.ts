@@ -8,17 +8,23 @@ export interface PostDetailResponse {
   isUrgent: boolean;
   urgentUntil?: string | null;
   createdAt: string;
-  location: LocationDto;
+  location?: LocationDto;
   tags: string[];
   images: PostImageDto[];
-  details: unknown;
+  details?: unknown;
   reportSummary?: ReportSummaryDto | null;
   averageRating?: AverageRatingResponse | null;
+  isOwner?: boolean;
+  owner?: PostOwnerDto | null;
+  author?: PostOwnerDto | null;
+  user?: PostOwnerDto | null;
+  userEmail?: string | null;
 }
 
 export interface LocationDto {
   city: string;
-  district: string;
+  postalCode?: string | null;
+  address?: string | null;
   latitude: number;
   longitude: number;
 }
@@ -32,4 +38,10 @@ export interface PostImageDto {
 
 export interface ReportSummaryDto {
   reportCount: number;
+}
+
+export interface PostOwnerDto {
+  email?: string | null;
+  username?: string | null;
+  name?: string | null;
 }

@@ -239,13 +239,26 @@
   }
 }
 
-.profile-state,
-.profile-error {
+.profile-state {
   margin: 40px 30px;
   background: white;
   padding: 30px;
   border-radius: 16px;
   text-align: center;
+}
+
+.state-loading {
+  color: var(--text-muted);
+}
+
+.state-error {
+  color: var(--red-color);
+  border: 1px solid #fee2e2;
+}
+
+.state-empty {
+  color: var(--text-muted);
+  border: 1px solid var(--gray-light-color);
 }
 
 .spinner {
@@ -258,9 +271,6 @@
   animation: spin 0.8s linear infinite;
 }
 
-.profile-error {
-  color: #8a1f1f;
-}
 
 .login-link {
   display: inline-block;

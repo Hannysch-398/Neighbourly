@@ -1,0 +1,14 @@
+<div
+  class="map-and-overlay-container"
+  [class.overlay-open]="isOverlayOpen"
+>
+  <app-modern-map
+    class="map-wrapper"
+    [isSidebarOpen]="isOverlayOpen"
+  ></app-modern-map>
+
+  <app-map-overlay
+    [isOpen]="isOverlayOpen"
+    (toggleOverlay)="toggleOverlay()"
+  ></app-map-overlay>
+</div>

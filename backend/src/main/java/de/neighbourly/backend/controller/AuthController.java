@@ -5,6 +5,7 @@ import de.neighbourly.backend.dto.RegistrationRequest;
 import de.neighbourly.backend.security.CustomUserDetailsService;
 import de.neighbourly.backend.security.JwtService;
 import de.neighbourly.backend.service.UserService;
+import de.neighbourly.backend.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,17 +33,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
-
-        userService.validateLoginAllowed(request.getEmail());
         authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(
-                       request.getEmail(),
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generateToken(userDetails);
+        User user = userService.getCurrentUserByEmail(request.getEmail());
+        String token = jwtService.generateToken(userDetails, user.getId());
 
         return ResponseEntity.ok(token);
     }

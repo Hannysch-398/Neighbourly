@@ -11,9 +11,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class ProductDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
@@ -22,12 +23,12 @@ public class ProductDetail {
     @JoinColumn(name = "post_id", nullable = false, unique = true)
     private Post post;
 
-    @Column(nullable = false)
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(name = "currency", nullable = false)
     private String currency;
 
-    @Column(nullable = false)
+    @Column(name = "condition", nullable = false)
     private String condition;
 }
