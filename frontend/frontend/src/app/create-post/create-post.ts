@@ -53,7 +53,7 @@ const initialData: PostBasicFormModel = {
   postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: '',
-  hasLocation: false,
+  hasLocation: true,
   city: '',
   address: '',
   eventStartDate: '',
@@ -162,7 +162,7 @@ export class CreatePost implements OnInit {
     if (!this.isEditMode) {
       if (!v.type || !v.postMode) return false;
       if (!this.hasRequiredDetails()) return false;
-      if (v.hasLocation && (!v.city.trim() || !v.postalCode.trim())) return false;
+      if (!v.city.trim() || !v.postalCode.trim()) return false;
     }
 
     return true;
@@ -182,7 +182,7 @@ export class CreatePost implements OnInit {
       return;
     }
 
-    if (this.postModel.hasLocation) {
+
       this.isLoading.set(true);
 
       this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
@@ -217,14 +217,6 @@ export class CreatePost implements OnInit {
         },
       });
 
-      return;
-    }
-
-    const payload = this.createPayload();
-
-    this.createPost(payload, () => {
-      setTimeout(() => this.router.navigate(['/posts']), 1500);
-    });
   }
 
   private createPost(payload: CreatePostRequest, onSuccess?: () => void): void {
@@ -343,7 +335,7 @@ export class CreatePost implements OnInit {
   getLocationErrorMessage(): string | null {
     const v = this.postModel;
 
-    if (!this.submitted() || !v.hasLocation) return null;
+    if (!this.submitted()) return null;
     if (!v.city.trim()) return 'Bitte gib eine Stadt ein.';
     if (!v.postalCode.trim()) return 'Bitte gib eine Postleitzahl ein.';
 
@@ -360,7 +352,7 @@ export class CreatePost implements OnInit {
       postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-      location: value.hasLocation ? value.resolvedLocation : null,
+      location: value.resolvedLocation,
       details: this.createDetails(),
     };
   }

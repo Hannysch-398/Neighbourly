@@ -217,59 +217,52 @@
         }
       </label>
     }
-
     @if (!isEditMode) {
-      <label class="location-toggle">
-        <input type="checkbox" name="hasLocation" [(ngModel)]="postModel.hasLocation" />
-        <span>
-          <strong>Location</strong>
-          <small>Aktivieren, wenn der Beitrag einen Ort haben soll.</small>
-        </span>
-      </label>
+      <div class="location-info">
+        <h4>Standort</h4>
+        <p>Stadt und Postleitzahl sind erforderlich. Die Adresse ist optional.</p>
+      </div>
 
-      @if (postModel.hasLocation) {
-        <div class="location-fields">
-          <label class="field">
-            <span>Stadt</span>
-            <input
-              type="text"
-              name="city"
-              [(ngModel)]="postModel.city"
-              placeholder="z. B. Berlin"
-              [class.invalid]="getLocationErrorMessage()"
-            />
-          </label>
+      <div class="location-fields">
+        <label class="field">
+          <span>Stadt *</span>
+          <input
+            type="text"
+            name="city"
+            [(ngModel)]="postModel.city"
+            placeholder="z. B. Berlin"
+            [class.invalid]="getLocationErrorMessage()"
+          />
+        </label>
 
-          <label class="field">
-            <span>Postleitzahl</span>
-            <input
-              type="text"
-              name="postalCode"
-              [(ngModel)]="postModel.postalCode"
-              placeholder="z. B. 10115"
-              [class.invalid]="getLocationErrorMessage()"
-            />
-          </label>
+        <label class="field">
+          <span>Postleitzahl *</span>
+          <input
+            type="text"
+            name="postalCode"
+            [(ngModel)]="postModel.postalCode"
+            placeholder="z. B. 10115"
+            [class.invalid]="getLocationErrorMessage()"
+          />
+        </label>
 
-          @if (getLocationErrorMessage()) {
-            <small class="form-error span-two">
-              {{ getLocationErrorMessage() }}
-            </small>
-          }
+        @if (getLocationErrorMessage()) {
+          <small class="form-error span-two">
+            {{ getLocationErrorMessage() }}
+          </small>
+        }
 
-          <label class="field span-two">
-            <span>Adresse</span>
-            <input
-              type="text"
-              name="address"
-              [(ngModel)]="postModel.address"
-              placeholder="z. B. Musterstrasse 12"
-            />
-          </label>
-        </div>
-      }
+        <label class="field span-two">
+          <span>Adresse (optional)</span>
+          <input
+            type="text"
+            name="address"
+            [(ngModel)]="postModel.address"
+            placeholder="z. B. Musterstrasse 12"
+          />
+        </label>
+      </div>
     }
-
     <div class="form-actions">
       <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
       <button
