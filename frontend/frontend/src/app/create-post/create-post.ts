@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CreatePostLocationDto, CreatePostRequest, PostMode, PostType } from '../models/post.model';
 import { PostsService } from '../services/posts.service';
 import { GeoService } from '../services/geo.service';
 import { UpdatePostRequest } from '../models/update-post-request.model';
-import {PostDetailResponse} from '../models/post-detail.model';
+import { PostDetailResponse } from '../models/post-detail.model';
 
 type PostTypeOption = {
   value: PostType;
@@ -53,7 +53,7 @@ const initialData: PostBasicFormModel = {
   postMode: 'OFFER',
   isUrgent: false,
   urgentUntil: '',
-  hasLocation: false,
+  hasLocation: true,
   city: '',
   address: '',
   eventStartDate: '',
@@ -83,9 +83,11 @@ const initialData: PostBasicFormModel = {
 })
 export class CreatePost implements OnInit {
   private router = inject(Router);
+
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly backendErrors = signal<string[]>([]);
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
 
@@ -124,6 +126,7 @@ export class CreatePost implements OnInit {
 
   loadPostForEditing(id: number): void {
     this.isLoading.set(true);
+
     this.postsService.getPostById(id).subscribe({
       next: (post: PostDetailResponse | null) => {
         if (!post) {
@@ -139,6 +142,7 @@ export class CreatePost implements OnInit {
           isUrgent: post.isUrgent ?? false,
           urgentUntil: post.urgentUntil ?? '',
         };
+
         this.isLoading.set(false);
       },
       error: () => {
@@ -158,7 +162,7 @@ export class CreatePost implements OnInit {
     if (!this.isEditMode) {
       if (!v.type || !v.postMode) return false;
       if (!this.hasRequiredDetails()) return false;
-      if (v.hasLocation && (!v.city.trim() || !v.postalCode.trim())) return false;
+      if (!v.city.trim() || !v.postalCode.trim()) return false;
     }
 
     return true;
@@ -169,6 +173,7 @@ export class CreatePost implements OnInit {
     this.savedPayload.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.backendErrors.set([]);
 
     if (!this.isFormValid) return;
 
@@ -177,11 +182,13 @@ export class CreatePost implements OnInit {
       return;
     }
 
-    if (this.postModel.hasLocation) {
+
       this.isLoading.set(true);
 
       this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
         next: (coordinates) => {
+          console.log('GEO OK', coordinates);
+
           this.postModel = {
             ...this.postModel,
             resolvedLocation: {
@@ -196,37 +203,23 @@ export class CreatePost implements OnInit {
           };
 
           const payload = this.createPayload();
-
-
-
+          console.log('PAYLOAD', payload);
 
           this.createPost(payload, () => {
             setTimeout(() => this.router.navigate(['/map']), 1500);
           });
-
-
         },
         error: (err) => {
           console.error('geo error', err);
           this.postModel = { ...this.postModel, resolvedLocation: null };
-          this.errorMessage.set('Bitte ermittle gültige Koordinaten für die PLZ.');
+          this.errorMessage.set(err?.error?.message || 'Bitte ermittle gültige Koordinaten für die PLZ.');
           this.isLoading.set(false);
         },
       });
 
-      return;
-    }
-
-    const payload = this.createPayload();
-
-    this.createPost(payload, () => {
-      setTimeout(() => this.router.navigate(['/posts']), 1500);
-    });
-
-
   }
 
-  private createPost(payload: CreatePostRequest, onSuccess?: () => void) {
+  private createPost(payload: CreatePostRequest, onSuccess?: () => void): void {
     this.isLoading.set(true);
 
     this.postsService.createPost(payload).subscribe({
@@ -234,21 +227,26 @@ export class CreatePost implements OnInit {
         this.savedPayload.set(payload);
         this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
         this.isLoading.set(false);
-
         onSuccess?.();
-
       },
       error: (err) => {
         console.error(err);
 
+        const backendErrors = err?.error?.errors;
 
-
-        const backendMessage = err?.error?.errors?.request || err?.error?.message;
-        if (err.status === 401) {
+        if (backendErrors && typeof backendErrors === 'object') {
+          this.backendErrors.set(
+            Object.values(backendErrors).map((message) => this.mapBackendError(String(message))),
+          );
+          this.errorMessage.set(err?.error?.message || 'Bitte korrigiere die markierten Eingaben.');
+        } else if (err.status === 401) {
+          this.backendErrors.set([]);
           this.errorMessage.set('Du bist nicht eingeloggt. Bitte melde dich an.');
         } else if (err.status === 400) {
-          this.errorMessage.set(backendMessage || 'Ungültige Eingabe.');
+          this.backendErrors.set([]);
+          this.errorMessage.set(err?.error?.message || 'Ungültige Eingabe.');
         } else {
+          this.backendErrors.set([]);
           this.errorMessage.set('Beitrag konnte nicht gespeichert werden.');
         }
 
@@ -289,11 +287,13 @@ export class CreatePost implements OnInit {
     this.savedPayload.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.backendErrors.set([]);
     this.postModel = { ...initialData };
   }
 
   shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode'): boolean {
     if (!this.submitted()) return false;
+
     switch (field) {
       case 'title':
         return !this.postModel.title.trim() || this.postModel.title.length > 120;
@@ -335,9 +335,10 @@ export class CreatePost implements OnInit {
   getLocationErrorMessage(): string | null {
     const v = this.postModel;
 
-    if (!this.submitted() || !v.hasLocation) return null;
+    if (!this.submitted()) return null;
     if (!v.city.trim()) return 'Bitte gib eine Stadt ein.';
     if (!v.postalCode.trim()) return 'Bitte gib eine Postleitzahl ein.';
+
     return null;
   }
 
@@ -351,7 +352,7 @@ export class CreatePost implements OnInit {
       postMode: value.postMode,
       isUrgent: value.isUrgent,
       urgentUntil: value.isUrgent && value.urgentUntil ? value.urgentUntil : null,
-      location: value.hasLocation ? value.resolvedLocation : null,
+      location: value.resolvedLocation,
       details: this.createDetails(),
     };
   }
@@ -423,8 +424,22 @@ export class CreatePost implements OnInit {
     }
   }
 
-  private toOptionalNumber(value: string): number | null {
-    const normalizedValue = value.trim();
+  private toOptionalNumber(value: string | number | null | undefined): number | null {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    const normalizedValue = String(value).trim().replace(',', '.');
+
     return normalizedValue ? Number(normalizedValue) : null;
+  }
+
+  private mapBackendError(message: string): string {
+    switch (message) {
+      case 'Location must not be null':
+        return 'Die Location konnte nicht gespeichert werden. Bitte überprüfe die Ortsangaben.';
+      default:
+        return message;
+    }
   }
 }

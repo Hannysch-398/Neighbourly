@@ -37,6 +37,7 @@ public class CreatePostRequest {
     private LocalDateTime urgentUntil;
 
     @Valid
+    @NotNull(message = "location is required")
     private CreatePostLocationDto location;
 
     @Valid

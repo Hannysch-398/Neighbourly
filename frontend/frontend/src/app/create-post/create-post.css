@@ -200,11 +200,27 @@
 }
 
 .error-message {
-  color: #b42318;
-  background: #fef3f2;
-  border: 1px solid #fecdca;
+  background: #ffebee;
+  border: 1px solid #ef9a9a;
   border-radius: 8px;
-  padding: 12px 14px;
+  color: var(--red-color);
+  font-size: 1rem;
+  font-weight: 700;
   margin-top: 16px;
-  font-weight: 500;
+  padding: 12px 14px;
+}
+
+.error-message p {
+  margin: 0;
+}
+
+.error-message ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.error-message li {
+  color: var(--red-color);
+  font-weight: 600;
+  margin-top: 4px;
 }
