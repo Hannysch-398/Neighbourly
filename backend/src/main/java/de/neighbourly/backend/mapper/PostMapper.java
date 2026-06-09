@@ -67,7 +67,8 @@ public class PostMapper {
             LocationDto location,
             List<String> tags,
             List<PostImageDto> images,
-            Object details
+            Object details,
+            boolean isOwner
     ) {
         return new PostDetailResponseDto(
                 post.getId(),
@@ -83,7 +84,8 @@ public class PostMapper {
                 images,
                 details,
                 null,
-                null
+                null,
+                isOwner
         );
     }
 

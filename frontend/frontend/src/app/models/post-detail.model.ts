@@ -14,6 +14,11 @@ export interface PostDetailResponse {
   details?: unknown;
   reportSummary?: ReportSummaryDto | null;
   averageRating?: AverageRatingResponse | null;
+  isOwner?: boolean;
+  owner?: PostOwnerDto | null;
+  author?: PostOwnerDto | null;
+  user?: PostOwnerDto | null;
+  userEmail?: string | null;
 }
 
 export interface LocationDto {
@@ -32,4 +37,10 @@ export interface PostImageDto {
 
 export interface ReportSummaryDto {
   reportCount: number;
+}
+
+export interface PostOwnerDto {
+  email?: string | null;
+  username?: string | null;
+  name?: string | null;
 }
