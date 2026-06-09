@@ -11,9 +11,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 import de.neighbourly.backend.model.PrecisionType;
 import de.neighbourly.backend.util.LocationMaskingUtil;
@@ -32,6 +34,7 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final ObjectMapper objectMapper;
     private final HousingDetailRepository housingDetailRepository;
+    private final GeoService geoService;
 
     public PostService(
             PostRepository postRepository,
@@ -43,7 +46,9 @@ public class PostService {
             PostTagRepository postTagRepository,
             PostImageRepository postImageRepository,
             ObjectMapper objectMapper,
-            HousingDetailRepository housingDetailRepository
+            HousingDetailRepository housingDetailRepository,
+            GeoService geoService
+
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -55,6 +60,8 @@ public class PostService {
         this.postImageRepository = postImageRepository;
         this.objectMapper = objectMapper;
         this.housingDetailRepository = housingDetailRepository;
+
+        this.geoService = geoService;
     }
 
     @Transactional
@@ -63,6 +70,12 @@ public class PostService {
 
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
+        validateLocation(request);
+
+
+        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
+            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
+        }
 
         Post post = PostMapper.toEntity(request, user);
 
@@ -248,7 +261,8 @@ public class PostService {
     private LocationDto mapLocation(PostLocation location) {
         return new LocationDto(
                 location.getCity(),
-                location.getDistrict(),
+                location.getPostalCode(),
+                location.getAddress(),
                 location.getLatitude(),
                 location.getLongitude(),
                 location.getPrecision(),
@@ -257,11 +271,7 @@ public class PostService {
     }
 
     private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(
-                image.getId(),
-                image.getUrl(),
-                image.getAltText()
-        );
+        return new PostImageDto(image.getId(), image.getUrl(), image.getAltText());
     }
 
     private static final double MAX_RADIUS = 200_000;
@@ -313,47 +323,36 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-    return postRepository.findByStatus(PostStatus.ACTIVE)
-            .stream()
-            .sorted(
-                    Comparator
-                            .comparing(PostMapper::isEffectivelyUrgent)
-                            .reversed()
-                            .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
-            )
-            .map(post -> {
-                LocationDto location = postLocationRepository
-                        .findByPostId(post.getId())
-                        .map(this::mapLocation)
-                        .orElse(null);
+        return postRepository.findByStatus(PostStatus.ACTIVE)
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
+                .map(post -> {
+                    LocationDto location = postLocationRepository
+                            .findByPostId(post.getId())
+                            .map(this::mapLocation)
+                            .orElse(null);
 
-                return PostMapper.toListDto(post, location);
-            })
-            .toList();
+                    return PostMapper.toListDto(post, location);
+                })
+                .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
 
-        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
-                .stream()
-                .map(location -> {
-                    Post post = postRepository.findById(location.getPost().getId())
-                            .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius).stream().map(location -> {
+            Post post = postRepository.findById(location.getPost().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-                    return new MapPostDto(
-                            post.getId(),
-                            post.getType().name(),
-                            post.getTitle(),
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            PostMapper.isEffectivelyUrgent(post),
-                            post.getPostMode().name(),
-                            shortenDescription(post.getDescription()),
-                            post.getCreatedAt()
-                    );
-                })
-                .toList();
+            return new MapPostDto(post.getId(), post.getType().name(), post.getTitle(), location.getLatitude(),
+                    location.getLongitude(), PostMapper.isEffectivelyUrgent(post), post.getPostMode().name(),
+                    shortenDescription(post.getDescription()), post.getCreatedAt());
+        }).toList();
     }
 
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
@@ -425,6 +424,9 @@ public class PostService {
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
+        location.setCity(dto.getCity());
+        location.setPostalCode(dto.getPostalCode());
+        location.setAddress(dto.getAddress());
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         location.setPrecision(dto.getPrecision());
@@ -459,10 +461,26 @@ public class PostService {
         }
     }
 
+    private void validateLocation(CreatePostRequest request) {
+        if (request.getLocation() == null) {
+            return;
+        }
+
+        CreatePostLocationDto location = request.getLocation();
+
+        GeoCoordinatesResponseDto geoResponse =
+                geoService.getCoordinatesByPlz(location.getPostalCode());
+
+        if (!geoResponse.city().equalsIgnoreCase(location.getCity().trim())) {
+            throw new IllegalArgumentException(
+                    "Die eingegebene Postleitzahl passt nicht zur angegebenen Stadt."
+            );
+        }
+    }
+
     @Transactional
     public Post updatePost(Long id, UpdatePostRequest request, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
             throw new RuntimeException("You are not authorized to update this post");
@@ -479,16 +497,28 @@ public class PostService {
 
     @Transactional
     public void softDeletePost(Long id, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the post owner may delete this post");
+            throw new RuntimeException("You are not authorized to delete this post");
         }
 
         post.setStatus(PostStatus.Inactive);
         post.setUpdatedAt(LocalDateTime.now());
 
         postRepository.save(post);
+
+    }
+
+
+    public List<PostListItemResponseDto> getPostsByUserId(Long userId) {
+        return postRepository.findByUserIdAndStatus(userId, PostStatus.ACTIVE).stream()
+                .sorted(Comparator.comparing(PostMapper::isEffectivelyUrgent).reversed()
+                        .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())).map(post -> {
+                    LocationDto location =
+                            postLocationRepository.findByPostId(post.getId()).map(this::mapLocation).orElse(null);
+
+                    return PostMapper.toListDto(post, location);
+                }).toList();
     }
 }

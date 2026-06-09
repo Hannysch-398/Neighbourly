@@ -41,4 +41,10 @@ public class UserController {
         userService.deleteUserByEmail(email);
         return ResponseEntity.ok(new SuccessResponseDto("Account erfolgreich gelöscht!"));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileDto> getUserById(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
 }

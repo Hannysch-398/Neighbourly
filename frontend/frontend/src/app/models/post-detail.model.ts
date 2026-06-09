@@ -2,6 +2,7 @@ import {AverageRatingResponse} from "../interface/AverageRatingResponse";
 
 export interface PostDetailResponse {
   id: number;
+  userId: number;
   title: string;
   description: string;
   type: string;
@@ -23,7 +24,8 @@ export interface PostDetailResponse {
 
 export interface LocationDto {
   city: string;
-  district: string;
+  postalCode?: string | null;
+  address?: string | null;
   latitude: number;
   longitude: number;
 }

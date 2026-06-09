@@ -1,14 +1,13 @@
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-
-import { Observable, of, catchError, throwError, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, catchError, throwError, tap } from 'rxjs';
 import { MapPostMarker } from '../interface/MapPostMarker';
 import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
 import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
-import {UpdatePostRequest} from '../models/update-post-request.model';
-import {PostDetailResponse} from '../models/post-detail.model';
-import {postDetailMock} from '../mocks/post-detail.mock';
+import { UpdatePostRequest } from '../models/update-post-request.model';
+import { PostDetailResponse } from '../models/post-detail.model';
+import { postDetailMock } from '../mocks/post-detail.mock';
 import { Router } from '@angular/router';
 
 export interface MapMarkerQuery {
@@ -40,10 +39,9 @@ export class PostsService {
   readonly mapPostsState = signal<MapPostsState>('loading');
   readonly mapPostsError = signal('');
 
-
   private readonly router = inject(Router);
   //toggle to see mock or real posts
-  private readonly useMockPosts = false;
+  private readonly useMockPosts = true;
 
   getPosts(): Observable<PostResponse[]> {
     if (this.useMockPosts) {
@@ -64,7 +62,6 @@ export class PostsService {
   selectMapPost(post: MapPostMarker | null): void {
     this.selectedMapPost.set(post);
   }
-
 
   loadMapPostMarkers(lat: number, lng: number, radius: number): Observable<MapPostMarker[]> {
     this.mapPostsState.set('loading');
@@ -113,7 +110,6 @@ export class PostsService {
     return this.http.post<PostResponse>(this.apiUrl, payload);
   }
 
-
   resolvePostMutationError(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
       return 'Die Anfrage konnte nicht verarbeitet werden.';
@@ -123,7 +119,11 @@ export class PostsService {
     const firstFieldError = apiError?.errors ? Object.values(apiError.errors)[0] : undefined;
 
     if (error.status === 403) {
-      return firstFieldError || apiError?.message || 'Du darfst diesen Beitrag nicht bearbeiten oder löschen.';
+      return (
+        firstFieldError ||
+        apiError?.message ||
+        'Du darfst diesen Beitrag nicht bearbeiten oder löschen.'
+      );
     }
 
     if (error.status === 404) {
@@ -166,4 +166,11 @@ export class PostsService {
     );
   }
 
+  getPostsByUserId(userId: number): Observable<PostResponse[]> {
+    if (this.useMockPosts) {
+      return of(postListMock);
+    }
+
+    return this.http.get<PostResponse[]>(`${this.apiUrl}/user/${userId}`);
+  }
 }

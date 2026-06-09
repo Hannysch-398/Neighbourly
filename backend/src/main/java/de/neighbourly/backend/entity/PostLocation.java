@@ -16,10 +16,11 @@ public class PostLocation {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
         private String city;
 
-        private String district;
+        private String postalCode;
+
+        private String address;
 
         private Double latitude;
 
@@ -27,6 +28,7 @@ public class PostLocation {
 
         @Enumerated(EnumType.STRING)
         private PrecisionType precision;
+
 
         @Column(name = "radius_m")
         private Integer radiusM;
