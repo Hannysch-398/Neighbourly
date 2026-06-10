@@ -124,5 +124,11 @@ public class RatingService {
         );
     }
 
+    public List<RatingResponse> getPostRatings(Long postId) {
+        return ratingRepository.findByPostIdOrderByCreationDateDesc(postId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
 }

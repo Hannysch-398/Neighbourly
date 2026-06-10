@@ -12,4 +12,6 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     boolean existsByPostIdAndRaterUserIdAndRatedUserId(Long postId, Long raterUserId, Long ratedUserId);
 
+    List<Rating> findByPostIdOrderByCreationDateDesc(Long postId);
+
 }
