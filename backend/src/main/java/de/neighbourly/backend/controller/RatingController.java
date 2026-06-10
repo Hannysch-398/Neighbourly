@@ -7,6 +7,7 @@ import de.neighbourly.backend.service.RatingService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -52,10 +53,11 @@ public class RatingController {
     @PostMapping("/users/{userId}/ratings")
     public ResponseEntity<RatingResponse> postUserRating(
             @PathVariable Long userId,
-            @Valid @RequestBody RatingRequest request) {
+            @Valid @RequestBody RatingRequest request,
+            Authentication authentication) {
 
         RatingResponse response =
-                ratingService.postUserRating(userId, request);
+                ratingService.postUserRating(userId, request, authentication.getName());
 
         return ResponseEntity.ok(response);
     }

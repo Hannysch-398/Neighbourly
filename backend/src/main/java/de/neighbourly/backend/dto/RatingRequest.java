@@ -13,9 +13,6 @@ public class RatingRequest {
     @NotNull(message = "postId is required")
     private Long postId;
 
-    @NotNull(message = "raterUserId is required")
-    private Long raterUserId;
-
     @Min(value = 1, message = "rating must be at least 1")
     @Max(value = 5, message = "rating must be at most 5")
     private int rating;

@@ -4,7 +4,9 @@ import de.neighbourly.backend.dto.AverageRatingResponse;
 import de.neighbourly.backend.dto.RatingRequest;
 import de.neighbourly.backend.dto.RatingResponse;
 import de.neighbourly.backend.entity.Rating;
+import de.neighbourly.backend.entity.User;
 import de.neighbourly.backend.repository.RatingRepository;
+import de.neighbourly.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,10 +23,13 @@ public class RatingService {
 
     private final RatingRepository ratingRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public RatingService(RatingRepository ratingRepository, PostRepository postRepository) {
+    public RatingService(RatingRepository ratingRepository, PostRepository postRepository,
+                         UserRepository userRepository) {
         this.ratingRepository = ratingRepository;
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     // get all Ratings
@@ -54,7 +59,7 @@ public class RatingService {
     }
 
     //create Rating for User
-    public RatingResponse postUserRating(Long ratedUserIdFromPath, RatingRequest ratingRequest) {
+    public RatingResponse postUserRating(Long ratedUserIdFromPath, RatingRequest ratingRequest, String raterEmail) {
         Post post = postRepository.findById(ratingRequest.getPostId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -69,7 +74,14 @@ public class RatingService {
         }
 
         Long postOwnerId = post.getUser().getId();
-        Long raterUserId = ratingRequest.getRaterUserId();
+
+        User rater = userRepository.findByEmail(raterEmail)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Authenticated user not found"
+                ));
+
+        Long raterUserId = rater.getId();
 
         if (!postOwnerId.equals(ratedUserIdFromPath)) {
             throw new ResponseStatusException(
