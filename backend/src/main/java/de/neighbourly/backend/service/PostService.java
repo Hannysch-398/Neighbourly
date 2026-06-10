@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -319,15 +320,15 @@ public class PostService {
         );
     }
 
-   private PostImageDto mapImage(PostImage image) {
-    return new PostImageDto(
-            image.getId(),
-            image.getUrl(),
-            image.getAltText(),
-            image.getOrderIndex(),
-            image.getCreatedAt()
-    );
-}
+    private PostImageDto mapImage(PostImage image) {
+        return new PostImageDto(
+                image.getId(),
+                image.getUrl(),
+                image.getAltText(),
+                image.getOrderIndex(),
+                image.getCreatedAt()
+        );
+    }
 
     @Transactional
     public PostImageDto uploadPostImage(Long postId, MultipartFile file, String altText, Long userId) {
@@ -535,12 +536,15 @@ public class PostService {
         CreatePostLocationDto dto = request.getLocation();
         dto.validate();
 
-        Double latitude = dto.getLat();
-        Double longitude = dto.getLng();
+        GeoCoordinatesResponseDto coordinates =
+                geoService.getCoordinates(dto.getPostalCode(), dto.getCity(), dto.getAddress());
+
+        Double latitude = coordinates.latitude();
+        Double longitude = coordinates.longitude();
 
         if (dto.getPrecision() == PrecisionType.RADIUS) {
             LocationMaskingUtil.MaskedCoordinates maskedCoordinates =
-                    LocationMaskingUtil.maskedCoordinates(dto.getLat(), dto.getLng(), dto.getRadiusM());
+                    LocationMaskingUtil.maskedCoordinates(latitude, longitude, dto.getRadiusM());
 
             latitude = maskedCoordinates.lat();
             longitude = maskedCoordinates.lng();
@@ -595,7 +599,11 @@ public class PostService {
         GeoCoordinatesResponseDto geoResponse =
                 geoService.getCoordinatesByPlz(location.getPostalCode());
 
-        if (!geoResponse.city().equalsIgnoreCase(location.getCity().trim())) {
+        String returnedCity = geoResponse.city().toLowerCase();
+        String inputCity = location.getCity().trim().toLowerCase();
+
+
+        if (!returnedCity.contains(inputCity) && !inputCity.contains(returnedCity)) {
             throw new IllegalArgumentException(
                     "Die eingegebene Postleitzahl passt nicht zur angegebenen Stadt."
             );

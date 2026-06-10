@@ -10,9 +10,20 @@ export class GeoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/geo/coordinates';
 
-  getCoordinatesByPlz(plz: string): Observable<GeoCoordinatesResponse> {
-    const params = new HttpParams().set('plz', plz.trim());
+  getCoordinates(
+    plz: string,
+    city: string,
+    address?: string | null
+  ): Observable<GeoCoordinatesResponse> {
 
-    return this.http.get<GeoCoordinatesResponse>(this.apiUrl, {params});
+    let params = new HttpParams()
+      .set('plz', plz.trim())
+      .set('city', city.trim());
+
+    if (address?.trim()) {
+      params = params.set('address', address.trim());
+    }
+
+    return this.http.get<GeoCoordinatesResponse>(this.apiUrl, { params });
   }
 }
