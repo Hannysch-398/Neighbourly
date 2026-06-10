@@ -185,7 +185,11 @@ export class CreatePost implements OnInit {
 
       this.isLoading.set(true);
 
-      this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
+    this.geoService.getCoordinates(
+      this.postModel.postalCode,
+      this.postModel.city,
+      this.postModel.address
+    ).subscribe({
         next: (coordinates) => {
           console.log('GEO OK', coordinates);
 
