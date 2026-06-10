@@ -100,9 +100,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
 
-
-
-
     private Long getAuthenticatedUserId(Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUserPrincipal principal)) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");

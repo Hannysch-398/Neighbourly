@@ -26,10 +26,13 @@ export interface PostDetailResponse {
 
 export interface LocationDto {
   city: string;
+  district?: string | null;
   postalCode?: string | null;
   address?: string | null;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  precision?: string | null;
+  radiusM?: number | null;
 }
 
 export interface ReportSummaryDto {
