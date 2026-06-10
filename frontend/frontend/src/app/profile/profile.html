@@ -1,4 +1,4 @@
-<section class="profile-container m-lg-2 m-rg-2">
+<section class="profile-container">
     <h1 class="profile-title">Dein Profil</h1>
 
 
@@ -35,68 +35,41 @@
             </div>
 
             <div class="profile-info">
-                <div class="profile-info-column">
+                <div class="profile-info-row">
                     <div>
                         <h2>Name</h2>
-                        <p>{{ profile()?.name ?? '-' }}</p>
+                        <p>{{ profile()?.username ?? '-' }}</p>
                     </div>
 
-                    <div>
-                        <h2>Mitglied seit</h2>
-                        <p>{{ profile()?.createdAt ?? '-' }}</p>
-                    </div>
+                  <div>
+                    <h2>E-Mail</h2>
+                    <p>{{ profile()?.email ?? '-' }}</p>
+                  </div>
+
+                  <div>
+                    <app-rating [userId]="profile()?.id ?? 0"></app-rating>
+                  </div>
                 </div>
 
-                <div class="profile-info-column">
-                    <div>
-                        <h2>E-Mail</h2>
-                        <p>{{ profile()?.email ?? '-' }}</p>
-                    </div>
 
-                    <div>
-                        <app-rating [userId]="profile()?.id ?? 0"></app-rating>
-                    </div>
-                </div>
-
-                <div class="profile-info-column">
-                    <div>
-                        <h2>Rolle</h2>
-                        <p>{{ profile()?.role ?? '-' }}</p>
-                    </div>
-                </div>
             </div>
         </div>
 
         <section class="posts-section">
-            <div class="post-tabs">
-                <button class="tab-button" (click)="active.set(true)">
-                    <h4 class="tab-text" [class.active-tab]="active()">Aktive Beiträge</h4>
-                </button>
+              <div class="post-tabs">
+                <h4 class="tab-text">Deine Beiträge</h4>
+              </div>
 
-                <h4 class="divider"></h4>
 
-                <button class="tab-button" (click)="active.set(false)">
-                    <h4 class="tab-text" [class.active-tab]="!active()">Archivierte Beiträge</h4>
-                </button>
-            </div>
-
-            @if (active()) {
-                @if (activePosts) {
-                  <div class="post-grid">
-                    @for (post of posts(); track post.id) {
-                      <app-post-card [post]="post"></app-post-card>
-                    }
-                  </div>
-                } @else {
-                    <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
-                }
-            } @else {
-                @if (archivedPosts) {
-                    //Archivierte-Post-Komponente
-                } @else {
-                    <h4 class="post-placeholder">Hier würden deine archivierten Posts stehen!</h4>
-                }
-            }
+              @if (activePosts) {
+                <div class="post-grid">
+                  @for (post of posts(); track post.id) {
+                    <app-post-card [post]="post"></app-post-card>
+                  }
+                </div>
+              } @else {
+                <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
+              }
         </section>
     }
 </section>

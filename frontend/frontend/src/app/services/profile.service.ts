@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface ProfileData {
   id: number;
-  name: string;
+  username: string;
   email: string;
   role?: string;
   createdAt?: string;

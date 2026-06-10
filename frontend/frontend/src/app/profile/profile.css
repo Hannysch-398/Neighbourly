@@ -1,3 +1,8 @@
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
 .profile-title {
   margin-left: 30px;
 }
@@ -76,9 +81,10 @@
   min-width: 0;
 }
 
-.profile-info-column {
+.profile-info-row {
   display: flex;
-  flex-direction: column;
+  justify-content: space-evenly;
+  flex-direction: row;
   min-width: 180px;
   flex: 1;
 }
@@ -159,6 +165,9 @@
     margin-left: 0;
     text-align: center;
   }
+  .profile-info-row {
+    flex-direction: column;
+  }
 
   .profile-card {
     flex-direction: column;
@@ -215,7 +224,8 @@
     gap: 1rem;
   }
 
-  .profile-info-column {
+  .profile-info-row {
+    flex-direction: column;
     width: 100%;
   }
 
