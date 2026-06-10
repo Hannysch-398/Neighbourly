@@ -338,11 +338,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   private resolveDeleteErrorMessage(error: unknown): string {
-    if (error instanceof HttpErrorResponse && error.status === 403) {
-      return 'Du darfst diesen Beitrag nicht löschen.';
-    }
-
-    return 'Der Beitrag könnte nicht gelöscht werden.';
     if (!(error instanceof HttpErrorResponse)) {
       return 'Der Beitrag konnte nicht geloescht werden. Bitte versuche es erneut.';
     }
