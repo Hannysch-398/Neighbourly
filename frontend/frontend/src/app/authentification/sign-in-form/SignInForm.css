@@ -94,7 +94,7 @@ button:disabled {
   border: 1px solid #ccc;
   border-left: none;
   border-radius: 0 6px 6px 0;
-  background-color: #1d7ddf;
+  background-color: var(--primary-color);
   cursor: pointer;
 
   svg {

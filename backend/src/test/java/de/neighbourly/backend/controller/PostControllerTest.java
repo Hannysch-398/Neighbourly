@@ -71,12 +71,12 @@ class PostControllerTest {
         Long postId = 1L;
         PostDetailResponseDto dto = mock(PostDetailResponseDto.class);
 
-        when(postService.getPostDetail(postId)).thenReturn(dto);
+        when(postService.getPostDetail(postId, null)).thenReturn(dto);
 
         ResponseEntity<PostDetailResponseDto> response =
-                postController.getPostById(postId);
+                postController.getPostById(postId, null);
 
-        verify(postService).getPostDetail(postId);
+        verify(postService).getPostDetail(postId, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(dto);

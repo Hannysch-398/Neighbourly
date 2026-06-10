@@ -77,7 +77,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           ['Skill', 'skillName'],
           ['Tags', 'skillTags'],
           ['Verfügbarkeit', 'availabilityNote'],
-          ['Erfahrung', 'experienceLevel'],
+          ['Erfahrungslevel', 'experienceLevel'],
         ]);
 
       case 'PRODUCT':
@@ -276,7 +276,11 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          void this.router.navigate(['/posts']);
+          void this.router.navigate(['/posts'], {
+            queryParams: {
+              deleted: 'true',
+            },
+          });
         },
         error: (error) => {
           this.errorMessage.set(this.resolveDeleteErrorMessage(error));
@@ -339,6 +343,38 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
 
     return 'Der Beitrag könnte nicht gelöscht werden.';
+    if (!(error instanceof HttpErrorResponse)) {
+      return 'Der Beitrag konnte nicht geloescht werden. Bitte versuche es erneut.';
+    }
+
+    if (error.status === 0) {
+      return 'Das Backend ist nicht erreichbar. Bitte pruefe deine Verbindung und versuche es erneut.';
+    }
+
+    if (error.status === 401) {
+      return 'Bitte melde dich erneut an, um den Beitrag zu loeschen.';
+    }
+
+    if (error.status === 403) {
+      return 'Du darfst diesen Beitrag nicht loeschen.';
+    }
+
+    if (error.status === 404) {
+      return 'Der Beitrag wurde bereits geloescht oder nicht gefunden.';
+    }
+
+    return this.extractBackendErrorMessage(error) || 'Der Beitrag konnte nicht geloescht werden. Bitte versuche es erneut.';
+  }
+
+  private extractBackendErrorMessage(error: HttpErrorResponse): string {
+    if (typeof error.error === 'string') {
+      return error.error;
+    }
+
+    const apiError = error.error as Partial<{ message: string; errors: Record<string, string> }> | null;
+    const firstFieldError = apiError?.errors ? Object.values(apiError.errors)[0] : undefined;
+
+    return firstFieldError || apiError?.message || '';
   }
 
   private formatLabel(value: string): string {

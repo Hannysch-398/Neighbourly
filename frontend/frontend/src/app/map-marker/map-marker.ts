@@ -1,22 +1,19 @@
 import * as L from 'leaflet';
-import { PostMode, PostType } from '../models/post.model';
-import { MapPostMarker } from '../interface/MapPostMarker';
+import {PostMode, PostType} from '../models/post.model';
+import {MapPostMarker} from '../interface/MapPostMarker';
 import {MARKER_ICONS, MODE_ICONS} from "../models/post.model"
 
-
-export function createPostMarker(post: MapPostMarker): L.Marker {
+export function createPostMarker(post: MapPostMarker, count = 1): L.Marker {
   return L.marker([post.lat, post.lng], {
-    icon: createMapMarkerIcon(post.type, post.isUrgent),
+    icon: createMapMarkerIcon(post.type, post.isUrgent, count),
   }).bindPopup(createPostPopup(post));
 }
 
-export function createStartMarker(position: L.LatLngExpression): L.Marker {
-  return L.marker(position, {
-    icon: createMapMarkerIcon(),
-  }).bindPopup(createStartPopup());
-}
-
-export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIcon {
+export function createMapMarkerIcon(
+  type?: PostType,
+  isUrgent = false,
+  count = 1,
+): L.DivIcon {
   const icon = type ? MARKER_ICONS[type] : '';
 
   return L.divIcon({
@@ -24,6 +21,7 @@ export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIco
       'modern-marker',
       type ? `marker-${type.toLowerCase()}` : 'marker-default',
       isUrgent ? 'marker-urgent' : '',
+      count > 1 ? 'marker-aggregated' : '',
     ]
       .filter(Boolean)
       .join(' '),
@@ -32,6 +30,12 @@ export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIco
         <div class="marker-dot">
           ${icon ? `<span class="marker-icon">${icon}</span>` : ''}
         </div>
+
+        ${
+      count > 1
+        ? `<span class="marker-count">${count}</span>`
+        : ''
+    }
       </div>
     `,
     iconSize: [42, 42],
@@ -39,6 +43,31 @@ export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIco
     popupAnchor: [0, -38],
   });
 }
+
+
+// export function createMapMarkerIcon(type?: PostType, isUrgent = false): L.DivIcon {
+//   const icon = type ? MARKER_ICONS[type] : '';
+//
+//   return L.divIcon({
+//     className: [
+//       'modern-marker',
+//       type ? `marker-${type.toLowerCase()}` : 'marker-default',
+//       isUrgent ? 'marker-urgent' : '',
+//     ]
+//       .filter(Boolean)
+//       .join(' '),
+//     html: `
+//       <div class="marker-pin">
+//         <div class="marker-dot">
+//           ${icon ? `<span class="marker-icon">${icon}</span>` : ''}
+//         </div>
+//       </div>
+//     `,
+//     iconSize: [42, 42],
+//     iconAnchor: [21, 42],
+//     popupAnchor: [0, -38],
+//   });
+// }
 
 function createPostPopup(post: MapPostMarker): string {
   const typeIcon = post.type ? MARKER_ICONS[post.type] : '';
@@ -60,10 +89,10 @@ function createPostPopup(post: MapPostMarker): string {
       </div>
 
       ${
-        post.createdAt
-          ? `<span class="custom-popup__date">Erstellt am: ${formatDate(post.createdAt)}</span>`
-          : ''
-      }
+    post.createdAt
+      ? `<span class="custom-popup__date">Erstellt am: ${formatDate(post.createdAt)}</span>`
+      : ''
+  }
 
       ${post.shortDescription ? `<p class="custom-popup__text">${post.shortDescription}</p>` : ''}
 
