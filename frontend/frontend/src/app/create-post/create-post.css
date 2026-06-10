@@ -41,6 +41,7 @@
 .field {
   display: grid;
   gap: 8px;
+  margin-top: 1rem;
 }
 
 .field span,
@@ -223,4 +224,11 @@
   color: var(--red-color);
   font-weight: 600;
   margin-top: 4px;
+}
+
+.location-info{
+  margin-top: 1.5rem;
+  h4{
+    font-weight: 600;
+  }
 }

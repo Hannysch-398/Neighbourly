@@ -151,8 +151,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     this.postMarkersLayer.addTo(this.map);
 
-
-    this.addStartMarker(position);
     this.loadMarkersForCurrentView();
 
     this.map.on('moveend', () => {
@@ -165,32 +163,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 0);
-  }
-
-  private addStartMarker(position: L.LatLngExpression): void {
-    if (!this.map) {
-      return;
-    }
-
-    const startIcon = L.divIcon({
-      className: 'modern-marker marker-default',
-      html: `
-        <div class="marker-pin">
-          <div class="marker-dot"></div>
-        </div>
-      `,
-      iconSize: [42, 42],
-      iconAnchor: [21, 42],
-      popupAnchor: [0, -38],
-    });
-
-    L.marker(position, {
-      icon: startIcon,
-    }).addTo(this.map).bindPopup(`
-        <div class="custom-popup">
-          <strong>Startposition</strong>
-        </div>
-      `);
   }
 
   private debouncedLoadMarkers(): void {
@@ -243,13 +215,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.postMarkersLayer.clearLayers();
     this.markersByPostId.clear();
 
-    posts.forEach((post) => {
-      const marker = createPostMarker(post);
+    const groupedPosts = this.groupPostsByLocation(posts);
+
+    groupedPosts.forEach((group) => {
+      const mainPost = group[0];
+      const marker = createPostMarker(mainPost, group.length);
 
       marker.on('click', () => {
-        this.selectedPostId = post.id;
-        this.selectedPost = post;
-        this.postService.selectMapPost(post);
+        this.selectedPostId = mainPost.id;
+        this.selectedPost = mainPost;
+        this.postService.selectMapPost(mainPost);
 
         if (this.isSidebarOpen) {
           marker.closePopup();
@@ -259,9 +234,26 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         marker.openPopup();
       });
 
-      this.markersByPostId.set(post.id, marker);
+      group.forEach((post) => {
+        this.markersByPostId.set(post.id, marker);
+      });
+
       this.postMarkersLayer.addLayer(marker);
     });
+  }
+
+  private groupPostsByLocation(posts: MapPostMarker[]): MapPostMarker[][] {
+    const groups = new Map<string, MapPostMarker[]>();
+
+    posts.forEach((post) => {
+      const key = `${post.lat.toFixed(6)}:${post.lng.toFixed(6)}`;
+      const group = groups.get(key) ?? [];
+
+      group.push(post);
+      groups.set(key, group);
+    });
+
+    return Array.from(groups.values());
   }
 
 
