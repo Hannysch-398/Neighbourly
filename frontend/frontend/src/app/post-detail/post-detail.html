@@ -73,7 +73,15 @@
       } @else {
         <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
       }
-
+      @if (post()?.tags?.length) {
+        <div class="tag-list">
+          @for (tag of post()?.tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
+      } @else {
+        <p class="fallback-text">Keine Tags hinterlegt.</p>
+      }
     </section>
     <section class="content-panel main-panel">
       <h2>Details</h2>
@@ -140,14 +148,40 @@
                 <dt>Dringend bis</dt>
                 <dd>{{ post.urgentUntil | date: 'dd.MM.yyyy, HH:mm' }}</dd>
               </div>
-            } @else {
-              <p class="fallback-text"> Keine Statusdaten angegeben </p>
             }
           </dl>
         } @else {
           <p class="fallback-text">Statusdaten werden nach dem Laden angezeigt.</p>
         }
       </section>
+        <section class="content-panel">
+            <h2>Bewertungen & Meldungen</h2>
+
+            @if (post()?.averageRating || post()?.reportSummary) {
+                <dl class="detail-list compact">
+                    @if (post()?.averageRating) {
+                        <div>
+                            <dt>Durchschnittsbewertung</dt>
+                            <dd>{{ post()?.averageRating?.average }}</dd>
+                        </div>
+
+                        <div>
+                            <dt>Anzahl Bewertungen</dt>
+                            <dd>{{ post()?.averageRating?.ratingAmount }}</dd>
+                        </div>
+                    }
+
+                    @if (post()?.reportSummary) {
+                        <div>
+                            <dt>Meldungen</dt>
+                            <dd>{{ post()?.reportSummary?.reportCount }}</dd>
+                        </div>
+                    }
+                </dl>
+            } @else {
+                <p class="fallback-text">Noch keine Bewertungs- oder Meldungsdaten vorhanden.</p>
+            }
+        </section>
 
       <section class="content-panel user-info-panel">
         @if (post()) {

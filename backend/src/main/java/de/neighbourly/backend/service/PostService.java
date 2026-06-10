@@ -6,22 +6,20 @@ import de.neighbourly.backend.entity.*;
 import de.neighbourly.backend.mapper.PostMapper;
 import de.neighbourly.backend.model.PostStatus;
 import de.neighbourly.backend.model.PostType;
+import de.neighbourly.backend.model.PrecisionType;
 import de.neighbourly.backend.repository.*;
-import jakarta.persistence.EntityNotFoundException;
+import de.neighbourly.backend.util.LocationMaskingUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.Comparator;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-import de.neighbourly.backend.model.PrecisionType;
-import de.neighbourly.backend.util.LocationMaskingUtil;
 
 @SuppressWarnings("ALL")
 @Service
@@ -101,7 +99,11 @@ public class PostService {
     }
 
     public PostDetailResponseDto getPostDetail(Long postId, Long currentUserId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Post not found"
+                ));
 
         Object details = buildDetailsBlock(post);
 
@@ -469,14 +471,22 @@ public class PostService {
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
 
-        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius).stream().map(location -> {
-            Post post = postRepository.findById(location.getPost().getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
+                .stream()
+                .map(location -> {
+                    Post post = location.getPost();
 
-            return new MapPostDto(post.getId(), post.getType().name(), post.getTitle(), location.getLatitude(),
-                    location.getLongitude(), PostMapper.isEffectivelyUrgent(post), post.getPostMode().name(),
-                    shortenDescription(post.getDescription()), post.getCreatedAt());
-        }).toList();
+                    if (post == null) {
+                        throw new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Post not found"
+                        );
+                    }
+
+                    return new MapPostDto(post.getId(), post.getType().name(), post.getTitle(), location.getLatitude(),
+                            location.getLongitude(), PostMapper.isEffectivelyUrgent(post), post.getPostMode().name(),
+                            shortenDescription(post.getDescription()), post.getCreatedAt());
+                }).toList();
     }
 
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {

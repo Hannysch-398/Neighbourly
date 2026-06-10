@@ -1,15 +1,15 @@
-import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of, catchError, throwError, tap } from 'rxjs';
-import { MapPostMarker } from '../interface/MapPostMarker';
-import { MOCK_MAP_POST_MARKERS } from '../mocks/mapPost.mock';
-import { postListMock } from '../mocks/post.mock';
-import { CreatePostRequest, PostResponse } from '../models/post.model';
-import { UpdatePostRequest } from '../models/update-post-request.model';
-import { PostDetailResponse } from '../models/post-detail.model';
-import { PostImage } from '../models/post-image.model';
-import { postDetailMock } from '../mocks/post-detail.mock';
-import { Router } from '@angular/router';
+import {HttpClient, HttpParams, HttpErrorResponse} from '@angular/common/http';
+import {inject, Injectable, signal} from '@angular/core';
+import {BehaviorSubject, Observable, of, catchError, throwError, tap} from 'rxjs';
+import {MapPostMarker} from '../interface/MapPostMarker';
+import {MOCK_MAP_POST_MARKERS} from '../mocks/mapPost.mock';
+import {postListMock} from '../mocks/post.mock';
+import {CreatePostRequest, PostResponse} from '../models/post.model';
+import {UpdatePostRequest} from '../models/update-post-request.model';
+import {PostDetailResponse} from '../models/post-detail.model';
+import {PostImage} from '../models/post-image.model';
+import {postDetailMock} from '../mocks/post-detail.mock';
+import {Router} from '@angular/router';
 
 export interface MapMarkerQuery {
   lat: number;
@@ -81,7 +81,7 @@ export class PostsService {
       .set('lng', lng.toString())
       .set('radius', safeRadius.toString());
 
-    return this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, { params }).pipe(
+    return this.http.get<MapPostMarker[]>(`${this.apiUrl}/marker`, {params}).pipe(
       tap((posts) => {
         this.mapPosts.set(posts);
         this.mapPostsState.set(posts.length === 0 ? 'empty' : 'ready');
@@ -181,7 +181,7 @@ export class PostsService {
           return of(null);
         }
 
-        return throwError(() => error);
+        return this.http.get<PostDetailResponse>(`${this.apiUrl}/${id}`);
       }),
     );
   }

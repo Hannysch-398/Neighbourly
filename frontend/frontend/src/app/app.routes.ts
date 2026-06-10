@@ -1,13 +1,13 @@
-import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
-import { VerifyEmail } from './verify-email/verify-email';
-import { CreatePost } from './create-post/create-post';
-import { PostsListComponent } from './posts-list/posts-list';
-import { MapAndOverlayComponent } from './map-and-overlay-component/map-and-overlay-component';
-import { NotFound } from './not-found/not-found';
-import { Chat } from './chat/chat';
-import { PostDetailComponent } from './post-detail/post-detail';
-import { UserProfile } from './user-profile/user-profile';
+import {Routes} from '@angular/router';
+import {authGuard} from './core/guards/auth.guard';
+import {VerifyEmail} from './verify-email/verify-email';
+import {CreatePost} from './create-post/create-post';
+import {PostsListComponent} from './posts-list/posts-list';
+import {MapAndOverlayComponent} from './map-and-overlay-component/map-and-overlay-component';
+import {NotFound} from './not-found/not-found';
+import {Chat} from './chat/chat';
+import {PostDetailComponent} from './post-detail/post-detail';
+import {UserProfile} from './user-profile/user-profile';
 
 export const routes: Routes = [
   {
@@ -66,14 +66,14 @@ export const routes: Routes = [
     component: Chat,
     canActivate: [authGuard],
   },
-
-  {
-    path: 'posts/:id',
-    loadComponent: () => import('./post-detail/post-detail').then((m) => m.PostDetailComponent),
-  },
   {
     path: '404',
     component: NotFound,
   },
-  { path: 'user/:id', component: UserProfile },
+  {
+    path: '**',
+    component: NotFound,
+  },
+  {path: 'user/:id', component: UserProfile},
 ];
+
