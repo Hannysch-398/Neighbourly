@@ -77,7 +77,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           ['Skill', 'skillName'],
           ['Tags', 'skillTags'],
           ['Verfügbarkeit', 'availabilityNote'],
-          ['Erfahrung', 'experienceLevel'],
+          ['Erfahrungslevel', 'experienceLevel'],
         ]);
 
       case 'PRODUCT':
