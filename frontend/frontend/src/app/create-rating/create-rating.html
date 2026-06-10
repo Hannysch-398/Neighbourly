@@ -49,8 +49,28 @@
     placeholder="Kommentar schreiben..."
     [(ngModel)]="comment">
   </textarea>
+  @if (errorMessage) {
+    <p class="error-message">
+      {{ errorMessage }}
+    </p>
+  }
 
-  <button type="button" class="submit-rating-button" (click)="submitRatingForm()">
-    Bewertung absenden
+  @if (successMessage) {
+    <p class="success-message">
+      {{ successMessage }}
+    </p>
+  }
+  <button
+    type="button"
+    class="submit-rating-button"
+    [disabled]="isSubmitting"
+    (click)="submitRatingForm()">
+
+    @if (isSubmitting) {
+      Wird gespeichert...
+    } @else {
+      Bewertung absenden
+    }
+
   </button>
 </div>
