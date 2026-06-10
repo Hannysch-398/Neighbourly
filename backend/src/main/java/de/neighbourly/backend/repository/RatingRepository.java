@@ -1,6 +1,5 @@
 package de.neighbourly.backend.repository;
 
-import de.neighbourly.backend.dto.RatingRequest;
 import de.neighbourly.backend.entity.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +9,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> findByRatedUserId(Long ratedUserId);
 
     Rating findByRatedUserIdAndId(Long ratedUserId, Long id);
+
+    boolean existsByPostIdAndRaterUserIdAndRatedUserId(Long postId, Long raterUserId, Long ratedUserId);
 
 }

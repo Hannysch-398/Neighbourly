@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class RatingResponse {
     private long id;
+    private long postId;
     private long raterUserId;
     private long ratedUserId;
     private int rating;

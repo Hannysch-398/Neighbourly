@@ -35,8 +35,15 @@ public class RatingService {
     }
 
     private RatingResponse mapToResponse(Rating rating) {
-        return new RatingResponse(rating.getId(), rating.getRaterUserId(), rating.getRatedUserId(), rating.getRating(),
-                rating.getComment(), rating.getCreationDate());
+        return new RatingResponse(
+                rating.getId(),
+                rating.getPostId(),
+                rating.getRaterUserId(),
+                rating.getRatedUserId(),
+                rating.getRating(),
+                rating.getComment(),
+                rating.getCreationDate()
+        );
     }
 
     //get specific Rating
@@ -78,7 +85,19 @@ public class RatingService {
             );
         }
 
+        if (ratingRepository.existsByPostIdAndRaterUserIdAndRatedUserId(
+                post.getId(),
+                raterUserId,
+                postOwnerId
+        )) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "You have already rated this post"
+            );
+        }
+
         Rating rating = new Rating();
+        rating.setPostId(post.getId());
         rating.setRaterUserId(raterUserId);
         rating.setRatedUserId(postOwnerId);
         rating.setRating(ratingRequest.getRating());

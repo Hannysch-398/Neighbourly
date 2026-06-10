@@ -5,10 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
-@Table(name = "rating")
+@Table(
+        name = "rating",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_rating_post_rater_rated",
+                        columnNames = {"post_id", "rater_user_id", "rated_user_id"}
+                )
+        }
+)
 @Setter
 @Getter
 public class Rating {
@@ -16,13 +23,15 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
 
-    @Column(nullable = false)
+    @Column(name = "post_id", nullable = false)
+    private long postId;
+
+    @Column(name = "rater_user_id", nullable = false)
     private long raterUserId;
 
-    @Column(nullable = false)
+    @Column(name = "rated_user_id", nullable = false)
     private long ratedUserId;
 
-    //out of 5 rating
     @Column(nullable = false)
     private int rating;
 
