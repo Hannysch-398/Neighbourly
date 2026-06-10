@@ -3,6 +3,8 @@ package de.neighbourly.backend.controller;
 import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.MapPostDto;
+import de.neighbourly.backend.dto.PostImageDto;
+import de.neighbourly.backend.dto.PostImageUrlRequest;
 import de.neighbourly.backend.dto.PostResponseDto;
 import de.neighbourly.backend.dto.SuccessResponseDto;
 import de.neighbourly.backend.dto.UpdatePostRequestDto;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import de.neighbourly.backend.dto.PostDetailResponseDto;
 import de.neighbourly.backend.dto.UpdatePostRequest;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -72,14 +77,28 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostImageDto> uploadPostImage(@PathVariable Long id,
+                                                        @RequestPart("file") MultipartFile file,
+                                                        @RequestParam(required = false) String altText,
+                                                        Authentication authentication) {
+        PostImageDto response = postService.uploadPostImage(id, file, altText, getAuthenticatedUserId(authentication));
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping(value = "/{id}/images", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PostImageDto> addPostImageUrl(@PathVariable Long id,
+                                                        @Valid @RequestBody PostImageUrlRequest request,
+                                                        Authentication authentication) {
+        PostImageDto response = postService.addPostImageUrl(id, request, getAuthenticatedUserId(authentication));
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @GetMapping("/marker")
     public ResponseEntity<List<MapPostDto>> getMapPosts(@RequestParam double lat, @RequestParam double lng,
                                                         @RequestParam double radius) {
         return ResponseEntity.ok(postService.getMapPostMarker(lat, lng, radius));
     }
-
-
-
 
     private Long getAuthenticatedUserId(Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUserPrincipal principal)) {

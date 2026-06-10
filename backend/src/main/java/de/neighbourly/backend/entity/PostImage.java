@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "post_images")
 @Getter
@@ -18,6 +20,9 @@ public class PostImage {
     private String altText;
 
     private Integer orderIndex;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)

@@ -7,6 +7,7 @@ import { postListMock } from '../mocks/post.mock';
 import { CreatePostRequest, PostResponse } from '../models/post.model';
 import { UpdatePostRequest } from '../models/update-post-request.model';
 import { PostDetailResponse } from '../models/post-detail.model';
+import { PostImage } from '../models/post-image.model';
 import { postDetailMock } from '../mocks/post-detail.mock';
 import { Router } from '@angular/router';
 
@@ -109,6 +110,25 @@ export class PostsService {
   createPost(payload: CreatePostRequest): Observable<PostResponse> {
     return this.http.post<PostResponse>(this.apiUrl, payload);
   }
+
+  uploadPostImageFile(postId: number, file: File, altText?: string | null): Observable<PostImage> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (altText?.trim()) {
+      formData.append('altText', altText.trim());
+    }
+
+    return this.http.post<PostImage>(`${this.apiUrl}/${postId}/images`, formData);
+  }
+
+  addPostImageUrl(postId: number, url: string, altText?: string | null): Observable<PostImage> {
+    return this.http.post<PostImage>(`${this.apiUrl}/${postId}/images`, {
+      url,
+      altText: altText?.trim() || null,
+    });
+  }
+
 
   resolvePostMutationError(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
