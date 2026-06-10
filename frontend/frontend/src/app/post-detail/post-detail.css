@@ -1,5 +1,5 @@
 .post-detail-page {
-  max-width: 1120px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1rem 3rem;
 }
@@ -151,24 +151,6 @@ h2 {
 .fallback-text {
   margin-bottom: 0;
   color: #74808b;
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 8px;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2rem;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  background: var(--gray-light-color);
-  color: #4e5d69;
-  font-weight: 600;
 }
 
 .gallery-container {

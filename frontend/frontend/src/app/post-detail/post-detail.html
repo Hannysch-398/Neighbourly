@@ -73,15 +73,7 @@
       } @else {
         <p class="fallback-text">Die Beschreibung wird angezeigt, sobald der Beitrag geladen ist.</p>
       }
-      @if (post()?.tags?.length) {
-        <div class="tag-list">
-          @for (tag of post()?.tags; track tag) {
-            <span class="tag">{{ tag }}</span>
-          }
-        </div>
-      } @else {
-        <p class="fallback-text">Keine Tags hinterlegt.</p>
-      }
+
     </section>
     <section class="content-panel main-panel">
       <h2>Details</h2>
@@ -148,6 +140,8 @@
                 <dt>Dringend bis</dt>
                 <dd>{{ post.urgentUntil | date: 'dd.MM.yyyy, HH:mm' }}</dd>
               </div>
+            } @else {
+              <p class="fallback-text"> Keine Statusdaten angegeben </p>
             }
           </dl>
         } @else {
