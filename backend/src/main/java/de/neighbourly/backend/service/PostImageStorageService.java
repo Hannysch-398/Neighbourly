@@ -64,6 +64,20 @@ public class PostImageStorageService {
         }
     }
 
+    public boolean isStoredUploadAvailable(String url) {
+        if (url == null || !url.startsWith("/uploads/post-images/")) {
+            return true;
+        }
+
+        String filename = url.substring("/uploads/post-images/".length());
+        if (filename.isBlank() || filename.contains("/") || filename.contains("\\")) {
+            return false;
+        }
+
+        Path imagePath = postImagesDirectory.resolve(filename).normalize();
+        return imagePath.startsWith(postImagesDirectory) && Files.isRegularFile(imagePath);
+    }
+
     private String resolveExtension(MultipartFile file, String contentType) {
         String originalFilename = file.getOriginalFilename();
 
