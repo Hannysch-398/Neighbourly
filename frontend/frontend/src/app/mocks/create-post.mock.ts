@@ -1,10 +1,14 @@
-import { CreatePostRequest } from '../models/create-post-request.model';
+import { CreatePostRequest } from '../models/post.model';
+import {CreatePostLocationDto} from '../models/post.model';
 
-const mockLocation = {
+const mockLocation: CreatePostLocationDto = {
+  city: 'Bremen',
+  postalCode: '28195',
+  address: 'Musterstraße 12',
   lat: 53.0793,
   lng: 8.8017,
-  precision: 'EXACT / RADIUS',
-  radius_m: 500
+  precision: 'EXACT',
+  radiusM: 50,
 };
 
 export const eventCreatePostMock: CreatePostRequest = {
@@ -34,8 +38,10 @@ export const skillCreatePostMock: CreatePostRequest = {
   details: {
     detailType: 'SKILL',
     skillName: 'German',
-    experienceLevel: 'ADVANCED'
-  }
+    skillTags: ['German'],
+    availabilityNote: 'Nachmittags oder am Wochenende',
+    experienceLevel: 'ADVANCED',
+  },
 };
 
 export const productCreatePostMock: CreatePostRequest = {
@@ -49,7 +55,9 @@ export const productCreatePostMock: CreatePostRequest = {
   details: {
     detailType: 'PRODUCT',
     productName: 'City Bike',
-    price: 150
+    price: 150,
+    currency: 'EUR',
+    condition: 'USED',
   }
 };
 

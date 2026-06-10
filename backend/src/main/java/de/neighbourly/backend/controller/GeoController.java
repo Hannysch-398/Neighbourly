@@ -14,7 +14,17 @@ public class GeoController {
     private final GeoService geoService;
 
     @GetMapping("/coordinates")
-    public ResponseEntity<GeoCoordinatesResponseDto> getCoordinates(@RequestParam String plz) {
+    public ResponseEntity<GeoCoordinatesResponseDto> getCoordinates(
+            @RequestParam String plz,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String address
+    ) {
+        if (address != null && !address.isBlank()) {
+            return ResponseEntity.ok(
+                    geoService.getCoordinatesByAddress(address, plz, city)
+            );
+        }
+
         return ResponseEntity.ok(geoService.getCoordinatesByPlz(plz));
     }
 }

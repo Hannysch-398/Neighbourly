@@ -15,16 +15,27 @@ export interface LocationDto {
 export interface CreatePostLocationDto {
   city: string;
   postalCode: string;
-  address?: string | null;
+  address: string | null;
   lat: number;
   lng: number;
-  precision: string;
-  radius_m: number;
+  precision: 'EXACT' | 'POSTAL_CODE';
+  radiusM: number;
 }
 
+export interface CreatePostRequest {
+  title: string;
+  description: string;
+  type: PostType;
+  postMode: PostMode;
+  isUrgent: boolean;
+  urgentUntil?: string | null;
+  location: CreatePostLocationDto;
+  details: PostDetailsDto;
+}
 export interface GeoCoordinatesResponse {
   latitude: number;
   longitude: number;
+  city: string;
 }
 
 export interface EventDetailsDto {
@@ -59,17 +70,6 @@ export interface HousingDetailsDto {
 }
 
 export type PostDetailsDto = EventDetailsDto | SkillDetailsDto | ProductDetailsDto | HousingDetailsDto;
-
-export interface CreatePostRequest {
-  title: string;
-  description: string;
-  type: PostType;
-  postMode: PostMode;
-  isUrgent: boolean;
-  urgentUntil?: string | null;
-  location?: CreatePostLocationDto | null;
-  details: PostDetailsDto;
-}
 
 export interface PostResponse {
   id: number;

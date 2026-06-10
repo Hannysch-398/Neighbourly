@@ -2,10 +2,15 @@ export type PostType = 'EVENT' | 'SKILL' | 'PRODUCT' | 'HOUSING';
 
 export type PostMode = 'OFFER' | 'REQUEST';
 
-export interface CreatePostLocation {
+export type LocationPrecision = 'EXACT' | 'POSTAL_CODE';
+
+export interface CreatePostLocationDto {
+  city: string;
+  postalCode: string;
+  address: string | null;
   lat: number;
   lng: number;
-  precision: string;
+  precision: LocationPrecision;
   radius_m: number;
 }
 
@@ -19,20 +24,24 @@ export interface EventDetails {
 export interface SkillDetails {
   detailType: 'SKILL';
   skillName: string;
+  skillTags: string[];
+  availabilityNote: string;
   experienceLevel: string;
 }
 
 export interface ProductDetails {
   detailType: 'PRODUCT';
   productName: string;
-  price: number;
+  price: number | null;
+  currency: string;
+  condition: string;
 }
 
 export interface HousingDetails {
   detailType: 'HOUSING';
   housingType: string;
-  rent: number;
-  rooms: number;
+  rent: number | null;
+  rooms: number | null;
   availableFrom: string;
 }
 
@@ -42,6 +51,12 @@ export type PostDetails =
   | ProductDetails
   | HousingDetails;
 
+export interface GeoCoordinatesResponse {
+  latitude: number;
+  longitude: number;
+  city: string;
+}
+
 export interface CreatePostRequest {
   title: string;
   description: string;
@@ -49,6 +64,6 @@ export interface CreatePostRequest {
   postMode: PostMode;
   isUrgent: boolean;
   urgentUntil?: string | null;
-  location: CreatePostLocation;
+  location: CreatePostLocationDto;
   details: PostDetails;
 }

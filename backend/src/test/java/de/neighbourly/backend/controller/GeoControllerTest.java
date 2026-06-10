@@ -22,7 +22,7 @@ class GeoControllerTest {
     private GeoController geoController;
 
     @Test
-    void getCoordinates_shouldReturnCoordinates() {
+    void getCoordinates_shouldReturnCoordinatesByPlz() {
         String plz = "10115";
 
         GeoCoordinatesResponseDto expectedResponse =
@@ -32,9 +32,10 @@ class GeoControllerTest {
                 .thenReturn(expectedResponse);
 
         ResponseEntity<GeoCoordinatesResponseDto> response =
-                geoController.getCoordinates(plz);
+                geoController.getCoordinates(plz, null, null);
 
         verify(geoService).getCoordinatesByPlz(plz);
+        verify(geoService, never()).getCoordinatesByAddress(anyString(), anyString(), any());
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(expectedResponse);

@@ -1,11 +1,17 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CreatePostLocationDto, CreatePostRequest, PostMode, PostType } from '../models/post.model';
-import { PostsService } from '../services/posts.service';
-import { GeoService } from '../services/geo.service';
-import { UpdatePostRequest } from '../models/update-post-request.model';
-import { PostDetailResponse } from '../models/post-detail.model';
+import {Component, OnInit, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {
+  CreatePostLocationDto,
+  CreatePostRequest,
+  GeoCoordinatesResponse,
+  PostMode,
+  PostType,
+} from '../models/post.model';
+import {PostsService} from '../services/posts.service';
+import {GeoService} from '../services/geo.service';
+import {UpdatePostRequest} from '../models/update-post-request.model';
+import {PostDetailResponse} from '../models/post-detail.model';
 
 type PostTypeOption = {
   value: PostType;
@@ -92,7 +98,7 @@ export class CreatePost implements OnInit {
   readonly savedPayload = signal<CreatePostRequest | null>(null);
 
   editPostId: number | null = null;
-  postModel: PostBasicFormModel = { ...initialData };
+  postModel: PostBasicFormModel = {...initialData};
 
   get isEditMode(): boolean {
     return this.editPostId !== null;
@@ -102,7 +108,8 @@ export class CreatePost implements OnInit {
     private postsService: PostsService,
     private geoService: GeoService,
     private route: ActivatedRoute,
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -113,15 +120,15 @@ export class CreatePost implements OnInit {
   }
 
   readonly postTypeOptions: PostTypeOption[] = [
-    { value: 'EVENT', label: 'Veranstaltung' },
-    { value: 'SKILL', label: 'Hilfe / Skill' },
-    { value: 'PRODUCT', label: 'Produkt' },
-    { value: 'HOUSING', label: 'Wohnen' },
+    {value: 'EVENT', label: 'Veranstaltung'},
+    {value: 'SKILL', label: 'Hilfe / Skill'},
+    {value: 'PRODUCT', label: 'Produkt'},
+    {value: 'HOUSING', label: 'Wohnen'},
   ];
 
   readonly postModeOptions: PostModeOption[] = [
-    { value: 'OFFER', label: 'Angebot' },
-    { value: 'REQUEST', label: 'Gesuch' },
+    {value: 'OFFER', label: 'Angebot'},
+    {value: 'REQUEST', label: 'Gesuch'},
   ];
 
   loadPostForEditing(id: number): void {
@@ -182,43 +189,77 @@ export class CreatePost implements OnInit {
       return;
     }
 
+    this.isLoading.set(true);
 
-      this.isLoading.set(true);
+    const address = this.postModel.address.trim() || null;
 
-      this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
-        next: (coordinates) => {
-          console.log('GEO OK', coordinates);
+    const geoRequest = address
+      ? this.geoService.getCoordinatesByAddress(
+        address,
+        this.postModel.postalCode,
+        this.postModel.city,
+      )
+      : this.geoService.getCoordinatesByPlz(this.postModel.postalCode);
 
-          this.postModel = {
-            ...this.postModel,
-            resolvedLocation: {
-              city: this.postModel.city.trim(),
-              postalCode: this.postModel.postalCode.trim(),
-              address: this.postModel.address.trim() || null,
-              lat: coordinates.latitude,
-              lng: coordinates.longitude,
-              precision: 'POSTAL_CODE',
-              radius_m: 1000,
-            },
-          };
+    geoRequest.subscribe({
+      next: (coordinates) => {
+        this.setResolvedLocationAndCreatePost(coordinates, address, !!address);
+      },
+      error: (addressErr) => {
+        console.warn('address geo failed, fallback to PLZ', addressErr?.error);
 
-          const payload = this.createPayload();
-          console.log('PAYLOAD', payload);
+        this.geoService.getCoordinatesByPlz(this.postModel.postalCode).subscribe({
+          next: (coordinates) => {
+            const originalAddress = this.postModel.address.trim();
 
-          this.createPost(payload, () => {
-            setTimeout(() => this.router.navigate(['/map']), 1500);
-          });
-        },
-        error: (err) => {
-          console.error('geo error', err);
-          this.postModel = { ...this.postModel, resolvedLocation: null };
-          this.errorMessage.set(err?.error?.message || 'Bitte ermittle gültige Koordinaten für die PLZ.');
-          this.isLoading.set(false);
-        },
-      });
+            this.setResolvedLocationAndCreatePost(
+              coordinates,
+              originalAddress || null,
+              false,
+            );
+          },
+          error: (plzErr) => {
+            console.error('PLZ fallback geo failed', plzErr);
 
+            this.postModel = {
+              ...this.postModel,
+              resolvedLocation: null,
+            };
+
+            this.errorMessage.set('Bitte gib eine gültige Adresse oder Postleitzahl ein.');
+            this.isLoading.set(false);
+          },
+        });
+      },
+    });
   }
 
+  private setResolvedLocationAndCreatePost(
+    coordinates: GeoCoordinatesResponse,
+    address: string | null,
+    isExact: boolean,
+  ): void {
+    this.postModel = {
+      ...this.postModel,
+      city: coordinates.city || this.postModel.city.trim(),
+      resolvedLocation: {
+        city: coordinates.city || this.postModel.city.trim(),
+        postalCode: this.postModel.postalCode.trim(),
+        address,
+        lat: coordinates.latitude,
+        lng: coordinates.longitude,
+        precision: isExact ? 'EXACT' : 'POSTAL_CODE',
+        radiusM: isExact ? 50 : 1000,
+      },
+    };
+
+    const payload = this.createPayload();
+    console.log('CREATE POST PAYLOAD', JSON.stringify(payload, null, 2));
+
+    this.createPost(payload, () => {
+      setTimeout(() => this.router.navigate(['/map']), 1500);
+    });
+  }
   private createPost(payload: CreatePostRequest, onSuccess?: () => void): void {
     this.isLoading.set(true);
 
@@ -288,7 +329,7 @@ export class CreatePost implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.backendErrors.set([]);
-    this.postModel = { ...initialData };
+    this.postModel = {...initialData};
   }
 
   shouldShowFieldError(field: 'title' | 'description' | 'type' | 'postMode'): boolean {
@@ -344,6 +385,10 @@ export class CreatePost implements OnInit {
 
   private createPayload(): CreatePostRequest {
     const value = this.postModel;
+
+    if (!value.resolvedLocation) {
+      throw new Error('Location wurde nicht aufgelöst.');
+    }
 
     return {
       title: value.title.trim(),

@@ -15,4 +15,17 @@ export class GeoService {
 
     return this.http.get<GeoCoordinatesResponse>(this.apiUrl, {params});
   }
+
+  getCoordinatesByAddress(
+    address: string,
+    postalCode: string,
+    city: string,
+  ): Observable<GeoCoordinatesResponse> {
+    const params = new HttpParams()
+      .set('plz', postalCode.trim())
+      .set('city', city.trim())
+      .set('address', address.trim());
+
+    return this.http.get<GeoCoordinatesResponse>(this.apiUrl, {params});
+  }
 }
