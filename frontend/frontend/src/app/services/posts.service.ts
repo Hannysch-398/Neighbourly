@@ -1,4 +1,4 @@
-import {HttpClient, HttpParams, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpParams, HttpErrorResponse} from '@angular/common/http';
 import {inject, Injectable, signal} from '@angular/core';
 import {BehaviorSubject, Observable, of, catchError, throwError, tap} from 'rxjs';
 import {MapPostMarker} from '../interface/MapPostMarker';
@@ -120,6 +120,24 @@ export class PostsService {
     }
 
     return this.http.post<PostImage>(`${this.apiUrl}/${postId}/images`, formData);
+  }
+
+  uploadPostImageFileWithProgress(
+    postId: number,
+    file: File,
+    altText?: string | null,
+  ): Observable<HttpEvent<PostImage>> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (altText?.trim()) {
+      formData.append('altText', altText.trim());
+    }
+
+    return this.http.post<PostImage>(`${this.apiUrl}/${postId}/images`, formData, {
+      observe: 'events',
+      reportProgress: true,
+    });
   }
 
   addPostImageUrl(postId: number, url: string, altText?: string | null): Observable<PostImage> {

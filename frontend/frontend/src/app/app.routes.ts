@@ -1,7 +1,6 @@
 import {Routes} from '@angular/router';
 import {authGuard} from './core/guards/auth.guard';
 import {VerifyEmail} from './verify-email/verify-email';
-import {CreatePost} from './create-post/create-post';
 import {PostsListComponent} from './posts-list/posts-list';
 import {MapAndOverlayComponent} from './map-and-overlay-component/map-and-overlay-component';
 import {NotFound} from './not-found/not-found';
@@ -49,12 +48,12 @@ export const routes: Routes = [
   },
   {
     path: 'posts/create',
-    component: CreatePost,
+    loadComponent: () => import('./create-post/create-post').then((m) => m.CreatePost),
     canActivate: [authGuard],
   },
   {
     path: 'posts/:id/edit',
-    component: CreatePost,
+    loadComponent: () => import('./create-post/create-post').then((m) => m.CreatePost),
     canActivate: [authGuard],
   },
   {
@@ -75,4 +74,3 @@ export const routes: Routes = [
     component: NotFound,
   }
 ];
-

@@ -1,5 +1,4 @@
 package de.neighbourly.backend.controller;
-
 import de.neighbourly.backend.dto.CreatePostRequest;
 import de.neighbourly.backend.dto.PostListItemResponseDto;
 import de.neighbourly.backend.dto.MapPostDto;
@@ -79,8 +78,7 @@ public class PostController {
 
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PostImageDto> uploadPostImage(@PathVariable Long id,
-                                                        @RequestPart("file") MultipartFile file,
-                                                        @RequestParam(required = false) String altText,
+                                                        @RequestPart("file") MultipartFile file,@RequestParam(required = false) String altText,
                                                         Authentication authentication) {
         PostImageDto response = postService.uploadPostImage(id, file, altText, getAuthenticatedUserId(authentication));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

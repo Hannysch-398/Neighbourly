@@ -1,11 +1,19 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreatePostLocationDto, CreatePostRequest, PostMode, PostType } from '../models/post.model';
+import {
+  CreatePostLocationDto,
+  CreatePostRequest,
+  PostMode,
+  PostResponse,
+  PostType,
+} from '../models/post.model';
 import { PostsService } from '../services/posts.service';
 import { GeoService } from '../services/geo.service';
 import { UpdatePostRequest } from '../models/update-post-request.model';
 import { PostDetailResponse } from '../models/post-detail.model';
+import { PostImage } from '../models/post-image.model';
 
 type PostTypeOption = {
   value: PostType;
@@ -46,6 +54,18 @@ type PostBasicFormModel = {
   resolvedLocation: CreatePostLocationDto | null;
 };
 
+type ImageUploadStatus = 'selected' | 'uploading' | 'uploaded' | 'error';
+
+type SelectedPostImage = {
+  id: number;
+  file: File;
+  previewUrl: string;
+  progress: number;
+  status: ImageUploadStatus;
+  error: string | null;
+  uploadedImage: PostImage | null;
+};
+
 const initialData: PostBasicFormModel = {
   title: '',
   description: '',
@@ -81,18 +101,22 @@ const initialData: PostBasicFormModel = {
   templateUrl: './create-post.html',
   styleUrl: './create-post.css',
 })
-export class CreatePost implements OnInit {
+export class CreatePost implements OnInit, OnDestroy {
   private router = inject(Router);
+  private nextSelectedImageId = 1;
 
   readonly isLoading = signal(false);
+  readonly isUploadingImages = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly backendErrors = signal<string[]>([]);
+  readonly imagePickerError = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly savedPayload = signal<CreatePostRequest | null>(null);
 
   editPostId: number | null = null;
   postModel: PostBasicFormModel = { ...initialData };
+  selectedImages: SelectedPostImage[] = [];
 
   get isEditMode(): boolean {
     return this.editPostId !== null;
@@ -110,6 +134,10 @@ export class CreatePost implements OnInit {
       this.editPostId = Number(id);
       this.loadPostForEditing(this.editPostId);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.revokeSelectedImagePreviews();
   }
 
   readonly postTypeOptions: PostTypeOption[] = [
@@ -209,9 +237,7 @@ export class CreatePost implements OnInit {
           const payload = this.createPayload();
           console.log('PAYLOAD', payload);
 
-          this.createPost(payload, () => {
-            setTimeout(() => this.router.navigate(['/map']), 1500);
-          });
+          this.createPost(payload);
         },
         error: (err) => {
           console.error('geo error', err);
@@ -223,15 +249,81 @@ export class CreatePost implements OnInit {
 
   }
 
-  private createPost(payload: CreatePostRequest, onSuccess?: () => void): void {
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+
+    this.imagePickerError.set(null);
+
+    if (!files.length) {
+      return;
+    }
+
+    const rejectedFiles = files.filter((file) => !file.type.startsWith('image/'));
+    const acceptedFiles = files.filter((file) => file.type.startsWith('image/'));
+
+    if (rejectedFiles.length) {
+      this.imagePickerError.set('Es wurden nur Bilddateien übernommen.');
+    }
+
+    this.selectedImages = [
+      ...this.selectedImages,
+      ...acceptedFiles.map((file) => ({
+        id: this.nextSelectedImageId++,
+        file,
+        previewUrl: URL.createObjectURL(file),
+        progress: 0,
+        status: 'selected' as const,
+        error: null,
+        uploadedImage: null,
+      })),
+    ];
+
+    input.value = '';
+  }
+
+  removeSelectedImage(imageId: number): void {
+    const image = this.selectedImages.find((selectedImage) => selectedImage.id === imageId);
+
+    if (image) {
+      URL.revokeObjectURL(image.previewUrl);
+    }
+
+    this.selectedImages = this.selectedImages.filter((selectedImage) => selectedImage.id !== imageId);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) {
+      return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  }
+
+  getImageStatusLabel(image: SelectedPostImage): string {
+    switch (image.status) {
+      case 'selected':
+        return 'Bereit zum Upload';
+      case 'uploading':
+        return `Upload läuft (${image.progress}%)`;
+      case 'uploaded':
+        return 'Hochgeladen';
+      case 'error':
+        return 'Upload fehlgeschlagen';
+    }
+  }
+
+  private createPost(payload: CreatePostRequest): void {
     this.isLoading.set(true);
 
     this.postsService.createPost(payload).subscribe({
-      next: () => {
+      next: (post: PostResponse) => {
         this.savedPayload.set(payload);
-        this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
-        this.isLoading.set(false);
-        onSuccess?.();
+        this.handlePostCreated(post);
       },
       error: (err) => {
         console.error(err);
@@ -256,6 +348,73 @@ export class CreatePost implements OnInit {
 
         this.isLoading.set(false);
       },
+    });
+  }
+
+  private handlePostCreated(post: PostResponse): void {
+    if (!this.selectedImages.length) {
+      this.successMessage.set('Beitrag wurde erfolgreich erstellt.');
+      this.isLoading.set(false);
+      setTimeout(() => this.router.navigate(['/map']), 1500);
+      return;
+    }
+
+    this.successMessage.set('Beitrag wurde erstellt. Bilder werden hochgeladen...');
+    this.uploadSelectedImages(post.id);
+  }
+
+  private uploadSelectedImages(postId: number): void {
+    this.isUploadingImages.set(true);
+
+    Promise.all(this.selectedImages.map((image) => this.uploadSelectedImage(postId, image))).then(
+      (results) => {
+        const failedUploads = results.filter((result) => !result).length;
+
+        this.isUploadingImages.set(false);
+        this.isLoading.set(false);
+
+        if (failedUploads > 0) {
+          this.errorMessage.set(
+            `${failedUploads} Bild${failedUploads === 1 ? '' : 'er'} konnte${
+              failedUploads === 1 ? '' : 'n'
+            } nicht hochgeladen werden. Der Beitrag wurde gespeichert.`,
+          );
+          this.successMessage.set('Beitrag wurde erstellt. Bitte prüfe die fehlerhaften Bilder.');
+          return;
+        }
+
+        this.successMessage.set('Beitrag und Bilder wurden erfolgreich erstellt.');
+        setTimeout(() => this.router.navigate(['/map']), 1500);
+      },
+    );
+  }
+
+  private uploadSelectedImage(postId: number, image: SelectedPostImage): Promise<boolean> {
+    image.status = 'uploading';
+    image.progress = 0;
+    image.error = null;
+
+    return new Promise((resolve) => {
+      this.postsService.uploadPostImageFileWithProgress(postId, image.file).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            image.progress = event.total ? Math.round((event.loaded / event.total) * 100) : 50;
+            return;
+          }
+
+          if (event.type === HttpEventType.Response) {
+            image.status = 'uploaded';
+            image.progress = 100;
+            image.uploadedImage = event.body ?? null;
+            resolve(true);
+          }
+        },
+        error: (error) => {
+          image.status = 'error';
+          image.error = this.mapUploadError(error);
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -292,6 +451,9 @@ export class CreatePost implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.backendErrors.set([]);
+    this.imagePickerError.set(null);
+    this.revokeSelectedImagePreviews();
+    this.selectedImages = [];
     this.postModel = { ...initialData };
   }
 
@@ -444,6 +606,28 @@ export class CreatePost implements OnInit {
         return 'Die Location konnte nicht gespeichert werden. Bitte überprüfe die Ortsangaben.';
       default:
         return message;
+    }
+  }
+
+  private mapUploadError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 401) {
+        return 'Du bist nicht eingeloggt. Bitte melde dich erneut an.';
+      }
+
+      if (error.status === 413) {
+        return 'Die Datei ist zu groß für den Upload.';
+      }
+
+      return error.error?.message || 'Bild konnte nicht hochgeladen werden.';
+    }
+
+    return 'Bild konnte nicht hochgeladen werden.';
+  }
+
+  private revokeSelectedImagePreviews(): void {
+    for (const image of this.selectedImages) {
+      URL.revokeObjectURL(image.previewUrl);
     }
   }
 }
