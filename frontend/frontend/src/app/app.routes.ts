@@ -65,7 +65,7 @@ export const routes: Routes = [
     path: 'chat',
     component: Chat,
     canActivate: [authGuard],
-  },
+  },{path: 'user/:id', component: UserProfile},
   {
     path: '404',
     component: NotFound,
@@ -73,7 +73,6 @@ export const routes: Routes = [
   {
     path: '**',
     component: NotFound,
-  },
-  {path: 'user/:id', component: UserProfile},
+  }
 ];
 
