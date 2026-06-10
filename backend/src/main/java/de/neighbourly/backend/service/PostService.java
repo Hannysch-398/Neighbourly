@@ -112,8 +112,14 @@ public class PostService {
 
         List<String> tags = postTagRepository.findAllByPostId(postId).stream().map(PostTag::getName).toList();
 
-        List<PostImageDto> images =
-                postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId).stream().map(this::mapImage).toList();
+        List<PostImageDto> images = postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId)
+                .stream()
+                .filter(image -> postImageStorageService.isStoredUploadAvailable(image.getUrl()))
+                .sorted(Comparator
+                        .comparing(PostImage::getOrderIndex, Comparator.nullsLast(Integer::compareTo))
+                        .thenComparing(PostImage::getId, Comparator.nullsLast(Long::compareTo)))
+                .map(this::mapImage)
+                .toList();
 
         boolean isOwner = currentUserId != null
                 && post.getUser() != null

@@ -5,6 +5,7 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {Subject, catchError, map, of, switchMap, takeUntil, tap} from 'rxjs';
 
 import {LocationDto, PostDetailResponse} from '../models/post-detail.model';
+import {PostImage} from '../models/post-image.model';
 import {PostsService} from '../services/posts.service';
 import {AuthService} from '../services/auth.service';
 import {ChatService} from '../services/chat.service';
@@ -33,7 +34,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   private readonly postService = inject(PostsService);
   private readonly authService = inject(AuthService);
   private readonly destroy$ = new Subject<void>();
-  selectedImage = signal<any>(null);
+  selectedImage = signal<PostImage | null>(null);
   protected readonly post = signal<PostDetailResponse | null>(null);
   protected readonly postId = signal<number | null>(null);
   protected readonly isLoading = signal(true);
@@ -130,6 +131,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         tap((id) => {
           this.postId.set(id);
           this.post.set(null);
+          this.selectedImage.set(null);
           this.errorMessage.set('');
           this.isLoading.set(true);
         }),
@@ -419,8 +421,31 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectImage(image: any): void {
+  selectImage(image: PostImage): void {
     this.selectedImage.set(image);
+  }
+
+  protected imageSrc(url: string): string {
+    if (!url) {
+      return '';
+    }
+
+    if (/^(https?:|data:|blob:)/i.test(url)) {
+      return url;
+    }
+
+    const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
+
+    if (
+      normalizedUrl.startsWith('/uploads/') &&
+      typeof window !== 'undefined' &&
+      window.location.hostname === 'localhost' &&
+      window.location.port === '4200'
+    ) {
+      return `http://localhost:8080${normalizedUrl}`;
+    }
+
+    return normalizedUrl;
   }
 
   protected startConversation(): void {

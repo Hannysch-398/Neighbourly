@@ -91,7 +91,7 @@
 
           @if (selectedImage(); as activeImage) {
             <div class="main-image-wrapper">
-              <img [src]="activeImage.url" [alt]="activeImage.altText || post()?.title || 'Hauptbild'"
+              <img [src]="imageSrc(activeImage.url)" [alt]="activeImage.altText || post()?.title || 'Hauptbild'"
                    class="gallery-main-image"/>
               @if (activeImage.altText) {
                 <p class="gallery-caption">{{ activeImage.altText }}</p>
@@ -105,7 +105,7 @@
                 class="thumbnail-wrapper"
                 [class.active]="image.id === selectedImage()?.id"
                 (click)="selectImage(image)">
-                <img [src]="image.url" [alt]="image.altText || 'Vorschau'"/>
+                <img [src]="imageSrc(image.url)" [alt]="image.altText || 'Vorschau'"/>
               </div>
             }
           </div>
