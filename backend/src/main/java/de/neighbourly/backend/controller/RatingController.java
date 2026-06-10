@@ -4,6 +4,7 @@ import de.neighbourly.backend.dto.AverageRatingResponse;
 import de.neighbourly.backend.dto.RatingRequest;
 import de.neighbourly.backend.dto.RatingResponse;
 import de.neighbourly.backend.service.RatingService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,11 +37,10 @@ public class RatingController {
         return ResponseEntity.ok(ratingService.getAverageRating(userId));
     }
 
-
     @PostMapping("/{userId}/ratings")
     public ResponseEntity<RatingResponse> postUserRating(
             @PathVariable Long userId,
-            @RequestBody RatingRequest request) {
+            @Valid @RequestBody RatingRequest request) {
 
         RatingResponse response = ratingService.postUserRating(userId, request);
         return ResponseEntity.ok(response);

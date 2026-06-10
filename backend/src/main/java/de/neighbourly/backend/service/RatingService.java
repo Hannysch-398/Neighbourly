@@ -11,13 +11,20 @@ import java.time.LocalDateTime;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
+import de.neighbourly.backend.entity.Post;
+import de.neighbourly.backend.repository.PostRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 @Service
 public class RatingService {
 
     private final RatingRepository ratingRepository;
+    private final PostRepository postRepository;
 
-    public RatingService(RatingRepository ratingRepository) {
+    public RatingService(RatingRepository ratingRepository, PostRepository postRepository) {
         this.ratingRepository = ratingRepository;
+        this.postRepository = postRepository;
     }
 
     // get all Ratings
@@ -40,10 +47,40 @@ public class RatingService {
     }
 
     //create Rating for User
-    public RatingResponse postUserRating(Long userId, RatingRequest ratingRequest) {
+    public RatingResponse postUserRating(Long ratedUserIdFromPath, RatingRequest ratingRequest) {
+        Post post = postRepository.findById(ratingRequest.getPostId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Post not found"
+                ));
+
+        if (post.getUser() == null || post.getUser().getId() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Post owner not found"
+            );
+        }
+
+        Long postOwnerId = post.getUser().getId();
+        Long raterUserId = ratingRequest.getRaterUserId();
+
+        if (!postOwnerId.equals(ratedUserIdFromPath)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "ratedUserId must be the post owner"
+            );
+        }
+
+        if (postOwnerId.equals(raterUserId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Self-rating is not allowed"
+            );
+        }
+
         Rating rating = new Rating();
-        rating.setRaterUserId(ratingRequest.getRaterUserId());
-        rating.setRatedUserId(userId);
+        rating.setRaterUserId(raterUserId);
+        rating.setRatedUserId(postOwnerId);
         rating.setRating(ratingRequest.getRating());
         rating.setComment(ratingRequest.getComment());
         rating.setCreationDate(LocalDateTime.now());
