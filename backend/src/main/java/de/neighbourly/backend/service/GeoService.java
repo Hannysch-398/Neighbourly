@@ -24,6 +24,7 @@ public class GeoService {
                 .queryParam("countrycodes", "de")
                 .queryParam("format", "json")
                 .queryParam("limit", 1)
+                .queryParam("addressdetails", 1)
                 .toUriString();
 
         HttpHeaders headers = new HttpHeaders();
@@ -46,10 +47,25 @@ public class GeoService {
         }
 
         Map<String, Object> firstResult = body.get(0);
-
         double latitude = Double.parseDouble(firstResult.get("lat").toString());
         double longitude = Double.parseDouble(firstResult.get("lon").toString());
 
-        return new GeoCoordinatesResponseDto(latitude, longitude);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> address = (Map<String, Object>) firstResult.get("address");
+
+        String city = address.getOrDefault("city",
+                address.getOrDefault("town",
+                        address.getOrDefault("village",
+                                address.getOrDefault("municipality", "")
+                        )
+                )
+        ).toString();
+
+        if (city.isBlank()) {
+            city = firstResult.get("name").toString();
+        }
+
+        return new GeoCoordinatesResponseDto(latitude, longitude, city);
     }
 }
+

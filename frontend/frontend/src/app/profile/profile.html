@@ -82,7 +82,11 @@
 
             @if (active()) {
                 @if (activePosts) {
-                    //Post-Komponente
+                  <div class="post-grid">
+                    @for (post of posts(); track post.id) {
+                      <app-post-card [post]="post"></app-post-card>
+                    }
+                  </div>
                 } @else {
                     <h4 class="post-placeholder">Hier würden deine Posts stehen!</h4>
                 }

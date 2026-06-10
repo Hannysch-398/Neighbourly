@@ -1,5 +1,5 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {PostResponse} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
 import {PostCard} from '../components/post-card/post-card';
@@ -14,10 +14,13 @@ type ListState = 'loading' | 'empty' | 'error' | 'ready';
 })
 export class PostsListComponent implements OnInit {
   private readonly postsService = inject(PostsService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly posts = signal<PostResponse[]>([]);
   readonly state = signal<ListState>('loading');
   readonly errorMessage = signal('');
+  readonly successMessage = signal('');
   readonly hasPosts = computed(() => this.posts().length > 0);
   readonly urgentPosts = computed(() =>
     this.posts()
@@ -31,6 +34,7 @@ export class PostsListComponent implements OnInit {
     return this.posts().filter((post) => !pinnedIds.has(post.id));
   });
   ngOnInit(): void {
+    this.showDeleteSuccessFromQueryParam();
     this.loadPosts();
   }
 
@@ -59,6 +63,23 @@ export class PostsListComponent implements OnInit {
     this.posts.set([]);
     this.errorMessage.set(message);
     this.state.set('error');
+  }
+
+  private showDeleteSuccessFromQueryParam(): void {
+    if (this.route.snapshot.queryParamMap.get('deleted') !== 'true') {
+      return;
+    }
+
+    this.successMessage.set('Beitrag wurde erfolgreich gelöscht.');
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        deleted: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
 }

@@ -289,3 +289,10 @@
     transform: rotate(360deg);
   }
 }
+
+.post-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+

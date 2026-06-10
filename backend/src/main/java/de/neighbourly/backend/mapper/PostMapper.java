@@ -22,7 +22,7 @@ public class PostMapper {
         post.setType(request.getType());
         post.setPostMode(request.getPostMode());
         post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.getIsUrgent() ? request.getUrgentUntil() : null);
         post.setStatus(PostStatus.ACTIVE);
         post.setUser(user);
 
@@ -67,10 +67,12 @@ public class PostMapper {
             LocationDto location,
             List<String> tags,
             List<PostImageDto> images,
-            Object details
+            Object details,
+            boolean isOwner
     ) {
         return new PostDetailResponseDto(
                 post.getId(),
+                post.getUser().getId(),
                 post.getTitle(),
                 post.getDescription(),
                 post.getType().name(),
@@ -83,7 +85,8 @@ public class PostMapper {
                 images,
                 details,
                 null,
-                null
+                null,
+                isOwner
         );
     }
 

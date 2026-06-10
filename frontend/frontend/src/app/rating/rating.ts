@@ -3,6 +3,7 @@ import { AverageRatingResponse } from '../interface/AverageRatingResponse';
 import { RatingResponse } from '../interface/RatingResponse';
 import { RatingService } from '../services/rating-service';
 import { ShowRatingComments } from '../show-rating-comments/show-rating-comments';
+import {UserService} from '../services/user-service';
 
 @Component({
   selector: 'app-rating',
@@ -22,9 +23,16 @@ export class Rating implements OnInit {
 
   stars: number[] = [0, 0, 0, 0, 0];
 
-  constructor(private ratingService: RatingService) {}
+  constructor(private ratingService: RatingService, private userService: UserService) {}
+
+
+
 
   ngOnInit(): void {
+    this.loadRatings();
+  }
+
+  loadRatings(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
@@ -68,5 +76,9 @@ export class Rating implements OnInit {
     }
 
     return ratingArray;
+  }
+
+  reload(): void {
+    this.loadRatings();
   }
 }

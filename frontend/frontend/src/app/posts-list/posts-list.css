@@ -4,6 +4,16 @@
   margin: 2rem auto;
 }
 
+.success-message {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  background: #f0fdf4;
+  color: #166534;
+  font-weight: 800;
+}
+
 .header-copy {
   max-width: 680px;
   margin: 0.35rem 0 0;
@@ -11,7 +21,7 @@
 }
 
 .posts-list-shell {
-  min-height: 520px;
+  min-height: 150px;
   padding: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: var(--border-radius);

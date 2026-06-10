@@ -2,6 +2,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'leaflet/dist/leaflet.css';
 @import './app/map-marker/map-marker.css';
+
 :root {
   --primary-color: #459cb8;
   --primary-color-hover: #367f97;

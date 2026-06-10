@@ -1,5 +1,6 @@
 package de.neighbourly.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class UpdatePostRequestDto {
     @NotBlank(message = "Description must not be empty")
     private String description;
 
+    @JsonProperty("isUrgent")
     private boolean isUrgent;
     private LocalDateTime urgentUntil;
 }

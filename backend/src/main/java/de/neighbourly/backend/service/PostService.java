@@ -14,10 +14,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
+import de.neighbourly.backend.model.PrecisionType;
+import de.neighbourly.backend.util.LocationMaskingUtil;
 
 @SuppressWarnings("ALL")
 @Service
@@ -36,6 +40,7 @@ public class PostService {
     private final PostImageStorageService postImageStorageService;
     private final ObjectMapper objectMapper;
     private final HousingDetailRepository housingDetailRepository;
+    private final GeoService geoService;
 
     public PostService(
             PostRepository postRepository,
@@ -48,7 +53,9 @@ public class PostService {
             PostImageRepository postImageRepository,
             PostImageStorageService postImageStorageService,
             ObjectMapper objectMapper,
-            HousingDetailRepository housingDetailRepository
+            HousingDetailRepository housingDetailRepository,
+            GeoService geoService
+
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -61,13 +68,18 @@ public class PostService {
         this.postImageStorageService = postImageStorageService;
         this.objectMapper = objectMapper;
         this.housingDetailRepository = housingDetailRepository;
+
+        this.geoService = geoService;
     }
 
+    @Transactional
     public PostResponseDto createPost(CreatePostRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         validateDetailsMatchPostType(request);
         validateTypeSpecificDetails(request);
+        validateLocation(request);
+
 
         if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
             throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
@@ -88,7 +100,7 @@ public class PostService {
         return PostMapper.toDto(savedPost, location);
     }
 
-    public PostDetailResponseDto getPostDetail(Long postId) {
+    public PostDetailResponseDto getPostDetail(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
         Object details = buildDetailsBlock(post);
@@ -100,7 +112,12 @@ public class PostService {
         List<PostImageDto> images =
                 postImageRepository.findAllByPostIdOrderByOrderIndexAsc(postId).stream().map(this::mapImage).toList();
 
-        return PostMapper.toDetailDto(post, location, tags, images, details);
+        boolean isOwner = currentUserId != null
+                && post.getUser() != null
+                && post.getUser().getId() != null
+                && post.getUser().getId().equals(currentUserId);
+
+        return PostMapper.toDetailDto(post, location, tags, images, details, isOwner);
     }
 
     private void validateTypeSpecificDetails(CreatePostRequest request) {
@@ -242,31 +259,75 @@ public class PostService {
 
     private Object buildDetailsBlock(Post post) {
         return switch (post.getType()) {
-            case EVENT -> new EventDetailsDto(null, null, null, null);
-            case SKILL -> new SkillDetailsDto(null, null, null, null, null);
-            case PRODUCT -> new ProductDetailsDto(null, null, null, null, null);
-            case HOUSING -> new HousingDetailsDto(null, null, null, null);
+            case EVENT -> eventRepository.findByPostId(post.getId())
+                    .map(event -> new EventDetailsDto(
+                            "EVENT",
+                            event.getStartDate(),
+                            event.getEndDate(),
+                            event.getVenue()
+                    ))
+                    .orElse(null);
+
+            case SKILL -> skillDetailRepository.findByPostId(post.getId())
+                    .map(skillDetail -> new SkillDetailsDto(
+                            "SKILL",
+                            null,
+                            splitSkillTags(skillDetail.getSkillTags()),
+                            skillDetail.getAvailabilityNote(),
+                            skillDetail.getExperienceLevel()
+                    ))
+                    .orElse(null);
+
+            case PRODUCT -> productDetailRepository.findByPostId(post.getId())
+                    .map(productDetail -> new ProductDetailsDto(
+                            "PRODUCT",
+                            productDetail.getProductName(),
+                            productDetail.getPrice(),
+                            productDetail.getCurrency(),
+                            productDetail.getCondition()
+                    ))
+                    .orElse(null);
+
+            case HOUSING -> housingDetailRepository.findByPostId(post.getId())
+                    .map(housingDetail -> new HousingDetailsDto(
+                            "HOUSING",
+                            housingDetail.getRent(),
+                            housingDetail.getRooms(),
+                            housingDetail.getAvailableFrom()
+                    ))
+                    .orElse(null);
         };
+    }
+
+    private List<String> splitSkillTags(String skillTags) {
+        if (skillTags == null || skillTags.isBlank()) {
+            return List.of();
+        }
+
+        return List.of(skillTags.split(","));
     }
 
     private LocationDto mapLocation(PostLocation location) {
         return new LocationDto(
                 location.getCity(),
-                location.getDistrict(),
+                location.getPostalCode(),
+                location.getAddress(),
                 location.getLatitude(),
-                location.getLongitude()
+                location.getLongitude(),
+                location.getPrecision(),
+                location.getRadiusM()
         );
     }
 
-    private PostImageDto mapImage(PostImage image) {
-        return new PostImageDto(
-                image.getId(),
-                image.getUrl(),
-                image.getAltText(),
-                image.getOrderIndex(),
-                image.getCreatedAt()
-        );
-    }
+   private PostImageDto mapImage(PostImage image) {
+    return new PostImageDto(
+            image.getId(),
+            image.getUrl(),
+            image.getAltText(),
+            image.getOrderIndex(),
+            image.getCreatedAt()
+    );
+}
 
     @Transactional
     public PostImageDto uploadPostImage(Long postId, MultipartFile file, String altText, Long userId) {
@@ -386,60 +447,45 @@ public class PostService {
     }
 
     public List<PostListItemResponseDto> getPostList() {
-    return postRepository.findByStatus(PostStatus.ACTIVE)
-            .stream()
-            .sorted(
-                    Comparator
-                            .comparing(PostMapper::isEffectivelyUrgent)
-                            .reversed()
-                            .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
-            )
-            .map(post -> {
-                LocationDto location = postLocationRepository
-                        .findByPostId(post.getId())
-                        .map(this::mapLocation)
-                        .orElse(null);
+        return postRepository.findByStatus(PostStatus.ACTIVE)
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(PostMapper::isEffectivelyUrgent)
+                                .reversed()
+                                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())
+                )
+                .map(post -> {
+                    LocationDto location = postLocationRepository
+                            .findByPostId(post.getId())
+                            .map(this::mapLocation)
+                            .orElse(null);
 
-                return PostMapper.toListDto(post, location);
-            })
-            .toList();
+                    return PostMapper.toListDto(post, location);
+                })
+                .toList();
     }
 
     public List<MapPostDto> getMapPostMarker(Double lat, Double lng, Double radius) {
         validateGeoParameters(lat, lng, radius);
 
-        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius)
-                .stream()
-                .map(location -> {
-                    Post post = postRepository.findById(location.getPost().getId())
-                            .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        return postLocationRepository.findActiveMapMarkersWithinRadius(lat, lng, radius).stream().map(location -> {
+            Post post = postRepository.findById(location.getPost().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-                    return new MapPostDto(
-                            post.getId(),
-                            post.getType().name(),
-                            post.getTitle(),
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            PostMapper.isEffectivelyUrgent(post),
-                            post.getPostMode().name(),
-                            shortenDescription(post.getDescription()),
-                            post.getCreatedAt()
-                    );
-                })
-                .toList();
+            return new MapPostDto(post.getId(), post.getType().name(), post.getTitle(), location.getLatitude(),
+                    location.getLongitude(), PostMapper.isEffectivelyUrgent(post), post.getPostMode().name(),
+                    shortenDescription(post.getDescription()), post.getCreatedAt());
+        }).toList();
     }
 
     public PostResponseDto updatePost(Long postId, UpdatePostRequestDto request, Long userId) {
         Post post = findPostForOwnerAction(postId, userId);
 
-        if (!request.isUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.isUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.isUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         Post savedPost = postRepository.save(post);
@@ -487,11 +533,26 @@ public class PostService {
         }
 
         CreatePostLocationDto dto = request.getLocation();
+        dto.validate();
+
+        Double latitude = dto.getLat();
+        Double longitude = dto.getLng();
+
+        if (dto.getPrecision() == PrecisionType.RADIUS) {
+            LocationMaskingUtil.MaskedCoordinates maskedCoordinates =
+                    LocationMaskingUtil.maskedCoordinates(dto.getLat(), dto.getLng(), dto.getRadiusM());
+
+            latitude = maskedCoordinates.lat();
+            longitude = maskedCoordinates.lng();
+        }
 
         PostLocation location = new PostLocation();
         location.setPost(savedPost);
-        location.setLatitude(dto.getLat());
-        location.setLongitude(dto.getLng());
+        location.setCity(dto.getCity());
+        location.setPostalCode(dto.getPostalCode());
+        location.setAddress(dto.getAddress());
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
         location.setPrecision(dto.getPrecision());
         location.setRadiusM(dto.getRadiusM());
 
@@ -524,23 +585,35 @@ public class PostService {
         }
     }
 
+    private void validateLocation(CreatePostRequest request) {
+        if (request.getLocation() == null) {
+            return;
+        }
+
+        CreatePostLocationDto location = request.getLocation();
+
+        GeoCoordinatesResponseDto geoResponse =
+                geoService.getCoordinatesByPlz(location.getPostalCode());
+
+        if (!geoResponse.city().equalsIgnoreCase(location.getCity().trim())) {
+            throw new IllegalArgumentException(
+                    "Die eingegebene Postleitzahl passt nicht zur angegebenen Stadt."
+            );
+        }
+    }
+
     @Transactional
     public Post updatePost(Long id, UpdatePostRequest request, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
             throw new RuntimeException("You are not authorized to update this post");
         }
 
-        if (!request.getIsUrgent() && request.getUrgentUntil() != null) {
-            throw new IllegalArgumentException("urgentUntil is only allowed when isUrgent is true");
-        }
-
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setUrgent(request.getIsUrgent());
-        post.setUrgentUntil(request.getUrgentUntil());
+        post.setUrgentUntil(request.getIsUrgent() ? request.getUrgentUntil() : null);
         post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post);
@@ -548,8 +621,7 @@ public class PostService {
 
     @Transactional
     public void softDeletePost(Long id, String email) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id " + id));
 
         if (post.getUser() == null || !post.getUser().getEmail().equalsIgnoreCase(email)) {
             throw new RuntimeException("You are not authorized to delete this post");
@@ -559,5 +631,18 @@ public class PostService {
         post.setUpdatedAt(LocalDateTime.now());
 
         postRepository.save(post);
+
+    }
+
+
+    public List<PostListItemResponseDto> getPostsByUserId(Long userId) {
+        return postRepository.findByUserIdAndStatus(userId, PostStatus.ACTIVE).stream()
+                .sorted(Comparator.comparing(PostMapper::isEffectivelyUrgent).reversed()
+                        .thenComparing(Post::getCreatedAt, Comparator.reverseOrder())).map(post -> {
+                    LocationDto location =
+                            postLocationRepository.findByPostId(post.getId()).map(this::mapLocation).orElse(null);
+
+                    return PostMapper.toListDto(post, location);
+                }).toList();
     }
 }
