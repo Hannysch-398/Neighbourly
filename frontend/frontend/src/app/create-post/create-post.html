@@ -263,6 +263,75 @@
           />
         </label>
       </div>
+
+      <section class="image-upload-section" aria-labelledby="image-upload-title">
+        <div class="image-upload-heading">
+          <div>
+            <h4 id="image-upload-title">Bilder</h4>
+            <p>Wähle ein oder mehrere Bilder aus. Die Bilder werden nach dem Speichern des Beitrags hochgeladen.</p>
+          </div>
+
+          <label class="image-picker">
+            <input
+              type="file"
+              name="images"
+              accept="image/*"
+              multiple
+              (change)="onImagesSelected($event)"
+              [disabled]="isLoading()"
+            />
+            <span>Bilder auswählen</span>
+          </label>
+        </div>
+
+        @if (imagePickerError()) {
+          <small class="form-error">{{ imagePickerError() }}</small>
+        }
+
+        @if (selectedImages.length) {
+          <div class="image-preview-grid">
+            @for (image of selectedImages; track image.id) {
+              <article class="image-preview-card">
+                <div class="image-preview-frame">
+                  <img [src]="image.previewUrl" [alt]="image.file.name" />
+                </div>
+
+                <div class="image-preview-body">
+                  <div>
+                    <strong>{{ image.file.name }}</strong>
+                    <small>{{ formatFileSize(image.file.size) }}</small>
+                  </div>
+
+                  <span class="image-status" [class.error]="image.status === 'error'">
+                    {{ getImageStatusLabel(image) }}
+                  </span>
+
+                  @if (image.status === 'uploading' || image.status === 'uploaded') {
+                    <div class="upload-progress" aria-label="Upload-Fortschritt">
+                      <span [style.width.%]="image.progress"></span>
+                    </div>
+                  }
+
+                  @if (image.error) {
+                    <small class="form-error">{{ image.error }}</small>
+                  }
+
+                  @if (image.status === 'selected' || image.status === 'error') {
+                    <button
+                      type="button"
+                      class="remove-image-button"
+                      (click)="removeSelectedImage(image.id)"
+                      [disabled]="isLoading() && image.status !== 'error'"
+                    >
+                      Entfernen
+                    </button>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
     }
     <div class="form-actions">
       <button type="button" class="secondary-button" (click)="resetForm()">Zurücksetzen</button>
@@ -271,7 +340,7 @@
         class="primary-button"
         [disabled]="isLoading()"
       >
-        {{ isEditMode ? 'Aktualisieren' : 'Speichern' }}
+        {{ isUploadingImages() ? 'Bilder werden hochgeladen...' : isEditMode ? 'Aktualisieren' : 'Speichern' }}
       </button>
     </div>
 
@@ -295,6 +364,8 @@
   }
 
   @if (isLoading()) {
-    <p class="loading-message">{{ isEditMode ? 'Beitrag wird aktualisiert...' : 'Beitrag wird gespeichert...' }}</p>
+    <p class="loading-message">
+      {{ isUploadingImages() ? 'Bilder werden hochgeladen...' : isEditMode ? 'Beitrag wird aktualisiert...' : 'Beitrag wird gespeichert...' }}
+    </p>
   }
 </section>
